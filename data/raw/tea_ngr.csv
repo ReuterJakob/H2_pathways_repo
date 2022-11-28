@@ -1,0 +1,15 @@
+﻿H2_NGR;NGR with CCS;Pyrolysis
+Lifetime (years);25;25
+Interest rate (%);0,08;0,08
+Amortisation factor;0,09;0,09
+OPEX (% of CAPEX/a);0,03;0,05
+Efficiency (%);0,69;0,52
+Availability (%);0,95;0,95
+Captured emissions (kgCO2/kgH2);8,7;
+Leaked emissions (kgCO2/kgH2);1;
+Carbon yield (kg/kg H2);3;
+Gas price ($/kWh);0,262;
+CO2 transport and storage cost ($/t);20;
+CO2 price for residual emissions ($/t);150;
+Solid carbon price ($/t);0;
+LHV (kWh/kg H2);33,33;

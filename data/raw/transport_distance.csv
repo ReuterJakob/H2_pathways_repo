@@ -1,0 +1,961 @@
+﻿Origin_Country;Destination_Country;sea distance (km);onshore distance (km);offshore distance (km);Starting point
+United Arab Emirates;Germany;12443,1;;;
+Angola;Germany;9809,65;;;
+Argentina;Germany;14063,9;;;
+Austria;Germany;6005,96;500;0;
+Australia;Germany;21212,1;;;
+Azerbaijan;Germany;6601,17;;;
+Estonia;Germany;1630,63;1300;;Smiltene (Latvia)
+Bangladesh;Germany;15544,3;;;
+Belgium;Germany;435,907;450;0;
+Bulgaria;Germany;6144,55;;;
+Bahrain;Germany;12917,1;;;
+Brunei darussalam;Germany;17577,5;;;
+Bolivia;Germany;12511,9;;;
+Brazil;Germany;10409,3;;;
+Belarus;Germany;1408,05;1000;;Minsk
+Canada;Germany;5417,07;;;
+Switzerland;Germany;3769,58;550;0;
+Chile;Germany;12510,5;;;
+China;Germany;20484,5;;;
+Colombia;Germany;6879,01;;;
+Czech Republic;Germany;0;500;0;
+Germany;Germany;0;;;
+Denmark;Germany;813,914;550;0;
+Dominican Republic;Germany;5798,5;;;
+Algeria;Germany;3173,57;2400;375;
+Egypt;Germany;6629,51;;;
+Spain;Germany;2697,2;1400;;Madrid
+Finland;Germany;1646,96;800;140;
+France;Germany;3768,47;600;;Saint-Maurice-la-Souterraine
+Ghana;Germany;7592,95;;;
+Georgia;Germany;6880,24;;;
+Equatorial Guinea;Germany;8648,2;;;
+Greece;Germany;5499,86;1700;;Ampelia (403 00)
+Hungary;Germany;6005,96;500;;Budapest
+Indonesia;Germany;16946,9;;;
+Ireland;Germany;1418,95;1000;200;Athlone
+India;Germany;12687,3;;;
+Iraq;Germany;13377,2;;;
+Iran;Germany;12508,6;;;
+Italy;Germany;4063,66;900;;Rom
+Japan;Germany;21391,2;;;
+Republic of Korea;Germany;21070,7;;;
+Kuwait;Germany;13352,8;;;
+Kazakhstan;Germany;6601,17;;;
+Israel;Germany;6854,45;;;
+Libya;Germany;4760,14;;;
+Morocco;Germany;2668,91;2100;50;
+Moldova;Germany;6447,59;;;
+Myanmar;Germany;15461,9;;;
+Mexico;Germany;10255,8;;;
+Malaysia;Germany;15945,3;;;
+Nigeria;Germany;7951,84;;;
+Netherlands;Germany;403,134;600;0;
+Norway;Germany;602,403;300;650;
+Oman;Germany;10799,4;;;
+Peru;Germany;9104,22;;;
+Pakistan;Germany;12201,6;;;
+Poland;Germany;1166,3;1000;;
+Portugal;Germany;2033,13;1900;;Coimbra
+Qatar;Germany;12830,8;;;
+Romania;Germany;6447,1;1100;;Coroi
+Russian Federation;Germany;6600,67;1000;2000;
+Russian Federation;Germany;6600,67;;;
+Russian Federation;Germany;6600,67;;;
+Russian Federation;Germany;6600,67;6000;0;
+Russian Federation;Germany;6600,67;6000;0;
+Russian Federation;Germany;6600,67;6000;0;
+Saudi Arabia;Germany;8294,03;;;
+Sweden;Germany;601,938;324;150;Jönköping
+Singapore;Germany;16294,6;;;
+Slovenia;Germany;6005,38;300;;Ljubljana
+Slovakia;Germany;6005,96;550;;Velke Zlievce
+Syria;Germany;6672,62;;;
+Thailand;Germany;18076,5;;;
+Turkmenistan;Germany;12508,4;;;
+Tunisia;Germany;4114,71;;;
+Turkey;Germany;5918,28;;;
+Trinidad and Tobago;Germany;6279,06;;;
+Taiwan;Germany;19486,1;;;
+Ukraine;Germany;6648,54;;;
+United Kingdom;Germany;540,628;600;80;Leicester
+United States;Germany;8319,37;;;
+United States;Germany;8319,37;;;
+United States;Germany;8319,37;;;
+United States;Germany;8319,37;;;
+Uzbekistan;Germany;12201,8;;;
+Venezuela;Germany;6553,84;;;
+Yemen;Germany;9768,26;;;
+Croatia;Germany;5925,71;;;
+Mozambique;Germany;14350,9;;;
+Vietnam;Germany;17589,9;;;
+Philippines;Germany;18853,3;;;
+Iceland;Germany;1012,38;;;
+Papua New Guinea;Germany;21143,3;;;
+Cameroon;Germany;8469,23;;;
+South Africa;Germany;13869,6;;;
+United Arab Emirates;Spain;8993,74;;;
+Angola;Spain;7650,75;;;
+Argentina;Spain;11765,6;;;
+Austria;Spain;3131,74;1800;;Liezen
+Australia;Spain;17761,3;;;
+Azerbaijan;Spain;3900,92;;;
+Estonia;Spain;4115,16;3300;;Smiltene (Latvia)
+Bangladesh;Spain;12040;;;
+Belgium;Spain;2442,08;1100;;Brussels
+Bulgaria;Spain;3444,88;;;
+Bahrain;Spain;9460,69;;;
+Brunei darussalam;Spain;13807,7;;;
+Bolivia;Spain;13257,8;;;
+Brazil;Spain;8824,13;;;
+Belarus;Spain;4074,55;3000;;Minsk
+Canada;Spain;4673,53;;;
+Switzerland;Spain;1069,6;1200;;Wolhusen
+Chile;Spain;13257,2;;;
+China;Spain;16838,3;;;
+Colombia;Spain;7282,7;;;
+Czech Republic;Spain;2697,2;1800;;Trhovy Stepanov
+Germany;Spain;2697,76;1500;;Würzburg
+Denmark;Spain;3486,93;2000;;Egtved
+Dominican Republic;Spain;6284,62;;;
+Algeria;Spain;449,922;500;300;
+Egypt;Spain;3408,26;;;
+Spain;Spain;0;;;
+Finland;Spain;4131,43;2000;1000;Mäntsälä
+France;Spain;1069,04;500;;Saint-Maurice-la-Souterraine
+Ghana;Spain;5433,82;;;
+Georgia;Spain;4180,49;;;
+Equatorial Guinea;Spain;6489,14;;;
+Greece;Spain;2785,02;2900;;Ampelia (403 00)
+Hungary;Spain;3131,74;2100;;Budapest
+Indonesia;Spain;13236,9;;;
+Ireland;Spain;2292,58;1650;150;Athlone
+India;Spain;9253,62;;;
+Iraq;Spain;9766,47;;;
+Iran;Spain;9043,64;;;
+Italy;Spain;1364,21;1500;;Rome
+Japan;Spain;17812,6;;;
+Republic of Korea;Spain;17509;;;
+Kuwait;Spain;9734,15;;;
+Kazakhstan;Spain;3900,92;;;
+Israel;Spain;3657,96;;;
+Libya;Spain;2002,26;;;
+Morocco;Spain;39,287;700;50;
+Moldova;Spain;3723,33;;;
+Myanmar;Spain;11798,7;;;
+Mexico;Spain;10695,4;;;
+Malaysia;Spain;12213,6;;;
+Nigeria;Spain;5792,72;;;
+Netherlands;Spain;2384,29;1300;;Rotterdam
+Norway;Spain;3149,45;2000;800;Bremerhaven
+Oman;Spain;7296,13;;;
+Peru;Spain;9663,55;;;
+Pakistan;Spain;9036,58;;;
+Poland;Spain;3891,66;2400;;Wloclawek
+Portugal;Spain;525,429;450;0;
+Qatar;Spain;9407,83;;;
+Romania;Spain;3722,97;2400;;Coroi
+Russian Federation;Spain;3900,95;;;
+Russian Federation;Spain;3900,95;;;
+Russian Federation;Spain;3900,95;;;
+Russian Federation;Spain;3900,95;;;
+Russian Federation;Spain;3900,95;;;
+Russian Federation;Spain;3900,95;;;
+Saudi Arabia;Spain;4804,5;;;
+Sweden;Spain;3105,93;2500;20;Jönköping
+Singapore;Spain;12555,5;;;
+Slovenia;Spain;3131,42;1600;;Ljubljana
+Slovakia;Spain;3131,74;2200;;Velke Zlievce
+Syria;Spain;3760,78;;;
+Thailand;Spain;14280,1;;;
+Turkmenistan;Spain;9044,14;;;
+Tunisia;Spain;1415,26;;;
+Turkey;Spain;3218,65;;;
+Trinidad and Tobago;Spain;5886,67;;;
+Taiwan;Spain;15795,4;;;
+Ukraine;Spain;3911;;;
+United Kingdom;Spain;2125,95;1300;80;Leicester
+United States;Spain;8601,06;;;
+United States;Spain;8601,06;;;
+United States;Spain;8601,06;;;
+United States;Spain;8601,06;;;
+Uzbekistan;Spain;9037,29;;;
+Venezuela;Spain;6511,98;;;
+Yemen;Spain;6166,22;;;
+Croatia;Spain;3067,08;;;
+Mozambique;Spain;12144,1;;;
+Vietnam;Spain;13889,9;;;
+Philippines;Spain;15122,6;;;
+Iceland;Spain;3264,17;;;
+Papua New Guinea;Spain;17401,7;;;
+Cameroon;Spain;6310,19;;;
+South Africa;Spain;11662,8;;;
+United Arab Emirates;France;7583,96;;;
+Angola;France;8722,58;;;
+Argentina;France;13196,7;;;
+Austria;France;1976,3;700;;Liezen
+Australia;France;16855,6;;;
+Azerbaijan;France;3529,3;;;
+Estonia;France;5187,04;2100;;Smilden
+Bangladesh;France;10613;;;
+Belgium;France;3513,9;100;0;Brüssel
+Bulgaria;France;2582,01;;;
+Bahrain;France;8046,48;;;
+Brunei darussalam;France;12257,2;;;
+Bolivia;France;14328,9;;;
+Brazil;France;9895,89;;;
+Belarus;France;5156,76;1900;;Minsk
+Canada;France;6158,92;;;
+Switzerland;France;0;600;0;
+Chile;France;14328,9;;;
+China;France;15425,6;;;
+Colombia;France;8354,55;;;
+Czech Republic;France;3768,47;700;;Trhovy Stepanov
+Germany;France;3769,58;700;0;
+Denmark;France;4571,11;900;;Egtved
+Dominican Republic;France;7356,5;;;
+Algeria;France;864,624;1500;300;
+Egypt;France;2025,92;;;
+Spain;France;1069,6;500;0;Madrid
+Finland;France;5203,31;1700;140;Greifswald & Obergailbach
+France;France;0;;;
+Ghana;France;6505,7;;;
+Georgia;France;3616,44;;;
+Equatorial Guinea;France;7561,02;;;
+Greece;France;1600,08;2000;;Ampelia (403 00)
+Hungary;France;1976,3;1200;;Budapest
+Indonesia;France;11695,2;;;
+Ireland;France;3481,09;650;200;Athlone
+India;France;7846,77;;;
+Iraq;France;8279,75;;;
+Iran;France;7623,29;;;
+Italy;France;515,53;800;0;Rome
+Japan;France;16455;;;
+Republic of Korea;France;16167,4;;;
+Kuwait;France;8248,41;;;
+Kazakhstan;France;3529,3;;;
+Israel;France;2284,24;;;
+Libya;France;1263,52;;;
+Morocco;France;1105,57;1200;50;
+Moldova;France;2856,88;;;
+Myanmar;France;10279,7;;;
+Mexico;France;11767,1;;;
+Malaysia;France;10657;;;
+Nigeria;France;6864,6;;;
+Netherlands;France;3456,11;250;;Rotterdam
+Norway;France;4221,27;300;1000;
+Oman;France;5856,53;;;
+Peru;France;10735,3;;;
+Pakistan;France;7725,33;;;
+Poland;France;5013,64;1150;;Wloclawek
+Portugal;France;1730,26;900;;Coimbra
+Qatar;France;8007,81;;;
+Romania;France;2857,78;1800;;Coroi
+Russian Federation;France;3530,2;;;
+Russian Federation;France;3530,2;;;
+Russian Federation;France;3530,2;;;
+Russian Federation;France;3530,2;;;
+Russian Federation;France;3530,2;;;
+Russian Federation;France;3530,2;;;
+Saudi Arabia;France;3365,38;;;
+Sweden;France;4177,75;1300;150;Jönköping
+Singapore;France;10995,2;;;
+Slovenia;France;1977,63;700;;Ljubljana
+Slovakia;France;1976,3;1300;;Velke Zlievce
+Syria;France;2475,22;;;
+Thailand;France;12690,3;;;
+Turkmenistan;France;7622,01;;;
+Tunisia;France;756,383;;;
+Turkey;France;2433,33;;;
+Trinidad and Tobago;France;6958,55;;;
+Taiwan;France;14324,3;;;
+Ukraine;France;3170,81;;;
+United Kingdom;France;3225,52;300;80;Leicester
+United States;France;9672,82;;;
+United States;France;9672,82;;;
+United States;France;9672,82;;;
+United States;France;9672,82;;;
+Uzbekistan;France;7725,39;;;
+Venezuela;France;7583,85;;;
+Yemen;France;4675,15;;;
+Croatia;France;1904,34;;;
+Mozambique;France;10559,4;;;
+Vietnam;France;12349,5;;;
+Philippines;France;13611,6;;;
+Iceland;France;4582,73;;;
+Papua New Guinea;France;15880,2;;;
+Cameroon;France;7382,06;;;
+South Africa;France;10913,4;;;
+United Arab Emirates;Italy;7260,41;;;
+Angola;Italy;9016,7;;;
+Argentina;Italy;13589,4;;;
+Austria;Italy;1608,56;700;0;
+Australia;Italy;16371,9;;;
+Azerbaijan;Italy;2906,77;;;
+Estonia;Italy;5481,36;1900;;Smiltene
+Bangladesh;Italy;10289,6;;;
+Belgium;Italy;3808,11;700;;Brüssel
+Bulgaria;Italy;2198,27;;;
+Bahrain;Italy;7722,94;;;
+Brunei darussalam;Italy;11933,8;;;
+Bolivia;Italy;14624;;;
+Brazil;Italy;10190;;;
+Belarus;Italy;5451,98;1600;;Minsk
+Canada;Italy;6614,32;;;
+Switzerland;Italy;515,53;450;0;
+Chile;Italy;14623;;;
+China;Italy;15102,2;;;
+Colombia;Italy;8648,79;;;
+Czech Republic;Italy;4063,66;550;;Trhovy Stepanov
+Germany;Italy;4063,79;500;;Würzburg
+Denmark;Italy;4865,41;1300;;Egtved
+Dominican Republic;Italy;7650,82;;;
+Algeria;Italy;1023,51;700;700;weicht ab von 1100 und 150 (Pipeline nach Mazara-del-vallo über El Haouaria)
+Egypt;Italy;1702,44;;;
+Spain;Italy;1363,82;1500;;Madrid
+Finland;Italy;5497,63;3200;1000;Mäntsälä
+France;Italy;513,275;600;;Saint-Maurice-la-Souterraine
+Ghana;Italy;6800,02;;;
+Georgia;Italy;3130,67;;;
+Equatorial Guinea;Italy;7855,34;;;
+Greece;Italy;1276,61;1200;200;
+Hungary;Italy;1608,56;550;;Budapest
+Indonesia;Italy;11371,8;;;
+Ireland;Italy;3853,55;1600;200;Athlone
+India;Italy;7523,23;;;
+Iraq;Italy;7956,24;;;
+Iran;Italy;7299,75;;;
+Italy;Italy;0;;;
+Japan;Italy;16131,7;;;
+Republic of Korea;Italy;15844,1;;;
+Kuwait;Italy;7924,89;;;
+Kazakhstan;Italy;2906,77;;;
+Israel;Italy;1960,76;;;
+Libya;Italy;1015,85;1600;550;
+Morocco;Italy;1399,8;;;
+Moldova;Italy;2452,22;;;
+Myanmar;Italy;9956,34;;;
+Mexico;Italy;12061,2;;;
+Malaysia;Italy;10333,7;;;
+Nigeria;Italy;7158,92;;;
+Netherlands;Italy;3750,32;900;;Rotterdam
+Norway;Italy;4515,51;1300;800;Bremerhaven
+Oman;Italy;5532,99;;;
+Peru;Italy;11029,4;;;
+Pakistan;Italy;7401,78;;;
+Poland;Italy;5307,97;1100;;
+Portugal;Italy;2024,51;1700;;Coimbra
+Qatar;Italy;7684,27;;;
+Romania;Italy;2452,2;1200;;Coroi
+Russian Federation;Italy;2906,35;;;
+Russian Federation;Italy;2906,35;;;
+Russian Federation;Italy;2906,35;;;
+Russian Federation;Italy;2906,35;;;
+Russian Federation;Italy;2906,35;;;
+Russian Federation;Italy;2906,35;;;
+Saudi Arabia;Italy;3041,93;;;
+Sweden;Italy;4471,99;1900;20;Jönköping
+Singapore;Italy;10671,8;;;
+Slovenia;Italy;1608,56;450;0;
+Slovakia;Italy;1608,56;600;;Velke Zlievce
+Syria;Italy;2151,75;;;
+Thailand;Italy;12366,9;;;
+Turkmenistan;Italy;7299,83;;;
+Tunisia;Italy;574,888;1300;200;
+Turkey;Italy;2045,8;;;
+Trinidad and Tobago;Italy;7252,87;;;
+Taiwan;Italy;14001;;;
+Ukraine;Italy;2637,68;;;
+United Kingdom;Italy;3519,73;1400;80;Griespass
+United States;Italy;9966,92;;;
+United States;Italy;9966,92;;;
+United States;Italy;9966,92;;;
+United States;Italy;9966,92;;;
+Uzbekistan;Italy;7403,21;;;
+Venezuela;Italy;7878,18;;;
+Yemen;Italy;4351,63;;;
+Croatia;Italy;1544,36;;;
+Mozambique;Italy;10236;;;
+Vietnam;Italy;12026,2;;;
+Philippines;Italy;13288,2;;;
+Iceland;Italy;5015,28;;;
+Papua New Guinea;Italy;15556,8;;;
+Cameroon;Italy;7676,39;;;
+South Africa;Italy;10590,1;;;
+United Arab Emirates;United Kingdom;11603,8;;;
+Angola;United Kingdom;9266,21;;;
+Argentina;United Kingdom;13520,5;;;
+Austria;United Kingdom;5328,7;1200;80;Liezen
+Australia;United Kingdom;20225,2;;;
+Azerbaijan;United Kingdom;6057,08;;;
+Estonia;United Kingdom;2032,33;950;1000;Smiltene, orientiert an einer Pipeline von Smiltene in Richtung Nordstream
+Bangladesh;United Kingdom;14705;;;
+Belgium;United Kingdom;323,696;200;80;Brüssel
+Bulgaria;United Kingdom;5594,2;;;
+Bahrain;United Kingdom;12077,8;;;
+Brunei darussalam;United Kingdom;16590,5;;;
+Bolivia;United Kingdom;12039,2;;;
+Brazil;United Kingdom;9938,45;;;
+Belarus;United Kingdom;1971,76;2000;80;Minsk
+Canada;United Kingdom;4864,91;;;
+Switzerland;United Kingdom;3225,52;800;80;Wolhusen
+Chile;United Kingdom;12038,4;;;
+China;United Kingdom;19497,6;;;
+Colombia;United Kingdom;6406,76;;;
+Czech Republic;United Kingdom;540,628;1200;80;Trhovy Stepanov
+Germany;United Kingdom;540,242;700;80;Würzburg
+Denmark;United Kingdom;1384,2;1000;80;Egtved
+Dominican Republic;United Kingdom;5246,34;;;
+Algeria;United Kingdom;2595,34;2400;562,5;
+Egypt;United Kingdom;5901,43;;;
+Spain;United Kingdom;2125,95;1400;140;
+Finland;United Kingdom;2048,6;1800;220;
+France;United Kingdom;3224,95;650;80;Saint-Maurice-la-Souterraine
+Ghana;United Kingdom;7026,06;;;
+Georgia;United Kingdom;6336,64;;;
+Equatorial Guinea;United Kingdom;8069,81;;;
+Greece;United Kingdom;4917,3;2600;80;Ampelia (403 00)
+Hungary;United Kingdom;5328,7;1550;80;Budapest
+Indonesia;United Kingdom;16017,3;;;
+Ireland;United Kingdom;734,066;120;120;Athlone
+India;United Kingdom;11847,9;;;
+Iraq;United Kingdom;12487,2;;;
+Iran;United Kingdom;11669,3;;;
+Italy;United Kingdom;3520,15;1600;80;Rome
+Japan;United Kingdom;20404,3;;;
+Republic of Korea;United Kingdom;20083,7;;;
+Kuwait;United Kingdom;12461,5;;;
+Kazakhstan;United Kingdom;6057,08;;;
+Israel;United Kingdom;6134,76;;;
+Libya;United Kingdom;4170,58;;;
+Morocco;United Kingdom;2090,73;;;
+Moldova;United Kingdom;5854,82;;;
+Myanmar;United Kingdom;14552,4;;;
+Mexico;United Kingdom;9783,68;;;
+Malaysia;United Kingdom;15002,2;;;
+Nigeria;United Kingdom;7388,72;;;
+Netherlands;United Kingdom;270,419;500;300;
+Norway;United Kingdom;1066,73;400;350;
+Oman;United Kingdom;9960,27;;;
+Peru;United Kingdom;8632,05;;;
+Pakistan;United Kingdom;11451;;;
+Poland;United Kingdom;1788,87;1100;200;Wloclawek
+Portugal;United Kingdom;1489,63;1700;140;Coimbra
+Qatar;United Kingdom;11993,9;;;
+Romania;United Kingdom;5854,83;2100;80;Coroi
+Russian Federation;United Kingdom;6057,08;;;
+Russian Federation;United Kingdom;6057,08;;;
+Russian Federation;United Kingdom;6057,08;;;
+Russian Federation;United Kingdom;6057,08;;;
+Russian Federation;United Kingdom;6057,08;;;
+Russian Federation;United Kingdom;6057,08;;;
+Saudi Arabia;United Kingdom;7462,89;;;
+Sweden;United Kingdom;1023,22;1400;100;
+Singapore;United Kingdom;15347,8;;;
+Slovenia;United Kingdom;5328,62;1400;80;Ljubljana
+Slovakia;United Kingdom;5328,7;1600;80;Velke Zlievce
+Syria;United Kingdom;5990,37;;;
+Thailand;United Kingdom;17100,9;;;
+Turkmenistan;United Kingdom;11669;;;
+Tunisia;United Kingdom;3571,2;;;
+Turkey;United Kingdom;5374,68;;;
+Trinidad and Tobago;United Kingdom;5806,81;;;
+Taiwan;United Kingdom;18499,1;;;
+Ukraine;United Kingdom;6042,87;;;
+United Kingdom;United Kingdom;0;;;
+United States;United Kingdom;7767,24;;;
+United States;United Kingdom;7767,24;;;
+United States;United Kingdom;7767,24;;;
+United States;United Kingdom;7767,24;;;
+Uzbekistan;United Kingdom;11451,6;;;
+Venezuela;United Kingdom;6081,59;;;
+Yemen;United Kingdom;8889,86;;;
+Croatia;United Kingdom;5258,93;;;
+Mozambique;United Kingdom;13668,8;;;
+Vietnam;United Kingdom;16662,3;;;
+Philippines;United Kingdom;17866,3;;;
+Iceland;United Kingdom;1803,94;;;
+Papua New Guinea;United Kingdom;20156,4;;;
+Cameroon;United Kingdom;7896,47;;;
+South Africa;United Kingdom;13187,6;;;
+United Arab Emirates;Netherlands;11977,2;;;
+Angola;Netherlands;9497,12;;;
+Argentina;Netherlands;13751,4;;;
+Austria;Netherlands;5642,98;900;;Liezen
+Australia;Netherlands;20628,4;;;
+Azerbaijan;Netherlands;6287,68;;;
+Estonia;Netherlands;1827,22;550;800;
+Bangladesh;Netherlands;15078,4;;;
+Belgium;Netherlands;70,418;300;0;
+Bulgaria;Netherlands;5831,96;;;
+Bahrain;Netherlands;12451,2;;;
+Brunei darussalam;Netherlands;16993,7;;;
+Bolivia;Netherlands;12212,5;;;
+Brazil;Netherlands;10110,8;;;
+Belarus;Netherlands;1704,92;1600;;
+Canada;Netherlands;5148,15;;;
+Switzerland;Netherlands;3456,11;650;;Wolhusen
+Chile;Netherlands;12212,1;;;
+China;Netherlands;19900,8;;;
+Colombia;Netherlands;6580,53;;;
+Czech Republic;Netherlands;403,134;850;;Trhovy Stepanov
+Germany;Netherlands;403,294;400;0;
+Denmark;Netherlands;1116,98;100;250;
+Dominican Republic;Netherlands;5529,58;;;
+Algeria;Netherlands;2861,01;2700;300;
+Egypt;Netherlands;6261,88;;;
+Spain;Netherlands;2384,64;1700;;Madrid
+Finland;Netherlands;1843,54;1300;140;
+France;Netherlands;3455,91;750;;Saint-Maurice-la-Souterraine
+Ghana;Netherlands;7280,36;;;
+Georgia;Netherlands;6567,65;;;
+Equatorial Guinea;Netherlands;8335,65;;;
+Greece;Netherlands;5187,27;2300;;Ampelia
+Hungary;Netherlands;5642,98;1250;;Budapest
+Indonesia;Netherlands;16420,7;;;
+Ireland;Netherlands;1107,34;1100;200;Athlone
+India;Netherlands;12221,3;;;
+Iraq;Netherlands;12890,7;;;
+Iran;Netherlands;12042,7;;;
+Italy;Netherlands;3751,1;1500;;Rom
+Japan;Netherlands;20807,5;;;
+Republic of Korea;Netherlands;20486,9;;;
+Kuwait;Netherlands;12865;;;
+Kazakhstan;Netherlands;6287,68;;;
+Israel;Netherlands;6486,82;;;
+Libya;Netherlands;4447,55;;;
+Morocco;Netherlands;2356,35;;;
+Moldova;Netherlands;6134,1;;;
+Myanmar;Netherlands;14955,8;;;
+Mexico;Netherlands;9957,38;;;
+Malaysia;Netherlands;15405,7;;;
+Nigeria;Netherlands;7639,25;;;
+Netherlands;Netherlands;0;;;
+Norway;Netherlands;806,749;150;1000;
+Oman;Netherlands;10333,7;;;
+Peru;Netherlands;8805,76;;;
+Pakistan;Netherlands;11824,4;;;
+Poland;Netherlands;1521,65;;;
+Portugal;Netherlands;1720,59;2000;;Coimbra
+Qatar;Netherlands;12367,3;;;
+Romania;Netherlands;6134,51;1850;;Coroi
+Russian Federation;Netherlands;6288,08;;;
+Russian Federation;Netherlands;6288,08;;;
+Russian Federation;Netherlands;6288,08;;;
+Russian Federation;Netherlands;6288,08;;;
+Russian Federation;Netherlands;6288,08;;;
+Russian Federation;Netherlands;6288,08;;;
+Saudi Arabia;Netherlands;7836,34;;;
+Sweden;Netherlands;821,923;1000;20;
+Singapore;Netherlands;15751,3;;;
+Slovenia;Netherlands;5643,24;1100;;Ljubljana
+Slovakia;Netherlands;5642,98;1300;;Velke Zlievce
+Syria;Netherlands;6304,99;;;
+Thailand;Netherlands;17504,1;;;
+Turkmenistan;Netherlands;12042,4;;;
+Tunisia;Netherlands;3802,15;;;
+Turkey;Netherlands;5605,69;;;
+Trinidad and Tobago;Netherlands;5980,59;;;
+Taiwan;Netherlands;18902,3;;;
+Ukraine;Netherlands;6335,95;;;
+United Kingdom;Netherlands;271,74;400;200;
+United States;Netherlands;8050,49;;;
+United States;Netherlands;8050,49;;;
+United States;Netherlands;8050,49;;;
+United States;Netherlands;8050,49;;;
+Uzbekistan;Netherlands;11825;;;
+Venezuela;Netherlands;6255,37;;;
+Yemen;Netherlands;9293,34;;;
+Croatia;Netherlands;5573,55;;;
+Mozambique;Netherlands;13983,4;;;
+Vietnam;Netherlands;17065,5;;;
+Philippines;Netherlands;18269,5;;;
+Iceland;Netherlands;1450,72;;;
+Papua New Guinea;Netherlands;20559,6;;;
+Cameroon;Netherlands;8156,71;;;
+South Africa;Netherlands;13502,1;;;
+United Arab Emirates;Japan;11278,8;;;
+Angola;Japan;18154,4;;;
+Argentina;Japan;18849,1;;;
+Austria;Japan;16335,4;;;
+Australia;Japan;6000;;;
+Azerbaijan;Japan;2136,68;;;
+Estonia;Japan;23179,8;;;
+Bangladesh;Japan;8398,13;;;
+Belgium;Japan;20879,5;;;
+Bulgaria;Japan;15995,4;;;
+Bahrain;Japan;11750,1;;;
+Brunei darussalam;Japan;4149,07;;;
+Bolivia;Japan;16934,8;;;
+Brazil;Japan;22374,6;;;
+Belarus;Japan;22711,7;;;
+Canada;Japan;8535,4;;;
+Switzerland;Japan;16455;;;
+Chile;Japan;16934,9;;;
+China;Japan;1459,34;;;
+Colombia;Japan;15390,6;;;
+Czech Republic;Japan;21391,2;;;
+Germany;Japan;21393,9;;;
+Denmark;Japan;22116;;;
+Dominican Republic;Japan;16706;;;
+Algeria;Japan;17389,2;;;
+Egypt;Japan;14388;;;
+Spain;Japan;17814,3;;;
+Finland;Japan;23247,1;;;
+France;Japan;16454,1;;;
+Ghana;Japan;21212,2;;;
+Georgia;Japan;16983,1;;;
+Equatorial Guinea;Japan;20450,9;;;
+Greece;Japan;15272,7;;;
+Hungary;Japan;16335,4;;;
+Indonesia;Japan;5809,86;;;
+Ireland;Japan;20468,6;;;
+India;Japan;9669,2;;;
+Iraq;Japan;12108,8;;;
+Iran;Japan;11336,8;;;
+Italy;Japan;16132;;;
+Japan;Japan;0;;;
+Republic of Korea;Japan;954,315;;;
+Kuwait;Japan;12077,5;;;
+Kazakhstan;Japan;2136,68;;;
+Israel;Japan;14534,6;;;
+Libya;Japan;16194,4;;;
+Morocco;Japan;17894,1;;;
+Moldova;Japan;16263,6;;;
+Myanmar;Japan;6427,29;;;
+Mexico;Japan;11861,2;;;
+Malaysia;Japan;5420,26;;;
+Nigeria;Japan;21172,5;;;
+Netherlands;Japan;20810;;;
+Norway;Japan;21969,3;;;
+Oman;Japan;10861;;;
+Peru;Japan;15271,5;;;
+Pakistan;Japan;10578,7;;;
+Poland;Japan;22452,8;;;
+Portugal;Japan;18356,7;;;
+Qatar;Japan;11680,6;;;
+Romania;Japan;16264,4;;;
+Russian Federation;Japan;7000;;;
+Russian Federation;Japan;7000;;;
+Russian Federation;Japan;7000;;;
+Russian Federation;Japan;7000;;;
+Russian Federation;Japan;7000;;;
+Russian Federation;Japan;7000;;;
+Saudi Arabia;Japan;12922,2;;;
+Sweden;Japan;21932,2;;;
+Singapore;Japan;5046,94;;;
+Slovenia;Japan;16335,6;;;
+Slovakia;Japan;16335,4;;;
+Syria;Japan;14907,5;;;
+Thailand;Japan;4953,74;;;
+Turkmenistan;Japan;11335,7;;;
+Tunisia;Japan;16219;;;
+Turkey;Japan;15846,7;;;
+Trinidad and Tobago;Japan;16951,3;;;
+Taiwan;Japan;1935,64;;;
+Ukraine;Japan;16513;;;
+United Kingdom;Japan;20406,5;;;
+United States;Japan;8905,1;;;
+United States;Japan;8905,1;;;
+United States;Japan;8905,1;;;
+United States;Japan;8905,1;;;
+Uzbekistan;Japan;10578,8;;;
+Venezuela;Japan;16365,3;;;
+Yemen;Japan;11527,9;;;
+Croatia;Japan;16262,3;;;
+Mozambique;Japan;13731;;;
+Vietnam;Japan;3747,56;;;
+Philippines;Japan;2568,18;;;
+Iceland;Japan;21363,5;;;
+Papua New Guinea;Japan;6228,56;;;
+Cameroon;Japan;20693,4;;;
+South Africa;Japan;13882,3;;;
+United Arab Emirates;United States;18375,5;;;
+Angola;United States;12162,7;;;
+Argentina;United States;12591;;;
+Austria;United States;11908,8;;;
+Australia;United States;12771,6;;;
+Azerbaijan;United States;8226,75;;;
+Estonia;United States;9275,86;;;
+Bangladesh;United States;17035,6;;;
+Belgium;United States;8106,73;;;
+Bulgaria;United States;12051,7;;;
+Bahrain;United States;18849,1;;;
+Brunei darussalam;United States;12615,4;;;
+Bolivia;United States;8511,36;;;
+Brazil;United States;9779,01;;;
+Belarus;United States;9245,78;;;
+Canada;United States;1519,17;;;
+Switzerland;United States;9672,82;;;
+Chile;United States;8514,9;;;
+China;United States;10402,3;;;
+Colombia;United States;2781,41;;;
+Czech Republic;United States;8319,37;;;
+Germany;United States;8323,27;;;
+Denmark;United States;8663,39;;;
+Dominican Republic;United States;2440,66;;;
+Algeria;United States;9075,72;;;
+Egypt;United States;12615,2;;;
+Spain;United States;8604,87;;;
+Finland;United States;9298,25;;;
+France;United States;9676,05;;;
+Ghana;United States;10039,3;;;
+Georgia;United States;12787,3;;;
+Equatorial Guinea;United States;11071,7;;;
+Greece;United States;11407,1;;;
+Hungary;United States;11908,8;;;
+Indonesia;United States;14000,3;;;
+Ireland;United States;7344,78;;;
+India;United States;18311,5;;;
+Iraq;United States;19308,7;;;
+Iran;United States;18440,9;;;
+Italy;United States;9971,22;;;
+Japan;United States;8904,71;;;
+Republic of Korea;United States;9754,88;;;
+Kuwait;United States;19284,3;;;
+Kazakhstan;United States;8226,75;;;
+Israel;United States;12840,1;;;
+Libya;United States;10667,6;;;
+Morocco;United States;8562,27;;;
+Moldova;United States;12350,6;;;
+Myanmar;United States;15204,4;;;
+Mexico;United States;2759,49;;;
+Malaysia;United States;14214,2;;;
+Nigeria;United States;10406,5;;;
+Netherlands;United States;8053,45;;;
+Norway;United States;7943,43;;;
+Oman;United States;16732,4;;;
+Peru;United States;4731,82;;;
+Pakistan;United States;18187,2;;;
+Poland;United States;9144,17;;;
+Portugal;United States;7947,81;;;
+Qatar;United States;18765,3;;;
+Romania;United States;12354,2;;;
+Russian Federation;United States;8226,87;;;
+Russian Federation;United States;8226,87;;;
+Russian Federation;United States;8226,87;;;
+Russian Federation;United States;8226,87;;;
+Russian Federation;United States;8226,87;;;
+Russian Federation;United States;8226,87;;;
+Saudi Arabia;United States;20000;;;
+Sweden;United States;8165,51;;;
+Singapore;United States;13845,6;;;
+Slovenia;United States;11912,5;;;
+Slovakia;United States;11908,8;;;
+Syria;United States;12658,3;;;
+Thailand;United States;14109,7;;;
+Turkmenistan;United States;18439,6;;;
+Tunisia;United States;10022,3;;;
+Turkey;United States;11825,4;;;
+Trinidad and Tobago;United States;3695,92;;;
+Taiwan;United States;11098,5;;;
+Ukraine;United States;12555,6;;;
+United Kingdom;United States;7770,6;;;
+United States;United States;0;;;
+United States;United States;0;;;
+United States;United States;0;;;
+United States;United States;0;;;
+Uzbekistan;United States;18185,9;;;
+Venezuela;United States;3118,44;;;
+Yemen;United States;15701,2;;;
+Croatia;United States;11832,9;;;
+Mozambique;United States;15490,5;;;
+Vietnam;United States;12907,4;;;
+Philippines;United States;11471,8;;;
+Iceland;United States;6381,13;;;
+Papua New Guinea;United States;10274,3;;;
+Cameroon;United States;10903,9;;;
+South Africa;United States;15013,3;;;
+United Arab Emirates;Korea;10958,7;;;
+Angola;Korea;17850;;;
+Argentina;Korea;19351,8;;;
+Austria;Korea;16047,8;;;
+Australia;Korea;10153,9;;;
+Azerbaijan;Korea;1579,54;;;
+Estonia;Korea;22858;;;
+Bangladesh;Korea;8077,66;;;
+Belgium;Korea;20557,7;;;
+Bulgaria;Korea;15692,7;;;
+Bahrain;Korea;11430;;;
+Brunei darussalam;Korea;3828,74;;;
+Bolivia;Korea;17656,2;;;
+Brazil;Korea;22052,8;;;
+Belarus;Korea;22391,1;;;
+Canada;Korea;9153,71;;;
+Switzerland;Korea;16167,4;;;
+Chile;Korea;17656,8;;;
+China;Korea;661,595;;;
+Colombia;Korea;16112,9;;;
+Czech Republic;Korea;21070,7;;;
+Germany;Korea;21072,1;;;
+Denmark;Korea;21794,2;;;
+Dominican Republic;Korea;17427,9;;;
+Algeria;Korea;17086,1;;;
+Egypt;Korea;14067,9;;;
+Spain;Korea;17510,6;;;
+Finland;Korea;22925,3;;;
+France;Korea;16168,4;;;
+Ghana;Korea;20907,9;;;
+Georgia;Korea;16663,2;;;
+Equatorial Guinea;Korea;20146,6;;;
+Greece;Korea;14987;;;
+Hungary;Korea;16047,8;;;
+Indonesia;Korea;5489,41;;;
+Ireland;Korea;20146,8;;;
+India;Korea;9348,99;;;
+Iraq;Korea;11809,1;;;
+Iran;Korea;11016,7;;;
+Italy;Korea;15846,3;;;
+Japan;Korea;954,701;;;
+Republic of Korea;Korea;0;;;
+Kuwait;Korea;11782,5;;;
+Kazakhstan;Korea;1579,54;;;
+Israel;Korea;14214,5;;;
+Libya;Korea;15891,7;;;
+Morocco;Korea;17590,1;;;
+Moldova;Korea;15942,7;;;
+Myanmar;Korea;6106,76;;;
+Mexico;Korea;12583,5;;;
+Malaysia;Korea;5099,85;;;
+Nigeria;Korea;20868,2;;;
+Netherlands;Korea;20488,2;;;
+Norway;Korea;21647,5;;;
+Oman;Korea;10540,9;;;
+Peru;Korea;15993,8;;;
+Pakistan;Korea;10258,5;;;
+Poland;Korea;22131;;;
+Portugal;Korea;18052,3;;;
+Qatar;Korea;11360,5;;;
+Romania;Korea;15944,3;;;
+Russian Federation;Korea;1579,54;;;
+Russian Federation;Korea;1579,54;;;
+Russian Federation;Korea;1579,54;;;
+Russian Federation;Korea;1579,54;;;
+Russian Federation;Korea;1579,54;;;
+Russian Federation;Korea;1579,54;;;
+Saudi Arabia;Korea;12602;;;
+Sweden;Korea;21610,4;;;
+Singapore;Korea;4726,54;;;
+Slovenia;Korea;16049,9;;;
+Slovakia;Korea;16047,8;;;
+Syria;Korea;14587,4;;;
+Thailand;Korea;4633,35;;;
+Turkmenistan;Korea;11015;;;
+Tunisia;Korea;15933,3;;;
+Turkey;Korea;15538;;;
+Trinidad and Tobago;Korea;17673,2;;;
+Taiwan;Korea;1615,23;;;
+Ukraine;Korea;16192,8;;;
+United Kingdom;Korea;20084,7;;;
+United States;Korea;9755,14;;;
+United States;Korea;9755,14;;;
+United States;Korea;9755,14;;;
+United States;Korea;9755,14;;;
+Uzbekistan;Korea;10258;;;
+Venezuela;Korea;17087,3;;;
+Yemen;Korea;11207,8;;;
+Croatia;Korea;15976,7;;;
+Mozambique;Korea;13445,3;;;
+Vietnam;Korea;3427,22;;;
+Philippines;Korea;2247,79;;;
+Iceland;Korea;21041,7;;;
+Papua New Guinea;Korea;6486,78;;;
+Cameroon;Korea;20389,1;;;
+South Africa;Korea;13596,6;;;
+United Arab Emirates;China;10371,3;;;
+Angola;China;17180;;;
+Argentina;China;19488;;;
+Austria;China;15305,9;;;
+Australia;China;10025,6;;;
+Azerbaijan;China;2252,47;;;
+Estonia;China;22270,9;;;
+Bangladesh;China;7490,4;;;
+Belgium;China;19970,5;;;
+Bulgaria;China;14997,9;;;
+Bahrain;China;10838,2;;;
+Brunei darussalam;China;3249,27;;;
+Bolivia;China;18238;;;
+Brazil;China;21465,6;;;
+Belarus;China;21805;;;
+Canada;China;10031,5;;;
+Switzerland;China;15425,6;;;
+Chile;China;18238;;;
+China;China;0;;;
+Colombia;China;16752,6;;;
+Czech Republic;China;20484,5;;;
+Germany;China;20484,9;;;
+Denmark;China;21207,1;;;
+Dominican Republic;China;18067,1;;;
+Algeria;China;16415,9;;;
+Egypt;China;13390,4;;;
+Spain;China;16840,5;;;
+Finland;China;22338,1;;;
+France;China;15425,3;;;
+Ghana;China;20236,6;;;
+Georgia;China;16056;;;
+Equatorial Guinea;China;19475,3;;;
+Greece;China;14243,9;;;
+Hungary;China;15305,9;;;
+Indonesia;China;4902,23;;;
+Ireland;China;19559,7;;;
+India;China;8761,85;;;
+Iraq;China;11079,9;;;
+Iran;China;10421,2;;;
+Italy;China;15103,2;;;
+Japan;China;1458,02;;;
+Republic of Korea;China;659,339;200;1000;
+Kuwait;China;11048,6;;;
+Kazakhstan;China;2252,47;1300;0;
+Israel;China;13584,2;;;
+Libya;China;15220,8;;;
+Morocco;China;16920,1;;;
+Moldova;China;15295,6;;;
+Myanmar;China;5519,56;2806;0;
+Mexico;China;13223,6;;;
+Malaysia;China;4512,67;;;
+Nigeria;China;20196,9;;;
+Netherlands;China;19901;;;
+Norway;China;21060,3;;;
+Oman;China;9953,77;;;
+Peru;China;16633,7;;;
+Pakistan;China;9671,41;;;
+Poland;China;21543,9;;;
+Portugal;China;17382,1;;;
+Qatar;China;10773,3;;;
+Romania;China;15297,5;;;
+Russian Federation;China;2251,54;;;
+Russian Federation;China;2251,54;;;
+Russian Federation;China;2251,54;3000;0;
+Russian Federation;China;2251,54;;;
+Russian Federation;China;2251,54;;;
+Russian Federation;China;2251,54;5000;0;
+Saudi Arabia;China;12014,9;;;
+Sweden;China;21023,2;;;
+Singapore;China;4139,35;;;
+Slovenia;China;15306,8;;;
+Slovakia;China;15305,9;;;
+Syria;China;14000,3;;;
+Thailand;China;4046,15;;;
+Turkmenistan;China;10419,2;;;
+Tunisia;China;15190,1;;;
+Turkey;China;14850,8;;;
+Trinidad and Tobago;China;18312,4;;;
+Taiwan;China;1052,53;;;
+Ukraine;China;15605,7;;;
+United Kingdom;China;19497,6;;;
+United States;China;10401,4;;;
+United States;China;10401,4;;;
+United States;China;10401,4;;;
+United States;China;10401,4;;;
+Uzbekistan;China;9671,52;2000;0;
+Venezuela;China;17726,5;;;
+Yemen;China;10620,7;;;
+Croatia;China;15233,5;;;
+Mozambique;China;12702,2;;;
+Vietnam;China;2840,02;;;
+Philippines;China;1782,35;;;
+Iceland;China;20454,6;;;
+Papua New Guinea;China;6298,52;;;
+Cameroon;China;19717,7;;;
+South Africa;China;12853,5;;;
