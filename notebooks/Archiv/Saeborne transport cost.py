@@ -66,7 +66,7 @@ result
 
 # Create csv file from results dataframe
 path=r'/Users/jakob/PycharmProjects/H2_pathways_repo/data/processed'
-output_file = os.path.join(path,'Liquefaction_costs.csv')
+output_file = os.path.join(path_csv,'Liquefaction_costs.csv')
 result.to_csv(output_file, sep = ';')
 
 ### Plot liquefaction costs
@@ -138,8 +138,8 @@ for year in years:
 result
 
 # Create csv file from results dataframe
-path = r'/Users/jakob/PycharmProjects/H2_pathways_repo/data/processed'
-output_file = os.path.join(path, 'Export_terminal_costs.csv')
+path_csv= r'/Users/jakob/PycharmProjects/H2_pathways_repo/data/processed'
+output_file = os.path.join(path_csv, 'Export_terminal_costs.csv')
 result.to_csv(output_file, sep=';')
 
 ### Plot export terminal costs
@@ -214,8 +214,8 @@ for year in years:
 result
 #%%
 # Create csv file from results dataframe
-path = r'/Users/jakob/PycharmProjects/H2_pathways_repo/data/processed'
-output_file = os.path.join(path, 'Shipping_costs.csv')
+path_csv= r'/Users/jakob/PycharmProjects/H2_pathways_repo/data/processed'
+output_file = os.path.join(path_csv, 'Shipping_costs.csv')
 result.to_csv(output_file, sep=';')
 #%% md
 ### Plot shipping costs
@@ -280,8 +280,8 @@ for year in years:
 result
 #%%
 # Create csv file from results dataframe
-path = r'/Users/jakob/PycharmProjects/H2_pathways_repo/data/processed'
-output_file = os.path.join(path, 'Import_terminal_costs.csv')
+path_csv= r'/Users/jakob/PycharmProjects/H2_pathways_repo/data/processed'
+output_file = os.path.join(path_csv, 'Import_terminal_costs.csv')
 result.to_csv(output_file, sep=';')
 #%% md
 ### Plot import terminal costs
@@ -327,8 +327,8 @@ for year in years:
 result
 #%%
 # Create csv file from results dataframe
-path = r'/Users/jakob/PycharmProjects/H2_pathways_repo/data/processed'
-output_file = os.path.join(path, 'Seaborne_transport_costs.csv')
+path_csv= r'/Users/jakob/PycharmProjects/H2_pathways_repo/data/processed'
+output_file = os.path.join(path_csv, 'Seaborne_transport_costs.csv')
 result.to_csv(output_file, sep=';')
 # Plot cost curve for seaborne transport
 fig, ax = plt.subplots(figsize=(10,6))
