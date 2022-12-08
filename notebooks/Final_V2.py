@@ -1329,8 +1329,6 @@ LH2_cargo_cost
 
 """Calc. shipping costs @ 10.000km"""
 
-d_sea = 100
-
 """Definition of the cost calculation function for the maritime shipping.
  [%]
 d_sea [km]
@@ -1714,21 +1712,8 @@ result
 
 LNH3_Conversion_costs = result
 
-# export result to excel
-path = '/Users/jakob/PycharmProjects/H2_pathways_repo/data/raw/H2_supply_route_assessment.xlsx'
-writer = pd.ExcelWriter(path, engine='openpyxl', mode='a', if_sheet_exists='overlay')
-book = load_workbook(path)
-writer.book = book
-writer.sheets = dict((ws.title, ws) for ws in book.worksheets)
-
-ws = book['Reference Results']
-
-result.to_excel(writer, sheet_name='Reference Results', index=False, startcol=ws.max_column)
-book.save(path)
-book.close()
 
 # Create csv file from results dataframe
-path=r'/Users/jakob/PycharmProjects/H2_pathways_repo/data/processed'
 output_file = os.path.join(path_csv,'LNH3_Conversion_costs.csv')
 result.to_csv(output_file, sep = ';')
 
@@ -1882,8 +1867,6 @@ ET_costs = (LNH3_Export_terminal_costs.loc[::]['LNH3_Export_terminal_costs']).ap
 # €/kg_H2 transported in the form of NH3
 LNH3_cargo_cost = (H2_costs + Con_costs + ET_costs).to_frame('LNH3_cargo_cost')
 LNH3_cargo_cost
-
-#d_sea = 10000
 
 """Definition of the cost calculation function for the maritime shipping.
 Time relevant variables:
