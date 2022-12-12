@@ -129,7 +129,7 @@ for year in years:
     capex_et_y = float(tea_lh2.loc['Export Terminal - CAPEX/tank [€/t/a]'][year])
     opex_et_y = float(tea_lh2.loc['Export Terminal - Annual OPEX [% of CAPEX]'][year])
     p_el_y = float(p_electricity.loc['Norway'][year])
-    lcoh_ngr_y = float(lcoh_ngr.loc[year]['LCOH_BLUE'])
+    lcoh_ngr_y = float(lcoh_ngr.loc[year]['LCOH_blue'])
 
     # calculate costs of specific year
     result.Export_terminal_costs.loc[year] = calculate_export_terminal_costs(alpha_et=alpha_et, capex_et_y=capex_et_y,
@@ -206,7 +206,7 @@ for year in years:
     # get capex, opex, xx
     capex_ship_y = float(tea_lh2.loc['Shipping - Capex/Ship opt. [€/t of carrier]'][year])
     opex_ship_y = float(tea_lh2.loc['Shipping - Annual Opex opt. [€/t/a]'][year])
-    lcoh_ngr_y = float(lcoh_ngr.loc[year]['LCOH_BLUE'])
+    lcoh_ngr_y = float(lcoh_ngr.loc[year]['LCOH_blue'])
 
     # calculate costs of specific year
     result.Shipping_costs.loc[year] = calculate_ship_costs(alpha_ship=alpha_ship, capex_ship_y=capex_ship_y, opex_ship_y=opex_ship_y, d_sea=d_sea, v_ship=v_ship, h_ship=h_ship, bog_ship=bog_ship, f_ship=f_ship, lcoh_ngr_y=lcoh_ngr_y)
@@ -271,7 +271,7 @@ for year in years:
     capex_it_y = float(tea_lh2.loc['Import Terminal - CAPEX [€/t/a]'][year])
     opex_it_y = float(tea_lh2.loc['Import Terminal - OPEX [€/t/a]'][year])
     p_el_y = float(p_electricity.loc['Norway'][year])
-    lcoh_ngr_y = float(lcoh_ngr.loc[year]['LCOH_BLUE'])
+    lcoh_ngr_y = float(lcoh_ngr.loc[year]['LCOH_blue'])
 
     # calculate costs of specific year
     result.Import_terminal_costs.loc[year] = calculate_import_terminal_costs(alpha_it=alpha_it, capex_it_y=capex_it_y,
