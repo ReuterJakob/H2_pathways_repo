@@ -93,7 +93,7 @@ plt.ylabel('[€/kg H2]')
 plt.show()
 
 # Create csv file from results dataframe
-output_file = os.path.join(path_csv,'LCOH_NGR.csv')
+output_file = os.path_excel.join(path_csv, 'LCOH_NGR.csv')
 result.to_csv(output_file, sep = ';')
 
 # export result to excel
@@ -180,7 +180,7 @@ lcoh_ngr_sensi_P_CCS.index.name = 'CCS_price_change in %'
 lcoh_ngr_sensi_P_CCS
 
 # Create csv file from results dataframe
-output_file = os.path.join(path_csv,'lcoh_ngr_sensi_P_CCS_.csv')
+output_file = os.path_excel.join(path_csv, 'lcoh_ngr_sensi_P_CCS_.csv')
 lcoh_ngr_sensi_P_CCS.to_csv(output_file, sep = ';')
 
 import matplotlib.ticker as mtick
@@ -352,7 +352,7 @@ retro_pipe_sensi_P_el.index.name = 'Electricity Price [€/MWh]'
 retro_pipe_sensi_P_el
 
 # Create csv file from results dataframe
-output_file = os.path.join(path_csv, 'retro_pipe_sensi_P_el.csv')
+output_file = os.path_excel.join(path_csv, 'retro_pipe_sensi_P_el.csv')
 retro_pipe_sensi_P_el.to_csv(output_file, sep=';')
 
 """### Transport distance sensi"""
@@ -375,7 +375,7 @@ retro_pipe_sensi_distance.index.name = 'Transport distance in km'
 retro_pipe_sensi_distance
 
 # Create csv file from results dataframe
-output_file = os.path.join(path_csv, 'retro_pipe_sensi_distance.csv')
+output_file = os.path_excel.join(path_csv, 'retro_pipe_sensi_distance.csv')
 retro_pipe_sensi_distance.to_csv(output_file, sep=';')
 
 """## Retrofit offshore pipeline cost"""
@@ -443,7 +443,7 @@ new_pipe_sensi_P_el.index.name = 'Electricity price [€/MWh]'
 new_pipe_sensi_P_el
 
 # Create csv file from results dataframe
-output_file = os.path.join(path_csv, 'new_pipe_sensi_P_el.csv')
+output_file = os.path_excel.join(path_csv, 'new_pipe_sensi_P_el.csv')
 new_pipe_sensi_P_el.to_csv(output_file, sep=';')
 
 """#### Transport distance sensi"""
@@ -471,7 +471,7 @@ new_pipe_sensi_distance.index.name = 'Transport distance in km'
 new_pipe_sensi_distance
 
 # Create csv file from results dataframe
-output_file = os.path.join(path_csv, 'new_pipe_sensi_distance.csv')
+output_file = os.path_excel.join(path_csv, 'new_pipe_sensi_distance.csv')
 new_pipe_sensi_distance.to_csv(output_file, sep=';')
 
 """## LH2 transport"""
@@ -526,7 +526,7 @@ result
 LH2_Liquefaction_costs = result
 
 # Create csv file from results dataframe
-output_file = os.path.join(path_csv,'LH2_Liquefaction_costs.csv')
+output_file = os.path_excel.join(path_csv, 'LH2_Liquefaction_costs.csv')
 result.to_csv(output_file, sep = ';')
 
 """Plot liquefaction costs"""
@@ -621,7 +621,7 @@ book.close()
 
 # Create csv file from results dataframe
 path = r'/Users/jakob/PycharmProjects/H2_pathways_repo/data/processed'
-output_file = os.path.join(path, 'LH2_Export_terminal_costs.csv')
+output_file = os.path_excel.join(path, 'LH2_Export_terminal_costs.csv')
 result.to_csv(output_file, sep=';')
 
 """Plot export terminal costs"""
@@ -748,7 +748,7 @@ book.save('/Users/jakob/PycharmProjects/H2_pathways_repo/data/raw/H2_supply_rout
 book.close()
 
 # Create csv file from results dataframe
-output_file = os.path.join(path_csv, 'LH2_Shipping_costs.csv')
+output_file = os.path_excel.join(path_csv, 'LH2_Shipping_costs.csv')
 result.to_csv(output_file, sep=';')
 
 """Plot shipping costs"""
@@ -833,7 +833,7 @@ book.close()
 
 # Create csv file from results dataframe
 path = r'/Users/jakob/PycharmProjects/H2_pathways_repo/data/processed'
-output_file = os.path.join(path, 'LH2_Import_terminal_costs.csv')
+output_file = os.path_excel.join(path, 'LH2_Import_terminal_costs.csv')
 result.to_csv(output_file, sep=';')
 
 """Plot import terminal costs"""
@@ -907,7 +907,7 @@ book.close()
 
 # Create csv file from results dataframe
 path = r'/Users/jakob/PycharmProjects/H2_pathways_repo/data/processed'
-output_file = os.path.join(path, 'LH2_Reconversion_costs.csv')
+output_file = os.path_excel.join(path, 'LH2_Reconversion_costs.csv')
 result.to_csv(output_file, sep=';')
 
 """## Total LH2 transport costs"""
@@ -957,7 +957,7 @@ book.save(path)
 book.close()
 
 # Create csv file from results dataframe
-output_file = os.path.join(path_csv, 'LH2_transport_costs.csv')
+output_file = os.path_excel.join(path_csv, 'LH2_transport_costs.csv')
 result.to_csv(output_file, sep=';')
 
 # Plot cost curve for seaborne transport
@@ -1041,7 +1041,7 @@ lh2_transport_sensi_P_el.index.name = 'Electricity price [€/MWh]'
 lh2_transport_sensi_P_el
 
 # Create csv file from results dataframe
-output_file = os.path.join(path_csv,'lh2_transport_sensi_P_el.csv')
+output_file = os.path_excel.join(path_csv, 'lh2_transport_sensi_P_el.csv')
 lh2_transport_sensi_P_el.to_csv(output_file, sep = ';')
 
 """#### Transport distance sensi"""
@@ -1071,7 +1071,7 @@ lh2_transport_sensi_distance.index.name = 'Transport distance in km'
 lh2_transport_sensi_distance
 
 # Create csv file from results dataframe
-output_file = os.path.join(path_csv,'lh2_transport_sensi_distance.csv')
+output_file = os.path_excel.join(path_csv, 'lh2_transport_sensi_distance.csv')
 lh2_transport_sensi_distance.to_csv(output_file, sep = ';')
 
 """## NH3 Transport"""
@@ -1145,7 +1145,7 @@ book.close()
 
 # Create csv file from results dataframe
 path=r'/Users/jakob/PycharmProjects/H2_pathways_repo/data/processed'
-output_file = os.path.join(path_csv,'LNH3_Conversion_costs.csv')
+output_file = os.path_excel.join(path_csv, 'LNH3_Conversion_costs.csv')
 result.to_csv(output_file, sep = ';')
 
 """Plot conversion costs"""
@@ -1246,7 +1246,7 @@ book.close()
 
 # Create csv file from results dataframe
 path_csv= r'/Users/jakob/PycharmProjects/H2_pathways_repo/data/processed'
-output_file = os.path.join(path_csv, 'LNH3_Export_terminal_costs.csv')
+output_file = os.path_excel.join(path_csv, 'LNH3_Export_terminal_costs.csv')
 result.to_csv(output_file, sep=';')
 
 """Plot export terminal costs"""
@@ -1370,7 +1370,7 @@ book.close()
 
 # Create csv file from results dataframe
 path_csv= r'/Users/jakob/PycharmProjects/H2_pathways_repo/data/processed'
-output_file = os.path.join(path_csv, 'LNH3_Shipping_costs.csv')
+output_file = os.path_excel.join(path_csv, 'LNH3_Shipping_costs.csv')
 result.to_csv(output_file, sep=';')
 
 """Plot shipping costs"""
@@ -1457,7 +1457,7 @@ book.close()
 
 # Create csv file from results dataframe
 path_csv= r'/Users/jakob/PycharmProjects/H2_pathways_repo/data/processed'
-output_file = os.path.join(path_csv, 'LNH3_Import_terminal_costs.csv')
+output_file = os.path_excel.join(path_csv, 'LNH3_Import_terminal_costs.csv')
 result.to_csv(output_file, sep=';')
 
 """
@@ -1576,7 +1576,7 @@ lnh3_transport_sensi_P_el.index.name = 'Electricity price [€/MWh]'
 lnh3_transport_sensi_P_el
 
 # Create csv file from results dataframe
-output_file = os.path.join(path_csv,'lnh3_transport_sensi_P_el.csv')
+output_file = os.path_excel.join(path_csv, 'lnh3_transport_sensi_P_el.csv')
 lnh3_transport_sensi_P_el.to_csv(output_file, sep = ';')
 
 """#### Transport distance sensi"""
@@ -1605,7 +1605,7 @@ lnh3_transport_sensi_distance.index.name = 'Transport distance in km'
 lnh3_transport_sensi_distance
 
 # Create csv file from results dataframe
-output_file = os.path.join(path_csv,'lnh3_transport_sensi_distance.csv')
+output_file = os.path_excel.join(path_csv, 'lnh3_transport_sensi_distance.csv')
 lnh3_transport_sensi_distance.to_csv(output_file, sep = ';')
 
 """## Sensitivity Plots
@@ -1755,7 +1755,7 @@ Pipeline_emissions_sensi_EF.index.name = 'Electricity emission factor [g CO2eq/k
 Pipeline_emissions_sensi_EF
 
 # Create csv file from results dataframe
-output_file = os.path.join(path_csv, 'pipe_EF_sensi.csv')
+output_file = os.path_excel.join(path_csv, 'pipe_EF_sensi.csv')
 Pipeline_emissions_sensi_EF.to_csv(output_file, sep=';')
 
 """Plot emission breakdown for pipeline transport
@@ -1799,7 +1799,7 @@ book.close()
 
 LH2_Conversion_emissions = result
 
-output_file = os.path.join(path_csv,'LH2_Conversion_emissions.csv')
+output_file = os.path_excel.join(path_csv, 'LH2_Conversion_emissions.csv')
 result.to_csv(output_file, sep = ';')
 
 """### Export terminal"""
@@ -1845,7 +1845,7 @@ result.to_excel(writer, sheet_name='Reference Results', index=False, startcol=ws
 book.save(path)
 book.close()
 
-output_file = os.path.join(path_csv,'LH2_Export_terminal_emissions.csv')
+output_file = os.path_excel.join(path_csv, 'LH2_Export_terminal_emissions.csv')
 result.to_csv(output_file, sep = ';')
 
 
@@ -1870,7 +1870,7 @@ ET_emissions = (LH2_Export_terminal_emissions.loc[::]['LH2_Export_terminal_emiss
 LH2_cargo_emissions = (H2_emissions + Con_emissions + ET_emissions).to_frame('LH2_cargo_emissions')
 LH2_cargo_emissions
 
-output_file = os.path.join(path_csv,'LH2_cargo_emissions.csv')
+output_file = os.path_excel.join(path_csv, 'LH2_cargo_emissions.csv')
 result.to_csv(output_file, sep = ';')
 
 # Boil-off when shipping in [%/day] to [%/hour]
@@ -1928,7 +1928,7 @@ result.to_excel(writer, sheet_name='Reference Results', index=False, startcol=ws
 book.save(path)
 book.close()
 
-output_file = os.path.join(path_csv,'LH2_Shipping_emissions.csv')
+output_file = os.path_excel.join(path_csv, 'LH2_Shipping_emissions.csv')
 result.to_csv(output_file, sep = ';')
 
 
@@ -1980,7 +1980,7 @@ result.to_excel(writer, sheet_name='Reference Results', index=False, startcol=ws
 book.save(path)
 book.close()
 
-output_file = os.path.join(path_csv, 'LH2_Import_terminal_emissions.csv')
+output_file = os.path_excel.join(path_csv, 'LH2_Import_terminal_emissions.csv')
 result.to_csv(output_file, sep=';')
 
 
@@ -2021,7 +2021,7 @@ book.save(path)
 book.close()
 
 path_csv = r'/Users/jakob/PycharmProjects/H2_pathways_repo/data/processed'
-output_file = os.path.join(path_csv, 'LH2_Reconversion_emissions.csv')
+output_file = os.path_excel.join(path_csv, 'LH2_Reconversion_emissions.csv')
 result.to_csv(output_file, sep=';')
 
 
@@ -2133,7 +2133,7 @@ lh2_transport_sensi_EF.index.name = 'Electricity emission [g CO2eq/kWh]'
 lh2_transport_sensi_EF
 
 # Create csv file from results dataframe
-output_file = os.path.join(path_csv,'LH2_EF_sensi.csv')
+output_file = os.path_excel.join(path_csv, 'LH2_EF_sensi.csv')
 lh2_transport_sensi_EF.to_csv(output_file, sep = ';')
 
 import matplotlib.ticker as mtick
@@ -2195,7 +2195,7 @@ book.save(path)
 book.close()
 
 path_csv = r'/Users/jakob/PycharmProjects/H2_pathways_repo/data/processed'
-output_file = os.path.join(path_csv, 'NH3_Conversion_emissions.csv')
+output_file = os.path_excel.join(path_csv, 'NH3_Conversion_emissions.csv')
 result.to_csv(output_file, sep=';')
 
 NH3_Conversion_emissions = result
@@ -2248,7 +2248,7 @@ book.save(path)
 book.close()
 
 path_csv = r'/Users/jakob/PycharmProjects/H2_pathways_repo/data/processed'
-output_file = os.path.join(path_csv, 'NH3_Export_terminal_emissions.csv')
+output_file = os.path_excel.join(path_csv, 'NH3_Export_terminal_emissions.csv')
 result.to_csv(output_file, sep=';')
 
 NH3_Export_terminal_emissions = result
@@ -2285,7 +2285,7 @@ ET_emissions = (NH3_Export_terminal_emissions.loc[::]['NH3_Export_terminal_emiss
 NH3_cargo_emissions = (H2_emissions + Con_emissions + ET_emissions).to_frame('NH3_cargo_emissions')
 NH3_cargo_emissions
 
-output_file = os.path.join(path_csv, 'NH3_cargo_emissions.csv')
+output_file = os.path_excel.join(path_csv, 'NH3_cargo_emissions.csv')
 result.to_csv(output_file, sep=';')
 
 #d_sea = 10000
@@ -2322,7 +2322,7 @@ book.save(path)
 book.close()
 
 path_csv = r'/Users/jakob/PycharmProjects/H2_pathways_repo/data/processed'
-output_file = os.path.join(path_csv, 'NH3_Shipping_emissions.csv')
+output_file = os.path_excel.join(path_csv, 'NH3_Shipping_emissions.csv')
 result.to_csv(output_file, sep=';')
 
 NH3_Shipping_emissions = result
@@ -2370,7 +2370,7 @@ book.save(path)
 book.close()
 
 path_csv = r'/Users/jakob/PycharmProjects/H2_pathways_repo/data/processed'
-output_file = os.path.join(path_csv, 'NH3_Import_terminal_emissions.csv')
+output_file = os.path_excel.join(path_csv, 'NH3_Import_terminal_emissions.csv')
 result.to_csv(output_file, sep=';')
 
 NH3_Import_terminal_emissions = result
@@ -2407,7 +2407,7 @@ book.save(path)
 book.close()
 
 path_csv = r'/Users/jakob/PycharmProjects/H2_pathways_repo/data/processed'
-output_file = os.path.join(path_csv, 'NH3_Reconversion_emissions.csv')
+output_file = os.path_excel.join(path_csv, 'NH3_Reconversion_emissions.csv')
 result.to_csv(output_file, sep=';')
 
 NH3_Reconversion_emissions = result
@@ -2533,7 +2533,7 @@ nh3_transport_sensi_wo_recon.index.name = 'Electricity emission factor [g CO2eq/
 nh3_transport_sensi_wo_recon
 
 # Create csv file from results dataframe
-output_file = os.path.join(path_csv, 'NH3_EF_sensi_wo_recon.csv')
+output_file = os.path_excel.join(path_csv, 'NH3_EF_sensi_wo_recon.csv')
 nh3_transport_sensi_wo_recon.to_csv(output_file, sep=';')
 
 """## Plots"""
@@ -2618,7 +2618,7 @@ book.save(path)
 book.close()
 
 # Create csv file from results dataframe
-output_file = os.path.join(path_csv, 'Minimal_production_costs_technology.csv')
+output_file = os.path_excel.join(path_csv, 'Minimal_production_costs_technology.csv')
 result.to_csv(output_file, sep=';')
 
 years = np.arange(2025, 2051)
@@ -2639,7 +2639,7 @@ for year in years:
 result
 
 # Create csv file from results dataframe
-output_file = os.path.join(path_csv, 'Minimal_production_costs.csv')
+output_file = os.path_excel.join(path_csv, 'Minimal_production_costs.csv')
 result.to_csv(output_file, sep=';')
 
 """### Plot production costs"""
@@ -2688,7 +2688,7 @@ result"""
 
 # Create csv file from results dataframe
 path_csv = r'/Users/jakob/PycharmProjects/H2_pathways_repo/data/processed'
-output_file = os.path.join(path_csv, 'Blue_production_emissions_H2_leakage.csv')
+output_file = os.path_excel.join(path_csv, 'Blue_production_emissions_H2_leakage.csv')
 result.to_csv(output_file, sep=';')
 
 # export result to excel
@@ -2731,7 +2731,7 @@ min_prod_cost
 # %store min_prod_cost
 
 # Create csv file from results dataframe
-output_file = os.path.join(path_csv, 'min_prod_cost_emissions.csv')
+output_file = os.path_excel.join(path_csv, 'min_prod_cost_emissions.csv')
 min_prod_cost.to_csv(output_file, sep=';')
 
 """## Transport inputs"""
@@ -2865,7 +2865,7 @@ result
 
 # Create csv file from results dataframe
 path = r'/Users/jakob/PycharmProjects/H2_pathways_repo/data/Results'
-output_file = os.path.join(path, 'Results.xlsx')
+output_file = os.path_excel.join(path, 'Results.xlsx')
 result.to_excel(output_file, sheet_name='Minimal_offshore_transport_costs')
 
 """### Plot transport costs"""
@@ -2937,11 +2937,11 @@ result
 
 # Create csv file from results dataframe
 path = r'/Users/jakob/PycharmProjects/H2_pathways_repo/data/processed'
-output_file = os.path.join(path, 'Minimal_supply_costs.csv')
+output_file = os.path_excel.join(path, 'Minimal_supply_costs.csv')
 result.to_csv(output_file, sep=';')
 
 path = r'/Users/jakob/PycharmProjects/H2_pathways_repo/data/Results'
-output_file = os.path.join(path, 'Results.xlsx')
+output_file = os.path_excel.join(path, 'Results.xlsx')
 result.to_excel(output_file, sheet_name='Minimal_supply_costs')
 
 # Plot cost curve for total supply costs
