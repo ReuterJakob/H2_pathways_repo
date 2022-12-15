@@ -5,6 +5,7 @@ import numpy as np
 import pandas as pd
 from matplotlib import pyplot as plt
 import os
+from openpyxl import load_workbook
 import xlwings as xl
 
 path_excel = r'\\dena.de\Daten\Home\Reuter\Desktop\H2_pathways_repo\data\raw\H2_supply_route_assessment.xlsx'
@@ -551,7 +552,7 @@ P_co2_y [€/t CO2]
 
 def calculate_lcoh_ngr():
 
-    result = float(LHV_h2 * ((alpha_ngr * capex_y + opex_y) / (CF * 8760) + P_ng_y / 1000 * n) + (Q_ce_y * P_ccs + Q_ue_y * P_co2_y) / 1000)
+    result = float(LHV_h2 * ((alpha_ngr * capex_y + opex_y) / (CF * 8760) + P_ng_y / 1000 * n) + (Q_ce_y * P_ccs_y + Q_ue_y * P_co2_y) / 1000)
 
     return result
 #%%
@@ -568,8 +569,9 @@ for year in years:
     opex_y = capex_y * opex_share
     Q_ce_y = float(GHG.loc['Captured emissions [kg CO2/kg H2]'][year])
     Q_ue_y = float(GHG.loc['Blue hydrogen emissions [kg CO2/kg H2] - Norway'][year])
-    P_ng_y = float(prices.loc['Gas prices in Germany [€_2020/MWh]'][year])
+    P_ng_y = float(prices.loc['Gas prices in Germany [€_2020/MWh] medium w/o Transport'][year])
     P_co2_y = float(prices.loc['EU ETS [€_2020/t_CO2]'][year])
+    P_ccs_y = float(tea_blue.loc['CO2 transport and storage cost pess. [€/t CO2]'][year])
 
     # calculate lcoe of specific year
     result.LCOH_blue.loc[year] = calculate_lcoh_ngr()
@@ -638,7 +640,22 @@ title = '\LCOH_green_blue'
 plt.savefig(path_plt + title + '.png', transparent=True)
 plt.show()
 
-"""## Sensitivity analysis"""
+"""## Sensitivity analysis production"""
+sensi_year = 2030
+
+capex_y = float(tea_blue.loc['Capex [€/kW]'][sensi_year])
+opex_y = capex_y * opex_share
+Q_grey = float(GHG.loc['Grey hydrogen emissions [kg CO2/kg H2] - Norway']['Value'])
+Q_ce_y = float(GHG.loc['Captured emissions [kg CO2/kg H2]'][sensi_year])
+Q_ue_y = float(GHG.loc['Blue hydrogen emissions [kg CO2/kg H2] - Norway'][sensi_year])
+P_ng_y = float(prices.loc['Gas prices in Germany [€_2020/MWh] medium w/o Transport'][sensi_year])
+P_co2_y = float(prices.loc['EU ETS [€_2020/t_CO2]'][sensi_year])
+P_ccs_y = float(tea_blue.loc['CO2 transport and storage cost pess. [€/t CO2]'][sensi_year])
+
+capture_rate = np.arange(0,1.01,0.1)
+lifetime = np.arange(1,30,2)
+
+
 ## Green vs blue
 
 # Green costs from EWI
@@ -651,7 +668,6 @@ years = np.arange(2025,2051)
 n_years = len(years)
 P_CO2_range = np.arange(0,301,50)
 n_prices =len(P_CO2_range)
-year = 2025
 # get capex, opex, natural gas price and CO2 price of specific year
 
 
@@ -661,7 +677,7 @@ result.index.name = 'Years'
 
 def calculate_lcoh_ngr_sensi_P_CO2():
 
-    result = float(LHV_h2 * ((alpha_ngr * capex_y + opex_y) / (CF * 8760)+ P_ng_y / 1000 * n) + (Q_ce_y * P_ccs + Q_ue_y * P_co2_y ) / 1000)
+    result = float(LHV_h2 * ((alpha_ngr * capex_y + opex_y) / (CF * 8760)+ P_ng_y / 1000 * n) + (Q_ce_y * P_ccs_y + Q_ue_y * P_co2_y ) / 1000)
     return  result
 
 sensitivity = []
@@ -671,7 +687,8 @@ for year in years:
     opex_y = capex_y * opex_share
     Q_ce_y = float(GHG.loc['Captured emissions [kg CO2/kg H2]'][year])
     Q_ue_y = float(GHG.loc['Blue hydrogen emissions [kg CO2/kg H2] - Norway'][year])
-    P_ng_y = float(prices.loc['Gas prices in Germany [€_2020/MWh]'][year])
+    P_ng_y = float(prices.loc['Gas prices in Germany [€_2020/MWh] medium w/o Transport'][year])
+    P_ccs_y = float(tea_blue.loc['CO2 transport and storage cost pess. [€/t CO2]'][year])
     for P_co2_y in P_CO2_range:
         result = calculate_lcoh_ngr_sensi_P_CO2()
         sensitivity.append(result)
@@ -691,7 +708,7 @@ price_sensitivities = pd.DataFrame(
     columns=cols,
 )
 price_sensitivities
-
+# Plot green vs blue sensi
 fig, ax = plt.subplots(figsize=(10,4))
 years = np.arange(2025,2051,5)
 #plt.subplot(1,2,1)
@@ -714,83 +731,37 @@ output_file = os.path.join(path_plt,title)
 plt.savefig(output_file+'.png', transparent = True)
 
 plt.show()
-'Gas price'
-
-sensi_year = 2030
-
-capex_y = float(tea_blue.loc['Capex [€/kW]'][sensi_year])
-opex_y = capex_y * opex_share
-Q_ce_y = float(GHG.loc['Captured emissions [kg CO2/kg H2]'][sensi_year])
-Q_ue_y = float(GHG.loc['Blue hydrogen emissions [kg CO2/kg H2] - Norway'][sensi_year])
-P_ng_y = float(prices.loc['Gas prices in Germany [€_2020/MWh]'][sensi_year])
-P_co2_y = float(prices.loc['EU ETS [€_2020/t_CO2]'][sensi_year])
 
 
-# P_NG sensi
-sensitivity = []
-def calculate_lcoh_ngr_sensi_P_NG(alpha_ngr, capex_y, opex_y, CF, P_ng_y, n, Q_ce_y, P_ccs, Q_ue_y, P_co2_y, LHV_h2):
-
-    for x in range(21):
-        factor = x/10
-
-        result = float(LHV_h2 * ((alpha_ngr * capex_y + opex_y) / (CF * 8760)+ P_ng_y * factor / 1000 * n) + (Q_ce_y * P_ccs + Q_ue_y * P_co2_y ) / 1000)
-
-        sensitivity.append(result)
-
-
-    return sensitivity
-
-calculate_lcoh_ngr_sensi_P_NG(alpha_ngr, capex_y, opex_y, CF, P_ng_y, n, Q_ce_y, P_ccs, Q_ue_y, P_co2_y, LHV_h2)
-
-lcoh_ngr_sensi_P_NG= pd.DataFrame(sensitivity, index= range(21), columns=['LCOH_NGR [€/kg H2]'])
-lcoh_ngr_sensi_P_NG.index.name = 'P_NG_price_change in %'
-
-# Create csv file from results dataframe
-output_file = os.path.join(path_csv,'lcoh_ngr_sensi_P_NG_.csv')
-lcoh_ngr_sensi_P_NG.to_csv(output_file, sep = ';')
 # Lifetime sensi
-sensi_year = 2030
-lifetime = np.arange(1,30,2)
-capex_y = float(tea_blue.loc['Capex [€/kW]'][sensi_year])
-opex_y = capex_y * opex_share
-Q_ce_y = float(GHG.loc['Captured emissions [kg CO2/kg H2]'][sensi_year])
-Q_ue_y = float(GHG.loc['Blue hydrogen emissions [kg CO2/kg H2] - Norway'][sensi_year])
-P_ng_y = float(prices.loc['Gas prices in Germany [€_2020/MWh]'][sensi_year])
-P_co2_y = float(prices.loc['EU ETS [€_2020/t_CO2]'][sensi_year])
+
 sensitivity = []
-def calculate_lcoh_ngr_sensi_Lifetime(alpha_ngr, capex_y, opex_y, CF, P_ng_y, n, Q_ce_y, P_ccs, Q_ue_y, P_co2_y, LHV_h2):
+def calculate_lcoh_ngr_sensi_Lifetime(alpha_ngr, capex_y, opex_y, CF, P_ng_y, n, Q_ce_y, P_ccs_y, Q_ue_y, P_co2_y, LHV_h2):
 
     for l_ngr in lifetime:
 
 
-        result = float(LHV_h2 * ((((i * (1 + i) ** l_ngr) / (((1 + i) ** l_ngr) - 1)) * capex_y + opex_y) / (CF * 8760)+ P_ng_y / 1000 * n) + (Q_ce_y * P_ccs + Q_ue_y * P_co2_y ) / 1000)
+        result = float(LHV_h2 * ((((i * (1 + i) ** l_ngr) / (((1 + i) ** l_ngr) - 1)) * capex_y + opex_y) / (CF * 8760)+ P_ng_y / 1000 * n) + (Q_ce_y * P_ccs_y + Q_ue_y * P_co2_y ) / 1000)
 
         sensitivity.append(result)
 
 
     return sensitivity
 
-calculate_lcoh_ngr_sensi_Lifetime(alpha_ngr, capex_y, opex_y, CF, P_ng_y, n, Q_ce_y, P_ccs, Q_ue_y, P_co2_y, LHV_h2)
+calculate_lcoh_ngr_sensi_Lifetime(alpha_ngr, capex_y, opex_y, CF, P_ng_y, n, Q_ce_y, P_ccs_y, Q_ue_y, P_co2_y, LHV_h2)
 
+# save as df
 lcoh_ngr_sensi_Lifetime= pd.DataFrame(sensitivity, index= lifetime, columns=['LCOH_NGR [€/kg H2]'])
 lcoh_ngr_sensi_Lifetime.index.name = 'Lifetime of plant in years'
 
 # Capture rate sensi on costs
-sensi_year = 2030
-capture_rate = np.arange(0,1.01,0.1)
-capex_y = float(tea_blue.loc['Capex [€/kW]'][sensi_year])
-opex_y = capex_y * opex_share
-Q_grey = float(GHG.loc['Grey hydrogen emissions [kg CO2/kg H2] - Norway']['Value'])
-
-P_ng_y = float(prices.loc['Gas prices in Germany [€_2020/MWh]'][sensi_year])
-P_co2_y = float(prices.loc['EU ETS [€_2020/t_CO2]'][sensi_year])
 sensitivity = []
 def calculate_lcoh_ngr_sensi_Lifetime(alpha_ngr, capex_y, opex_y, CF, P_ng_y, n, Q_ce_y, P_ccs, Q_ue_y, P_co2_y, LHV_h2):
 
     for rate in capture_rate:
 
 
-        result = float(LHV_h2 * ((alpha_ngr * capex_y + opex_y) / (CF * 8760)+ P_ng_y / 1000 * n) + ((Q_grey *  rate) * P_ccs + (Q_grey  * (1- rate)) * P_co2_y ) / 1000)
+        result = float(LHV_h2 * ((alpha_ngr * capex_y + opex_y) / (CF * 8760)+ P_ng_y / 1000 * n) + ((Q_grey *  rate) * P_ccs_y + (Q_grey  * (1- rate)) * P_co2_y ) / 1000)
 
         sensitivity.append(result)
 
@@ -802,34 +773,6 @@ calculate_lcoh_ngr_sensi_Lifetime(alpha_ngr, capex_y, opex_y, CF, P_ng_y, n, Q_c
 lcoh_ngr_sensi_capture_rate= pd.DataFrame(sensitivity, index= capture_rate, columns=['LCOH_NGR [€/kg H2]'])
 lcoh_ngr_sensi_capture_rate.index.name = 'capture rate in %'
 lcoh_ngr_sensi_capture_rate
-
-# Lifetime sensi
-sensi_year = 2030
-lifetime = np.arange(1,30,2)
-capex_y = float(tea_blue.loc['Capex [€/kW]'][sensi_year])
-opex_y = capex_y * opex_share
-Q_ce_y = float(GHG.loc['Captured emissions [kg CO2/kg H2]'][sensi_year])
-Q_ue_y = float(GHG.loc['Blue hydrogen emissions [kg CO2/kg H2] - Norway'][sensi_year])
-P_ng_y = float(prices.loc['Gas prices in Germany [€_2020/MWh]'][sensi_year])
-P_co2_y = float(prices.loc['EU ETS [€_2020/t_CO2]'][sensi_year])
-sensitivity = []
-def calculate_lcoh_ngr_sensi_Lifetime(alpha_ngr, capex_y, opex_y, CF, P_ng_y, n, Q_ce_y, P_ccs, Q_ue_y, P_co2_y, LHV_h2):
-
-    for l_ngr in lifetime:
-
-
-        result = float(LHV_h2 * ((((i * (1 + i) ** l_ngr) / (((1 + i) ** l_ngr) - 1)) * capex_y + opex_y) / (CF * 8760)+ P_ng_y / 1000 * n) + (Q_ce_y * P_ccs + Q_ue_y * P_co2_y ) / 1000)
-
-        sensitivity.append(result)
-
-
-    return sensitivity
-
-calculate_lcoh_ngr_sensi_Lifetime(alpha_ngr, capex_y, opex_y, CF, P_ng_y, n, Q_ce_y, P_ccs, Q_ue_y, P_co2_y, LHV_h2)
-
-lcoh_ngr_sensi_Lifetime= pd.DataFrame(sensitivity, index= lifetime, columns=['LCOH_NGR [€/kg H2]'])
-lcoh_ngr_sensi_Lifetime.index.name = 'Lifetime of plant in years'
-
 
 #lifetime and capture rate sensi LCOH blue
 fig, ax = plt.subplots(figsize=(10,4))
@@ -862,11 +805,32 @@ title = 'LCOH_ngr_lifetime_capture'
 output_file = os.path.join(path_plt,title)
 plt.savefig(output_file+'.png', transparent = True)
 
+# P_NG sensi
+sensitivity = []
+def calculate_lcoh_ngr_sensi_P_NG(alpha_ngr, capex_y, opex_y, CF, P_ng_y, n, Q_ce_y, P_ccs, Q_ue_y, P_co2_y, LHV_h2):
 
+    for x in range(21):
+        factor = x/10
+
+        result = float(LHV_h2 * ((alpha_ngr * capex_y + opex_y) / (CF * 8760)+ P_ng_y * factor / 1000 * n) + (Q_ce_y * P_ccs + Q_ue_y * P_co2_y ) / 1000)
+
+        sensitivity.append(result)
+
+
+    return sensitivity
+
+calculate_lcoh_ngr_sensi_P_NG(alpha_ngr, capex_y, opex_y, CF, P_ng_y, n, Q_ce_y, P_ccs, Q_ue_y, P_co2_y, LHV_h2)
+# save as df
+lcoh_ngr_sensi_P_NG= pd.DataFrame(sensitivity, index= range(21), columns=['LCOH_NGR [€/kg H2]'])
+lcoh_ngr_sensi_P_NG.index.name = 'P_NG_price_change in %'
+
+# Create csv file from results dataframe
+output_file = os.path.join(path_csv,'lcoh_ngr_sensi_P_NG_.csv')
+lcoh_ngr_sensi_P_NG.to_csv(output_file, sep = ';')
 
 # P_CO2 sensi
 sensitivity = []
-def calculate_lcoh_ngr_sensi_P_CO2(alpha_ngr, capex_y, opex_y, CF, P_ng_y, n, Q_ce_y, P_ccs, Q_ue_y, P_co2_y, LHV_h2):
+def calculate_lcoh_ngr_sensi_P_CO2():
 
     for x in range(21):
         factor = x/10
@@ -878,7 +842,7 @@ def calculate_lcoh_ngr_sensi_P_CO2(alpha_ngr, capex_y, opex_y, CF, P_ng_y, n, Q_
 
     return sensitivity
 
-calculate_lcoh_ngr_sensi_P_CO2(alpha_ngr, capex_y, opex_y, CF, P_ng_y, n, Q_ce_y, P_ccs, Q_ue_y, P_co2_y, LHV_h2)
+calculate_lcoh_ngr_sensi_P_CO2()
 
 lcoh_ngr_sensi_P_CO2= pd.DataFrame(sensitivity, index= range(21), columns=['LCOH_NGR [€/kg H2]'])
 lcoh_ngr_sensi_P_CO2.index.name = 'P_CO2_price_change in %'
@@ -887,21 +851,22 @@ lcoh_ngr_sensi_P_CO2.index.name = 'P_CO2_price_change in %'
 output_file = os.path.join(path_csv,'lcoh_ngr_sensi_P_CO2_.csv')
 lcoh_ngr_sensi_P_CO2.to_csv(output_file, sep = ';')
 
+#P_ccs_y = float(tea_blue.loc['CO2 transport and storage cost pess. [€/t CO2]'][year])
 # P_CCS sensi
 sensitivity = []
-def calculate_lcoh_ngr_sensi_P_CCS(alpha_ngr, capex_y, opex_y, CF, P_ng_y, n, Q_ce_y, P_ccs, Q_ue_y, P_co2_y, LHV_h2):
+def calculate_lcoh_ngr_sensi_P_CCS(alpha_ngr, capex_y, opex_y, CF, P_ng_y, n, Q_ce_y, P_ccsP_ccs_y, Q_ue_y, P_co2_y, LHV_h2):
 
     for x in range(21):
         factor = x/10
 
-        result = float(LHV_h2 * ((alpha_ngr * capex_y + opex_y) / (CF * 8760)+ P_ng_y / 1000 * n) + (Q_ce_y * P_ccs * factor + Q_ue_y * P_co2_y ) / 1000)
+        result = float(LHV_h2 * ((alpha_ngr * capex_y + opex_y) / (CF * 8760)+ P_ng_y / 1000 * n) + (Q_ce_y * P_ccs_y * factor + Q_ue_y * P_co2_y ) / 1000)
 
         sensitivity.append(result)
 
 
     return sensitivity
 
-calculate_lcoh_ngr_sensi_P_CCS(alpha_ngr, capex_y, opex_y, CF, P_ng_y, n, Q_ce_y, P_ccs, Q_ue_y, P_co2_y, LHV_h2)
+calculate_lcoh_ngr_sensi_P_CCS(alpha_ngr, capex_y, opex_y, CF, P_ng_y, n, Q_ce_y, P_ccs_y, Q_ue_y, P_co2_y, LHV_h2)
 
 lcoh_ngr_sensi_P_CCS= pd.DataFrame(sensitivity, index= range(21), columns=['LCOH_NGR [€/kg H2]'])
 lcoh_ngr_sensi_P_CCS.index.name = 'P_CCS_price_change in %'
@@ -909,11 +874,6 @@ lcoh_ngr_sensi_P_CCS.index.name = 'P_CCS_price_change in %'
 # Create csv file from results dataframe
 output_file = os.path.join(path_csv,'lcoh_ngr_sensi_P_CCS_.csv')
 lcoh_ngr_sensi_P_CCS.to_csv(output_file, sep = ';')
-
-
-
-
-
 
 
 # Plot LCOH sensi
@@ -1624,7 +1584,7 @@ for year in years:
     # get capex, opex, xx
     capex_it_y = float(tea_lh2.loc['Import Terminal - CAPEX [€/t/a]'][year])
     opex_it_y = capex_it_y * opex_it_share
-    p_el_y = float(el_price.loc['Electricity prices in Germany [€_2020/MWh]'][year])
+    p_el_y = float(el_price.loc['Electricity prices in Germany [€_2020/MWh] medium'][year])
 
 
     # calculate costs of specific year
@@ -1684,7 +1644,7 @@ for year in years:
     capex_recon_y = float(tea_lh2.loc['Reconversion - Capex opt. [€/t/a]'][year])
     opex_recon_y = capex_recon_y * opex_recon_share
     el_recon_y = float(tea_lh2.loc['Reconversion - Electricity consumption opt. [kWh/kg H2]'][year])
-    p_el_y = float(el_price.loc['Electricity prices in Germany [€_2020/MWh]'][year])
+    p_el_y = float(el_price.loc['Electricity prices in Germany [€_2020/MWh] medium'][year])
 
     # calculate costs of specific year
     result.LH2_Reconversion_costs.loc[year] = calculate_recon_costs_LH2(alpha_recon=alpha_recon, capex_recon_y=capex_recon_y,
@@ -2163,7 +2123,7 @@ for year in years:
     # get capex, opex, xx
     capex_it_y = float(tea_lnh3.loc['Import Terminal - CAPEX for storage tanks [€/t/a]'][year])
     opex_it_y = float(tea_lnh3.loc['Import Terminal - Annual OPEX [€/t/a]'][year])
-    p_el_y = float(el_price.loc['Electricity prices in Germany [€_2020/MWh]'][year])
+    p_el_y = float(el_price.loc['Electricity prices in Germany [€_2020/MWh] medium'][year])
 
 
     # calculate costs of specific year
@@ -2232,7 +2192,7 @@ for year in years:
     opex_recon_y = capex_recon_y * opex_recon_share
     el_recon_y = float(tea_lnh3.loc['Reconversion - Electricity consumption opt. [kWh/kg H2]'][year])
     heat_recon_y = float(tea_lnh3.loc['Reconversion - Heat consumption opt. [kWh/kg H2]'][year])
-    p_el_y = float(el_price.loc['Electricity prices in Germany [€_2020/MWh]'][year])
+    p_el_y = float(el_price.loc['Electricity prices in Germany [€_2020/MWh] medium'][year])
 
     # calculate costs of specific year
     result.LNH3_Reconversion_costs.loc[year] = calculate_recon_costs_NH3(alpha_recon=alpha_recon, capex_recon_y=capex_recon_y,
@@ -2892,28 +2852,6 @@ lh2_transport_sensi_EF.to_csv(output_file, sep = ';')
 
 import matplotlib.ticker as mtick
 
-fig, ax = plt.subplots(figsize=(5,4))
-#plt.subplot(1,2,1)
-
-
-plt.plot(lh2_transport_sensi_EF, color='blue', linestyle='solid', label = 'Emission factor')
-#plt.plot(lcoh_ngr_sensi_P_Co2, color='dodgerblue',linestyle='-', label = 'CO2 price')
-#plt.plot(lcoh_ngr_sensi_P_CCS, color='royalblue',linestyle='-', label = 'CCS cost')
-plt.grid(True, axis='y')
-#plt.grid(True, axis='x')
-ax.set_axisbelow(True)
-ax.xaxis.set_major_formatter(mtick.PercentFormatter(10, decimals=None))
-plt.locator_params(axis='x', nbins=5)
-plt.ylabel('[g CO2eq/kg H2]')
-plt.xlabel('Change')
-plt.legend()
-
-
-
-title = '\LH2_EF_sensi'
-plt.savefig(path_plt + title + '.png', transparent=True)
-
-plt.show()
 
 """## NH3 transport
 
@@ -3453,7 +3391,7 @@ def LCOT_append_emissions():
         else:
             result = NH3_transport_emissions.loc[year]['NH3_transport_emissions']
 
-
+# from g Co2eq/kg H2 to kg CO2eq/kg H2
         emissions.append(result)
 
     return emissions
@@ -3461,6 +3399,7 @@ def LCOT_append_emissions():
 LCOT_append_emissions()
 
 LCOT_min_tech_em = LCOT_min_tech.assign(Emissions=emissions)
+LCOT_min_tech_em.Emissions = LCOT_min_tech_em.Emissions.divide(1000)
 
 output_file = os.path.join(path_csv, 'LCOT_min_tech_em.csv')
 LCOT_min_tech_em.to_csv(output_file, sep =';')
@@ -3599,14 +3538,14 @@ output_file = os.path.join(path_csv, 'Supply_df.csv')
 Supply_df.to_csv(output_file, sep=';')
 
 # export result to excel
-writer = pd.ExcelWriter(r'\\dena.de\Daten\Home\Reuter\Desktop\H2_pathways_repo\data\Results\Supply.xlsx', engine='openpyxl', mode='a', if_sheet_exists='replace')
-book = load_workbook(r'\\dena.de\Daten\Home\Reuter\Desktop\H2_pathways_repo\data\Results\Supply.xlsx')
-writer.book = book
-writer.sheets = dict((ws.title, ws) for ws in book.worksheets)
+writer = pd.ExcelWriter(path_excel, engine='openpyxl', mode='a', if_sheet_exists='overlay')
+book = load_workbook(path_excel)
+#writer.book = book
+#writer.sheets = dict((ws.title, ws) for ws in book.worksheets)
 
 ws = book['Reference Results']
 
-result.to_excel(writer, sheet_name='Reference Results', index=False, startcol=ws.max_column)
-book.save(r'\\dena.de\Daten\Home\Reuter\Desktop\H2_pathways_repo\data\Results\Supply.xlsx')
+result.to_excel(writer, sheet_name='Reference Results', index=True, startcol=ws.max_column)
+book.save(path_excel)
 book.close()
 #Supply_df.to_excel(r'\\dena.de\Daten\Home\Reuter\Desktop\H2_pathways_repo\data\Results\Supply.xlsx', sheet_name='Reference Results', index=False)
