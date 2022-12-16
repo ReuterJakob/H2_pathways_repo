@@ -553,7 +553,7 @@ Q_ue [kgCO2/kgH2]
 P_ccs [€/t CO2]
 P_co2_y [€/t CO2]
 """
-
+#LCOH REF
 def calculate_lcoh_ngr():
 
     result = float(LHV_h2 * ((alpha_ngr * capex_y + opex_y) / (CF * 8760) + P_ng_y / 1000 * n) + (Q_ce_y * P_ccs_y + Q_ue_y * P_co2_y) / 1000)
@@ -573,7 +573,7 @@ for year in years:
     opex_y = capex_y * opex_share
     Q_ce_y = float(GHG.loc['Captured emissions [kg CO2/kg H2]'][year])
     Q_ue_y = float(GHG.loc['Blue hydrogen emissions [kg CO2/kg H2] - Norway'][year])
-    P_ng_y = float(prices.loc['Gas prices in NOR [€_2020/MWh] high'][year])
+    P_ng_y = float(prices.loc['Gas prices in NOR [€_2020/MWh] medium'][year])
     P_co2_y = float(prices.loc['EU ETS [€_2020/t_CO2]'][year])
     P_ccs_y = float(tea_blue.loc['CO2 transport and storage cost pess. [€/t CO2]'][year])
 
@@ -584,8 +584,40 @@ result
 # Create csv file from results dataframe
 output_file = os.path.join(path_csv,'LCOH_blue.csv')
 result.to_csv(output_file, sep = ';')
-LCOH_blue_df = result
+LCOH_blue_Ref = result
+#LCOH POL
+alpha_ngr = 0.08
+def calculate_lcoh_ngr():
 
+    result = float(LHV_h2 * ((alpha_ngr * capex_y + opex_y) / (CF * 8760) + P_ng_y / 1000 * n) + (Q_ce_y * P_ccs_y + Q_ue_y * P_co2_y) / 1000)
+
+    return result
+
+# Calculation of LCOH from NGR for every year from 2025 to 2050.
+years = np.arange(2025,2051)
+result = pd.DataFrame(index=years, columns=['LCOH_blue'])
+result.index.name = 'Years'
+
+
+for year in years:
+
+    # get capex, opex, natural gas price and CO2 price of specific year
+    capex_y = float(tea_blue.loc['Capex [€/kW]'][year])
+    opex_y = capex_y * opex_share
+    Q_ce_y = float(GHG.loc['Captured emissions [kg CO2/kg H2] - low capture'][year])
+    Q_ue_y = float(GHG.loc['Blue hydrogen emissions [kg CO2/kg H2] - Norway - low capture'][year])
+    P_ng_y = float(prices.loc['Gas prices in NOR [€_2020/MWh] high'][year])
+    P_co2_y = float(prices.loc['EU ETS [€_2020/t_CO2]'][year])
+    P_ccs_y = float(tea_blue.loc['CO2 transport and storage cost pess. [€/t CO2]'][year])
+
+    # calculate lcoe of specific year
+    result.LCOH_blue.loc[year] = calculate_lcoh_ngr()
+
+result
+# Create csv file from results dataframe
+output_file = os.path.join(path_csv,'LCOH_blue_Pol.csv')
+result.to_csv(output_file, sep = ';')
+LCOH_blue_Pol = result
 
 # Plot cost curve of hydrogen production from NGR with CCS
 fig, ax = plt.subplots(figsize=(10,6))
@@ -595,16 +627,18 @@ ax.set_axisbelow(True)
 #plt.title('Cost curve for blue hydrogen production', fontweight='bold')
 plt.ylabel('[€/kg H2]')
 
-title = '\LCOH_blue'
+title = '\LLCOH_blue_Pol'
 plt.savefig(path_plt + title + '.png', transparent=True)
 
 plt.show()
 
 
 """## Green LCOH"""
-LCOH_green = ((lcoh_green_source.loc['Norway_Onshore_2_low_temp_optimistic', 2025:2050]).mul(0.89))
-LCOH_green_df = pd.DataFrame(LCOH_green)
+LCOH_green_low = ((lcoh_green_source.loc['Norway_Onshore_2_low_temp_optimistic', 2025:2050]).mul(0.89))
+LCOH_green_df = pd.DataFrame(LCOH_green_low)
 LCOH_green_df.index.name = 'Years'
+
+LCOH_green_ref = ((lcoh_green_source.loc['Norway_Onshore_2_low_temp_baseline', 2025:2050]).mul(0.89))
 
 # Create csv file from results dataframe
 output_file = os.path.join(path_csv,'LCOH_green.csv')
@@ -630,9 +664,13 @@ plt.show()
 
 
 # Plot cost curves of hydrogen production from NGR with CCS and RES
-fig, ax = plt.subplots(figsize=(5,4))
-plt.plot(LCOH_blue_df, color = 'blue', linestyle = 'solid', label='Blue hydrogen')
-plt.plot(LCOH_green, color = 'green', linestyle = 'solid', label='Green hydrogen')
+fig, ax = plt.subplots(figsize=(10,5))
+plt.plot(LCOH_green_ref, color = 'green', linestyle = 'solid', label='Green H2 - Reference')
+
+plt.plot(LCOH_green_low, color = 'lime', linestyle = 'solid', label='Green H2 - Policy')
+
+plt.plot(LCOH_blue_Pol, color ='dodgerblue', linestyle ='solid', label='Blue H2 - Policy')
+plt.plot(LCOH_blue_Ref, color ='blue', linestyle ='solid', label='Blue H2 - Reference')
 plt.grid(True, axis = 'y')
 ax.set_axisbelow(True)
 #plt.title('LCOH green and blue', fontweight='bold')
@@ -652,7 +690,7 @@ opex_y = capex_y * opex_share
 Q_grey = float(GHG.loc['Grey hydrogen emissions [kg CO2/kg H2] - Norway']['Value'])
 Q_ce_y = float(GHG.loc['Captured emissions [kg CO2/kg H2]'][sensi_year])
 Q_ue_y = float(GHG.loc['Blue hydrogen emissions [kg CO2/kg H2] - Norway'][sensi_year])
-P_ng_y = float(prices.loc['Gas prices in NOR [€_2020/MWh] high'][sensi_year])
+P_ng_y = float(prices.loc['Gas prices in NOR [€_2020/MWh] medium'][sensi_year])
 P_co2_y = float(prices.loc['EU ETS [€_2020/t_CO2]'][sensi_year])
 P_ccs_y = float(tea_blue.loc['CO2 transport and storage cost pess. [€/t CO2]'][sensi_year])
 
@@ -690,7 +728,7 @@ for year in years:
     opex_y = capex_y * opex_share
     Q_ce_y = float(GHG.loc['Captured emissions [kg CO2/kg H2]'][year])
     Q_ue_y = float(GHG.loc['Blue hydrogen emissions [kg CO2/kg H2] - Norway'][year])
-    P_ng_y = float(prices.loc['Gas prices in NOR [€_2020/MWh] high'][year])
+    P_ng_y = float(prices.loc['Gas prices in NOR [€_2020/MWh] medium'][year])
     P_ccs_y = float(tea_blue.loc['CO2 transport and storage cost pess. [€/t CO2]'][year])
     for P_co2_y in P_CO2_range:
         result = calculate_lcoh_ngr_sensi_P_CO2()
@@ -982,7 +1020,7 @@ for year in years:
     # get all costs
 
     LCOH_green = float(LCOH_green_df.loc[year]['Norway_Onshore_2_low_temp_optimistic'])
-    LCOH_blue = float(LCOH_blue_df.loc[year]['LCOH_blue'])
+    LCOH_blue = float(LCOH_blue_Ref.loc[year]['LCOH_blue'])
 
     # calculate costs of specific year
     result.Minimal_production_costs.loc[year] = choose_minimal_production_costs()
@@ -1004,7 +1042,7 @@ for year in years:
     # get all costs
 
     LCOH_green = float(LCOH_green_df.loc[year]['Norway_Onshore_2_low_temp_optimistic'])
-    LCOH_blue = float(LCOH_blue_df.loc[year]['LCOH_blue'])
+    LCOH_blue = float(LCOH_blue_Ref.loc[year]['LCOH_blue'])
 
     # calculate costs of specific year
     result.Minimal_production_costs.loc[year] = choose_minimal_production_costs()
@@ -1026,7 +1064,7 @@ LCOH_min = result
 fig, ax = plt.subplots(figsize=(10, 6))
 
 plt.plot(LCOH_green, color='green', linestyle='solid', label='Green hydrogen')
-plt.plot(LCOH_blue_df, color='blue', linestyle='solid', label='Blue hydrogen')
+plt.plot(LCOH_blue_Ref, color='blue', linestyle='solid', label='Blue hydrogen')
 plt.grid(True, axis='y')
 ax.set_axisbelow(True)
 #plt.title('Cost curves for green and blue hydrogen production', fontweight='bold')
@@ -2478,12 +2516,12 @@ plt.locator_params(axis='y', nbins=7)
 
 plt.axvline(x=31.8, color='grey', linestyle = '--')
 plt.axvline(x=57, color='grey', linestyle = '--')
-plt.axvline(x=103, color='grey', linestyle = '--')
+plt.axvline(x=97, color='grey', linestyle = '--')
 plt.axvline(x=84, color='grey', linestyle = '--')
-plt.text(31.8,3, 'NOR 2021', horizontalalignment='center', verticalalignment='center')
-plt.text(57,3, 'NOR 2030', horizontalalignment='center', verticalalignment='center')
-plt.text(97,3, 'GER 2021', horizontalalignment='center', verticalalignment='center')
-plt.text(84,3, 'GER 2030', horizontalalignment='center', verticalalignment='center')
+plt.text(31.8,2.9, 'NOR 2021', horizontalalignment='center', verticalalignment='center')
+plt.text(57,2.9, 'NOR 2030', horizontalalignment='center', verticalalignment='center')
+plt.text(97,2.9, 'GER 2021', horizontalalignment='center', verticalalignment='center')
+plt.text(84,2.9, 'GER 2030', horizontalalignment='center', verticalalignment='center')
 
 
 plt.ylabel('[€/kg H2]')
@@ -3155,7 +3193,7 @@ plt.title('Emission breakdown for NH3 shipping [g CO2eq/kg H2]', fontweight='bol
 plt.legend(loc='upper right')
 plt.ylabel('[g CO2eq/kg H2]')
 
-title = '\Ammonia_emissions_w_reconversion'
+title = '\LNH3_emissions_w_reconversion'
 plt.savefig(path_plt+title+'.png', transparent = True)
 
 plt.show()
