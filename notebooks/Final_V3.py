@@ -7,13 +7,14 @@ import os
 from openpyxl import load_workbook
 import xlwings as xl
 
+## Canda version
 
 path_excel = r'\\dena.de\Daten\Home\Reuter\Desktop\H2_pathways_repo\data\raw\H2_supply_route_assessment.xlsx'
 path_csv = r'\\dena.de\Daten\Home\Reuter\Desktop\H2_pathways_repo\data\interim'
-path_plt = r'\\dena.de\Daten\Home\Reuter\Desktop\H2_pathways_repo\Plots'
+path_plt = r'\\dena.de\Daten\Home\Reuter\Desktop\H2_pathways_repo\Plots_v3'
 
 # adjust plotsize and font
-params = { 'font.size':11,
+params = {'font.size':11,
 'font.weight':'normal',
 'font.family':'arial',
 'lines.linewidth':2
@@ -104,15 +105,12 @@ GWP100_CH4
 
 # Methane leakage rate in %
 leakage_rate_low = float(GHG.loc['Upstream methane leakage rate [%] low']['Value'])
-leakage_rate_low
 
 # Methane leakage rate in %
-leakage_rate_mid = float(GHG.loc['Upstream methane leakage rate [%] mid']['Value'])
-leakage_rate_mid
+leakage_rate_mid = float(GHG.loc['Upstream methane leakage rate mid [%] Permian basin']['Value'])
 
 # Methane leakage rate in %
-leakage_rate_high = float(GHG.loc['Upstream methane leakage rate [%] high']['Value'])
-leakage_rate_high
+leakage_rate_high = float(GHG.loc['Upstream methane leakage rate high [%] Permian basin']['Value'])
 
 """## Direct emissions from SMR"""
 
@@ -329,15 +327,17 @@ Total_emissions_grey_GWP20_high
 
 
 
-x =['Grey, GWP100\nw/o FGC', 'Grey, GWP20\nw/o FGC', 'Blue, GWP100\nSGC 55%, w/o FGC', 'Blue, GWP20\nSGC 55%, w/o FGC','Blue, GWP100\nSGC 80%, FGC 65%', 'Blue, GWP20\nSGC 80%, FGC 65%','Blue, GWP100\nSGC 95%, FGC 90%','Blue, GWP20\nSGC 95%, FGC 90%']
+Direct_emissions = [Direct_emissions_grey, Direct_emissions_grey, Direct_emissions_grey, Direct_emissions_grey, Direct_emissions_grey, Direct_emissions_grey,
+                    Direct_emissions_high, Direct_emissions_high, Direct_emissions_high, Direct_emissions_high, Direct_emissions_high, Direct_emissions_high,
+                    Direct_emissions_high, Direct_emissions_high, Direct_emissions_high, Direct_emissions_high, Direct_emissions_high, Direct_emissions_high]
 
-Direct_emissions = [Direct_emissions_grey, Direct_emissions_grey, Direct_emissions_low, Direct_emissions_low, Direct_emissions_mid, Direct_emissions_mid, Direct_emissions_high, Direct_emissions_high]
+Drive_emissions_plt = [Drive_CO2_emissions_grams_grey, Drive_CO2_emissions_grams_grey, Drive_CO2_emissions_grams_grey, Drive_CO2_emissions_grams_grey, Drive_CO2_emissions_grams_grey, Drive_CO2_emissions_grams_grey,
+                       Drive_CO2_emissions_grams_grey, Drive_CO2_emissions_grams_grey, Drive_CO2_emissions_grams_grey, Drive_CO2_emissions_grams_grey, Drive_CO2_emissions_grams_grey, Drive_CO2_emissions_grams_grey,
+                       Drive_CO2_emissions_grams_blue_flue_high, Drive_CO2_emissions_grams_blue_flue_high, Drive_CO2_emissions_grams_blue_flue_high, Drive_CO2_emissions_grams_blue_flue_high, Drive_CO2_emissions_grams_blue_flue_high, Drive_CO2_emissions_grams_blue_flue_high]
 
-Drive_emissions_plt = [Drive_CO2_emissions_grams_grey, Drive_CO2_emissions_grams_grey, Drive_CO2_emissions_grams_grey, Drive_CO2_emissions_grams_grey, Drive_CO2_emissions_grams_blue_flue_low, Drive_CO2_emissions_grams_blue_flue_low, Drive_CO2_emissions_grams_blue_flue_high, Drive_CO2_emissions_grams_blue_flue_high]
+Indirect_emissions_plt = [Indirect_emissions] * 18
 
-Indirect_emissions_plt = [Indirect_emissions] * 8
-
-Upstream_emissions = [upstream_emissions_GWP100_low, upstream_emissions_GWP20_low, upstream_emissions_GWP100_low, upstream_emissions_GWP20_low, upstream_emissions_GWP100_low, upstream_emissions_GWP20_low, upstream_emissions_GWP100_low, upstream_emissions_GWP20_low]
+Upstream_emissions = [upstream_emissions_GWP100_low, upstream_emissions_GWP20_low, upstream_emissions_GWP100_mid, upstream_emissions_GWP20_mid, upstream_emissions_GWP100_high, upstream_emissions_GWP20_high, upstream_emissions_GWP100_low, upstream_emissions_GWP20_low, upstream_emissions_GWP100_mid, upstream_emissions_GWP20_mid, upstream_emissions_GWP100_high, upstream_emissions_GWP20_high, upstream_emissions_GWP100_low, upstream_emissions_GWP20_low, upstream_emissions_GWP100_mid, upstream_emissions_GWP20_mid, upstream_emissions_GWP100_high, upstream_emissions_GWP20_high]
 
 """## Calc. total emissions for each case"""
 
@@ -355,10 +355,12 @@ opt
 
 """## Plot total emissions"""
 
-x =['Grey, GWP100', 'Grey, GWP20', 'Blue,  GWP100\nSGC 55%, w/o FGC', 'Blue, GWP20\nSGC 55%, w/o FGC','Blue, GWP100\nSGC 80%, FGC 65%', 'Blue, GWP20\nSGC 80%, FGC 65%','Blue, GWP100\nSGC 95%, FGC 90%','Blue, GWP20\nSGC 95%, FGC 90%']
+x =['Grey, GWP100\n0.2%', 'Grey, GWP20\n0.2%', 'Grey, GWP100\n3.7%', 'Grey, GWP20\n3.7%', 'Grey, GWP100\n9%', 'Grey, GWP20\n9%',
+    'Blue,  GWP100, SGC 90%\n0.2%', 'Blue, GWP20, SCG 90%\n0.2%','Blue, GWP100, SGC 90%\n3.7%', 'Blue, GWP20, SGC 90%\n3.7%','Blue, GWP100, SGC 90%\n9%', 'Blue, GWP20, SGC 90%\n9%',
+    'Blue, GWP100\nSGC 90%, FGC 95%, 0.2%','Blue, GWP20\nSGC 95%, FGC 90%, 0.2%','Blue, GWP100\nSGC 95%, FGC 90%, 3.7%', 'Blue, GWP20\nSGC 95%, FGC 90%, 3.7%', 'GWP100\nSGC 95%, FGC 90%, 9%', 'Blue, GWP20\nSGC 95%, FGC 90%, 9%']
 
 # Creating a stacked bar chart to display emissions. Adding lists for the bottom method.
-fig, ax = plt.subplots(figsize=(7,6), frameon=False, layout = 'constrained')
+fig, ax = plt.subplots(figsize=(10,6), frameon=False, layout = 'constrained')
 width = 0.5
 #y_axis = np.arange(101,step=10)
 direct = plt.bar(x, Direct_emissions, width, color = 'royalblue', label='CO2 from SMR', bottom=list(map(lambda x, y, z: x + y + z, Upstream_emissions, Indirect_emissions_plt, Drive_emissions_plt)))
@@ -367,12 +369,12 @@ indirect = plt.bar(x, Indirect_emissions, width, color = 'grey', label = 'CO2 fr
 upstream = plt.bar(x, Upstream_emissions, width, color = 'lightcoral',label = 'CH4 from fugitive upstream methane')
 plt.grid(True, axis = 'y')
 ax.set_ylabel(ylabel= ('[g CO2eq/MJ H2]'))
-ax.yaxis.set_major_locator(mtick.LinearLocator(13))
-ax.set_ylim(0,100)
+ax.yaxis.set_major_locator(mtick.LinearLocator(6))
+ax.set_ylim(0,250)
 ax.set_axisbelow(True)
 ax2 = ax.secondary_yaxis('right', functions=(lambda MJ: MJ*120/1000, lambda kg: kg/120))
-ax2.yaxis.set_major_locator(mtick.LinearLocator(13))
-ax2.set_ylim(0,12)
+ax2.yaxis.set_major_locator(mtick.LinearLocator(6))
+ax2.set_ylim(0,30)
 ax2.set_ylabel(ylabel= '[kg CO2eq/kg H2]')
 plt.xticks(rotation = 90)
 plt.legend(loc='upper right')
@@ -571,7 +573,7 @@ for year in years:
     opex_y = capex_y * opex_share
     Q_ce_y = float(GHG.loc['Captured emissions [kg CO2/kg H2]'][year])
     Q_ue_y = float(GHG.loc['Blue hydrogen emissions [kg CO2/kg H2] - Norway'][year])
-    P_ng_y = float(prices.loc['Gas prices in NOR [€_2020/MWh] high'][year])
+    P_ng_y = float(prices.loc['Gas prices in NOR [€_2020/MWh] medium'][year])
     P_co2_y = float(prices.loc['EU ETS [€_2020/t_CO2]'][year])
     P_ccs_y = float(tea_blue.loc['CO2 transport and storage cost pess. [€/t CO2]'][year])
 
@@ -583,9 +585,7 @@ result
 output_file = os.path.join(path_csv,'LCOH_blue.csv')
 result.to_csv(output_file, sep = ';')
 LCOH_blue_Ref = result
-
-
-#LCOH Policy
+#LCOH POL
 alpha_ngr = 0.08
 def calculate_lcoh_ngr():
 
@@ -606,7 +606,7 @@ for year in years:
     opex_y = capex_y * opex_share
     Q_ce_y = float(GHG.loc['Captured emissions [kg CO2/kg H2] - low capture'][year])
     Q_ue_y = float(GHG.loc['Blue hydrogen emissions [kg CO2/kg H2] - Norway - low capture'][year])
-    P_ng_y = float(prices.loc['Gas prices in NOR [€_2020/MWh] medium'][year])
+    P_ng_y = float(prices.loc['Gas prices in NOR [€_2020/MWh] high'][year])
     P_co2_y = float(prices.loc['EU ETS [€_2020/t_CO2]'][year])
     P_ccs_y = float(tea_blue.loc['CO2 transport and storage cost pess. [€/t CO2]'][year])
 
@@ -665,7 +665,7 @@ plt.show()
 
 # Plot cost curves of hydrogen production from NGR with CCS and RES
 fig, ax = plt.subplots(figsize=(10,5))
-plt.plot(LCOH_green_ref, color = 'green', linestyle = 'solid', label='Green H2 - Basl')
+plt.plot(LCOH_green_ref, color = 'green', linestyle = 'solid', label='Green H2 - Reference')
 
 plt.plot(LCOH_green_low, color = 'lime', linestyle = 'solid', label='Green H2 - Policy')
 
