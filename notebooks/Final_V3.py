@@ -7,7 +7,7 @@ import os
 from openpyxl import load_workbook
 import xlwings as xl
 
-## Canda version
+#Directory
 
 path_excel = r'\\dena.de\Daten\Home\Reuter\Desktop\H2_pathways_repo\data\raw\H2_supply_route_assessment.xlsx'
 path_csv = r'\\dena.de\Daten\Home\Reuter\Desktop\H2_pathways_repo\data\interim'
@@ -53,86 +53,88 @@ lcoh_green_source = pd.read_excel(path_excel, sheet_name='LCOH_RES', decimal=','
 
 # LHV H2 in moles per MJ
 LHV_H2_moles_MJ = float(GHG.loc['H2 LHV [mole/MJ]']['Value'])
-LHV_H2_moles_MJ
+
 
 # CO2 produced during SMR @ 1 mole CO2 per 4 moles H2 [moles CO2/MJ]
 CO2_SMR_mole = LHV_H2_moles_MJ * 1/4
-CO2_SMR_mole
+
 
 # Molecular weight of CO2 [g/Mole]
 CO2_g_mole = float(GHG.loc['CO2 [g/Mole]']['Value'])
-CO2_g_mole
+
 
 # Capture rate syngas [%] low
 capture_rate_low = float(GHG.loc['Capture rate [%] low']['Value'])
-capture_rate_low
+
 
 # Capture rate syngas [%] mid
 capture_rate_mid = float(GHG.loc['Capture rate [%] mid']['Value'])
-capture_rate_mid
+
 
 # Capture rate syngas [%] high
 capture_rate_high = float(GHG.loc['Capture rate [%] high']['Value'])
-capture_rate_high
+
 
 # Molecular weight of CH4 [g/Mole]
 CH4_g_mole = float(GHG.loc['CH4 [g/Mole]']['Value'])
-CH4_g_mole
+
 
 # Heat consumption to drive SMR in [MJ/mole_H2]
 Drive_Energy_MJ_mole_h2 = float(GHG.loc['Heat Input [MJ/mole_H2]']['Value'])
-Drive_Energy_MJ_mole_h2
+
 
 # Emission intensity of CH4 [g CO2/MJ]
 emission_intensity_CH4 = float(GHG.loc['Combustion emissions CH4 [g CO2/MJ]']['Value'])
-emission_intensity_CH4
+
 
 # Flue gas capture rate [%] low
 capture_rate_flue_gas_low = float(GHG.loc['Capture rate [%] flue gas low']['Value'])
-capture_rate_flue_gas_low
+
 
 # Flue gas capture rate [%] high
 capture_rate_flue_gas_high = float(GHG.loc['Capture rate [%] flue gas high']['Value'])
-capture_rate_flue_gas_high
+
 
 #GWP20 of methane
 GWP20_CH4 = float(GHG.loc['CH4 GWP20 [Years]']['Value'])
-GWP20_CH4
+
 
 #GWP100 of methane
 GWP100_CH4 = float(GHG.loc['CH4 GWP100 [Years]']['Value'])
-GWP100_CH4
+
 
 # Methane leakage rate in %
-leakage_rate_low = float(GHG.loc['Upstream methane leakage rate [%] low']['Value'])
+leakage_rate_NOR_Base = float(GHG.loc['Upstream methane leakage rate [%] NOR - Baseline']['Value'])
+# Methane leakage rate in %
+leakage_rate_NOR_Policy = float(GHG.loc['Upstream methane leakage rate [%] NOR - Policy']['Value'])
 
 # Methane leakage rate in %
-leakage_rate_mid = float(GHG.loc['Upstream methane leakage rate mid [%] Permian basin']['Value'])
+leakage_rate_US_Base = float(GHG.loc['Upstream methane leakage rate [%] US - Baseline']['Value'])
 
 # Methane leakage rate in %
-leakage_rate_high = float(GHG.loc['Upstream methane leakage rate high [%] Permian basin']['Value'])
+leakage_rate_US_Policy = float(GHG.loc['Upstream methane leakage rate [%] US - Policy']['Value'])
 
 """## Direct emissions from SMR"""
 
 # CO2 emissions from SMR process [g CO2/MJ]
 Direct_emissions_grey = CO2_g_mole * CO2_SMR_mole
-Direct_emissions_grey
+
 
 # CO2 emissions from SMR @ 55% capture rate [g CO2/MJ]
 Direct_emissions_low = Direct_emissions_grey * (1-capture_rate_low)
-Direct_emissions_low
+
 
 # CO2 emissions from SMR @ 55% capture rate [g CO2/MJ]
 Direct_emissions_mid = Direct_emissions_grey * (1-capture_rate_mid)
-Direct_emissions_mid
+
 
 # CO2 emissions from SMR @ 55% capture rate [g CO2/MJ]
 Direct_emissions_high = Direct_emissions_grey * (1-capture_rate_high)
-Direct_emissions_high
+
 
 #CH4 consumed during SMR @ 1 mole CH4 per 4 moles H2 [g CH4/MJ]
 CH4_SMR_grams = 1.03 * CH4_g_mole
-CH4_SMR_grams
+
 
 """Emissions from energy to drive SMR
 
@@ -141,27 +143,27 @@ CH4_SMR_grams
 
 # When burning natural gas for heat production CO2 is emitted [CO2/mole_H2]
 Drive_CO2_emissions_mole = Drive_Energy_MJ_mole_h2 * emission_intensity_CH4
-Drive_CO2_emissions_mole
+
 
 # CO2 emissions per MJ hydrogen in order to create heat and pressure - w/o flue gas capture [g CO2/MJ_H2]
 Drive_CO2_emissions_grams_grey = Drive_CO2_emissions_mole * LHV_H2_moles_MJ
-Drive_CO2_emissions_grams_grey
+
 
 """## w/o flue gas capture (blue)"""
 
 # CO2 emissions drive with flue gas capture - low [g CO2/MJ]
 Drive_CO2_emissions_grams_blue_flue_low = Drive_CO2_emissions_grams_grey * (1 - capture_rate_flue_gas_low)
-Drive_CO2_emissions_grams_blue_flue_low
+
 
 # CO2 emissions drive with flue gas capture - high [g CO2/MJ]
 Drive_CO2_emissions_grams_blue_flue_high = Drive_CO2_emissions_grams_grey * (1 - capture_rate_flue_gas_high)
-Drive_CO2_emissions_grams_blue_flue_high
+
 
 """## Check this cell!!"""
 
 # CH4 consumed to drive the process [g CH4/MJ_H2]
 Drive_CH4_consumed = Drive_Energy_MJ_mole_h2 * 1/CO2_g_mole * CH4_g_mole
-Drive_CH4_consumed
+
 
 """## Total direct CO2 emissions
 
@@ -170,19 +172,19 @@ Drive_CH4_consumed
 
 # Total CO2 emissions to produce grey hydrogen [g CO2/MJ_H2]
 Total_CO2_emissions_grey = Direct_emissions_grey + Drive_CO2_emissions_grams_grey
-Total_CO2_emissions_grey
+
 
 # Total CO2 emissions to produce grey hydrogen [g CO2/MJ_H2]
 Total_CO2_emissions_blue_low_no_fluegas = Direct_emissions_low + Drive_CO2_emissions_grams_grey
-Total_CO2_emissions_blue_low_no_fluegas
+
 
 # Total CO2 emissions to produce grey hydrogen [g CO2/MJ_H2]
 Total_CO2_emissions_blue_mid_no_fluegas = Direct_emissions_mid + Drive_CO2_emissions_grams_grey
-Total_CO2_emissions_blue_mid_no_fluegas
+
 
 # Total CO2 emissions to produce grey hydrogen [g CO2/MJ_H2]
 Total_CO2_emissions_blue_high_no_fluegas = Direct_emissions_high + Drive_CO2_emissions_grams_grey
-Total_CO2_emissions_blue_high_no_fluegas
+
 
 """## With flue gas capture
 
@@ -191,35 +193,35 @@ Total_CO2_emissions_blue_high_no_fluegas
 
 # Total CO2 emissions to produce grey hydrogen [g CO2/MJ_H2]
 Total_CO2_emissions_blue_low_with_fluegas_low = Direct_emissions_low + Drive_CO2_emissions_grams_blue_flue_low
-Total_CO2_emissions_blue_low_with_fluegas_low
+
 
 # Total CO2 emissions to produce grey hydrogen [g CO2/MJ_H2]
 Total_CO2_emissions_blue_mid_with_fluegas_low = Direct_emissions_mid + Drive_CO2_emissions_grams_blue_flue_low
-Total_CO2_emissions_blue_mid_with_fluegas_low
+
 
 # Total CO2 emissions to produce grey hydrogen [g CO2/MJ_H2]
 Total_CO2_emissions_blue_high_with_fluegas_low = Direct_emissions_high + Drive_CO2_emissions_grams_blue_flue_low
-Total_CO2_emissions_blue_high_with_fluegas_low
+
 
 """### high (90%)"""
 
 # Total CO2 emissions to produce grey hydrogen [g CO2/MJ_H2]
 Total_CO2_emissions_blue_low_with_fluegas_high = Direct_emissions_low + Drive_CO2_emissions_grams_blue_flue_high
-Total_CO2_emissions_blue_low_with_fluegas_high
+
 
 # Total CO2 emissions to produce grey hydrogen [g CO2/MJ_H2]
 Total_CO2_emissions_blue_mid_with_fluegas_high = Direct_emissions_mid + Drive_CO2_emissions_grams_blue_flue_high
-Total_CO2_emissions_blue_mid_with_fluegas_high
+
 
 # Total CO2 emissions to produce grey hydrogen [g CO2/MJ_H2]
 Total_CO2_emissions_blue_high_with_fluegas_high = Direct_emissions_high + Drive_CO2_emissions_grams_blue_flue_high
-Total_CO2_emissions_blue_high_with_fluegas_high
+
 
 """## Indirect emissions from natural gas transport and storage"""
 
 # Indirect emissions from natural gas transport and storage [g CO2/MJ_H2]
 Indirect_emissions = Total_CO2_emissions_grey * 0.075
-Indirect_emissions
+
 
 
 
@@ -227,49 +229,61 @@ Indirect_emissions
 
 # CH4 consumption as feedstock and energy to drive SMR [g CH4/MJ_H2]
 Total_methane_SMR = CH4_SMR_grams + Drive_CH4_consumed
-Total_methane_SMR
+
 
 # Quantity of methane consumed to produce grey hydrogen [g CH4/MJ_H2]
-upstream_emissions_CH4_low = leakage_rate_low * Total_methane_SMR
-upstream_emissions_CH4_low
+upstream_emissions_CH4_low = leakage_rate_NOR_Policy * Total_methane_SMR
+
 
 # Quantity of methane consumed to produce grey hydrogen [g CH4/MJ_H2]
-upstream_emissions_CH4_mid = leakage_rate_mid * Total_methane_SMR
-upstream_emissions_CH4_mid
+upstream_emissions_CH4_mid = leakage_rate_US_Base * Total_methane_SMR
+
 
 # Quantity of methane consumed to produce grey hydrogen [g CH4/MJ_H2]
-upstream_emissions_CH4_high = leakage_rate_high * Total_methane_SMR
-upstream_emissions_CH4_high
+upstream_emissions_CH4_high = leakage_rate_US_Policy * Total_methane_SMR
+
 
 # Upstream emissions at GWP20 of CH4 [g CO2e/MJ_H2]
-upstream_emissions_GWP20_low = upstream_emissions_CH4_low * GWP20_CH4
-upstream_emissions_GWP20_low = leakage_rate_low * Total_methane_SMR * GWP20_CH4
+upstream_emissions_GWP20_NOR_Policy = upstream_emissions_CH4_low * GWP20_CH4
+upstream_emissions_GWP20_NOR_Base = leakage_rate_NOR_Base * Total_methane_SMR * GWP20_CH4
+
+# Upstream emissions at GWP20 of CH4 [g CO2e/MJ_H2]
+upstream_emissions_GWP20_NOR_Policy = upstream_emissions_CH4_low * GWP20_CH4
+upstream_emissions_GWP20_NOR_Policy = leakage_rate_NOR_Policy * Total_methane_SMR * GWP20_CH4
+
+# Upstream emissions at GWP100 of CH4 [g CO2e/MJ_H2]
+upstream_emissions_GWP100_NOR_Policy = upstream_emissions_CH4_low * GWP100_CH4
+upstream_emissions_GWP100_NOR_Base = leakage_rate_NOR_Base * Total_methane_SMR * GWP100_CH4
+
+# Upstream emissions at GWP100 of CH4 [g CO2e/MJ_H2]
+upstream_emissions_GWP100_NOR_Policy = upstream_emissions_CH4_low * GWP100_CH4
+upstream_emissions_GWP100_NOR_Policy = leakage_rate_NOR_Policy * Total_methane_SMR * GWP100_CH4
 
 # Upstream emissions at GWP20 of CH4 [g CO2e/MJ_H2]
 upstream_emissions_GWP20_mid = upstream_emissions_CH4_mid * GWP20_CH4
-upstream_emissions_GWP20_mid
+
 
 # Upstream emissions at GWP20 of CH4 [g CO2e/MJ_H2]
 upstream_emissions_GWP20_high = upstream_emissions_CH4_high * GWP20_CH4
-upstream_emissions_GWP20_high
+
 
 # Upstream emissions at GWP100 of CH4 [g CO2e/MJ_H2]
 upstream_emissions_GWP100_low = upstream_emissions_CH4_low * GWP100_CH4
-upstream_emissions_GWP100_low
+
 
 # Upstream emissions at GWP100 of CH4 [g CO2e/MJ_H2]
 upstream_emissions_GWP100_mid = upstream_emissions_CH4_mid * GWP100_CH4
-upstream_emissions_GWP100_mid
+
 
 # Upstream emissions at GWP100 of CH4 [g CO2e/MJ_H2]
 upstream_emissions_GWP100_high = upstream_emissions_CH4_high * GWP100_CH4
-upstream_emissions_GWP100_high
+
 
 """## Total emissions"""
 
 # Total CO2 emissions including indirect emissions from natural gas transport and storage
 Total_CO2_emissions = Total_CO2_emissions_grey + Indirect_emissions
-Total_CO2_emissions
+
 
 """## w/o flue gas capture
 
@@ -277,7 +291,7 @@ Total_CO2_emissions
 """
 
 # Total Emissions for grey hydrogen: CO2 + fugitive CH4 [g CO2e/MJ]
-Total_emissions_grey_GWP20_low = Total_CO2_emissions_grey + Indirect_emissions + upstream_emissions_GWP20_low
+Total_emissions_grey_GWP20_low = Total_CO2_emissions_grey + Indirect_emissions + upstream_emissions_GWP20_NOR_Policy
 Total_emissions_grey_GWP20_low
 
 # Total Emissions for grey hydrogen: CO2 + fugitive CH4 [g CO2e/MJ]
@@ -308,7 +322,7 @@ Total_emissions_grey_GWP100_high
 """
 
 # Total Emissions for grey hydrogen: CO2 + fugitive CH4 [g CO2e/MJ]
-Total_emissions_grey_GWP20_low = Total_CO2_emissions + upstream_emissions_GWP20_low
+Total_emissions_grey_GWP20_low = Total_CO2_emissions + upstream_emissions_GWP20_NOR_Policy
 Total_emissions_grey_GWP20_low
 
 # Total Emissions for grey hydrogen: CO2 + fugitive CH4 [g CO2e/MJ]
@@ -327,37 +341,41 @@ Total_emissions_grey_GWP20_high
 
 
 
-Direct_emissions = [Direct_emissions_grey, Direct_emissions_grey, Direct_emissions_grey, Direct_emissions_grey, Direct_emissions_grey, Direct_emissions_grey,
-                    Direct_emissions_high, Direct_emissions_high, Direct_emissions_high, Direct_emissions_high, Direct_emissions_high, Direct_emissions_high,
-                    Direct_emissions_high, Direct_emissions_high, Direct_emissions_high, Direct_emissions_high, Direct_emissions_high, Direct_emissions_high]
+Direct_emissions = [Direct_emissions_grey, Direct_emissions_grey, Direct_emissions_grey, Direct_emissions_grey, Direct_emissions_grey, Direct_emissions_grey, Direct_emissions_grey, Direct_emissions_grey,
+                    Direct_emissions_high, Direct_emissions_high, Direct_emissions_high, Direct_emissions_high,
+                    Direct_emissions_high, Direct_emissions_high, Direct_emissions_high, Direct_emissions_high]
 
-Drive_emissions_plt = [Drive_CO2_emissions_grams_grey, Drive_CO2_emissions_grams_grey, Drive_CO2_emissions_grams_grey, Drive_CO2_emissions_grams_grey, Drive_CO2_emissions_grams_grey, Drive_CO2_emissions_grams_grey,
-                       Drive_CO2_emissions_grams_grey, Drive_CO2_emissions_grams_grey, Drive_CO2_emissions_grams_grey, Drive_CO2_emissions_grams_grey, Drive_CO2_emissions_grams_grey, Drive_CO2_emissions_grams_grey,
-                       Drive_CO2_emissions_grams_blue_flue_high, Drive_CO2_emissions_grams_blue_flue_high, Drive_CO2_emissions_grams_blue_flue_high, Drive_CO2_emissions_grams_blue_flue_high, Drive_CO2_emissions_grams_blue_flue_high, Drive_CO2_emissions_grams_blue_flue_high]
+Drive_emissions_plt = [Drive_CO2_emissions_grams_grey, Drive_CO2_emissions_grams_grey, Drive_CO2_emissions_grams_grey, Drive_CO2_emissions_grams_grey,
+                       Drive_CO2_emissions_grams_grey, Drive_CO2_emissions_grams_grey, Drive_CO2_emissions_grams_grey, Drive_CO2_emissions_grams_grey,
+                       Drive_CO2_emissions_grams_grey, Drive_CO2_emissions_grams_grey, Drive_CO2_emissions_grams_grey, Drive_CO2_emissions_grams_grey,
+                       Drive_CO2_emissions_grams_blue_flue_high, Drive_CO2_emissions_grams_blue_flue_high, Drive_CO2_emissions_grams_blue_flue_high, Drive_CO2_emissions_grams_blue_flue_high]
 
-Indirect_emissions_plt = [Indirect_emissions] * 18
+Indirect_emissions_plt = [Indirect_emissions] * 16
 
-Upstream_emissions = [upstream_emissions_GWP100_low, upstream_emissions_GWP20_low, upstream_emissions_GWP100_mid, upstream_emissions_GWP20_mid, upstream_emissions_GWP100_high, upstream_emissions_GWP20_high, upstream_emissions_GWP100_low, upstream_emissions_GWP20_low, upstream_emissions_GWP100_mid, upstream_emissions_GWP20_mid, upstream_emissions_GWP100_high, upstream_emissions_GWP20_high, upstream_emissions_GWP100_low, upstream_emissions_GWP20_low, upstream_emissions_GWP100_mid, upstream_emissions_GWP20_mid, upstream_emissions_GWP100_high, upstream_emissions_GWP20_high]
+Upstream_emissions = [upstream_emissions_GWP100_NOR_Base, upstream_emissions_GWP20_NOR_Base, upstream_emissions_GWP100_NOR_Policy, upstream_emissions_GWP20_NOR_Policy,
+                      upstream_emissions_GWP100_mid, upstream_emissions_GWP20_mid, upstream_emissions_GWP100_high, upstream_emissions_GWP20_high,
+                      upstream_emissions_GWP20_NOR_Base, upstream_emissions_GWP20_NOR_Policy, upstream_emissions_GWP20_mid, upstream_emissions_GWP20_high,
+                      upstream_emissions_GWP20_NOR_Base, upstream_emissions_GWP20_NOR_Policy, upstream_emissions_GWP20_mid, upstream_emissions_GWP20_high]
 
 """## Calc. total emissions for each case"""
 
 Grey_GWP100 = Direct_emissions_grey + Drive_CO2_emissions_grams_grey + Indirect_emissions + upstream_emissions_GWP100_low
 Grey_GWP100
 
-Grey_GWP20 = Direct_emissions_grey + Drive_CO2_emissions_grams_grey + Indirect_emissions + upstream_emissions_GWP20_low
+Grey_GWP20 = Direct_emissions_grey + Drive_CO2_emissions_grams_grey + Indirect_emissions + upstream_emissions_GWP20_NOR_Policy
 Grey_GWP20
 
-pess = Direct_emissions_low + Drive_CO2_emissions_grams_grey + Indirect_emissions + upstream_emissions_GWP20_low
+pess = Direct_emissions_low + Drive_CO2_emissions_grams_grey + Indirect_emissions + upstream_emissions_GWP20_NOR_Policy
 pess
 
-opt = Direct_emissions_high + Drive_CO2_emissions_grams_blue_flue_high + Indirect_emissions + upstream_emissions_GWP20_low
+opt = Direct_emissions_high + Drive_CO2_emissions_grams_blue_flue_high + Indirect_emissions + upstream_emissions_GWP20_NOR_Policy
 opt
 
 """## Plot total emissions"""
 
-x =['Grey, GWP100\n0.2%', 'Grey, GWP20\n0.2%', 'Grey, GWP100\n3.7%', 'Grey, GWP20\n3.7%', 'Grey, GWP100\n9%', 'Grey, GWP20\n9%',
-    'Blue,  GWP100, SGC 90%\n0.2%', 'Blue, GWP20, SCG 90%\n0.2%','Blue, GWP100, SGC 90%\n3.7%', 'Blue, GWP20, SGC 90%\n3.7%','Blue, GWP100, SGC 90%\n9%', 'Blue, GWP20, SGC 90%\n9%',
-    'Blue, GWP100\nSGC 90%, FGC 95%, 0.2%','Blue, GWP20\nSGC 95%, FGC 90%, 0.2%','Blue, GWP100\nSGC 95%, FGC 90%, 3.7%', 'Blue, GWP20\nSGC 95%, FGC 90%, 3.7%', 'GWP100\nSGC 95%, FGC 90%, 9%', 'Blue, GWP20\nSGC 95%, FGC 90%, 9%']
+x =['Grey, GWP100\n0.02%', 'Grey, GWP20\n0.02%', 'Grey, GWP100\n1.3%', 'Grey, GWP20\n1.3%', 'Grey, GWP100\n3.7%', 'Grey, GWP20\n3.7%', 'Grey, GWP100\n9%', 'Grey, GWP20\n9%',
+    'Blue,  SGC 90%\n0.02%', 'Blue, SCG 90%\n1.3%','Blue, SGC 90%\n3.7%', 'Blue, SGC 90%\n9%',
+    'Blue\nSGC 90%, FGC 95%, 0.02%','Blue\nSGC 95%, FGC 90%, 1.3%','Blue\nSGC 95%, FGC 90%, 3.7%', 'Blue\nSGC 95%, FGC 90%, 9%']
 
 # Creating a stacked bar chart to display emissions. Adding lists for the bottom method.
 fig, ax = plt.subplots(figsize=(10,6), frameon=False, layout = 'constrained')
@@ -369,11 +387,11 @@ indirect = plt.bar(x, Indirect_emissions, width, color = 'grey', label = 'CO2 fr
 upstream = plt.bar(x, Upstream_emissions, width, color = 'lightcoral',label = 'CH4 from fugitive upstream methane')
 plt.grid(True, axis = 'y')
 ax.set_ylabel(ylabel= ('[g CO2eq/MJ H2]'))
-ax.yaxis.set_major_locator(mtick.LinearLocator(6))
+ax.yaxis.set_major_locator(mtick.LinearLocator(18))
 ax.set_ylim(0,250)
 ax.set_axisbelow(True)
 ax2 = ax.secondary_yaxis('right', functions=(lambda MJ: MJ*120/1000, lambda kg: kg/120))
-ax2.yaxis.set_major_locator(mtick.LinearLocator(6))
+ax2.yaxis.set_major_locator(mtick.LinearLocator(18))
 ax2.set_ylim(0,30)
 ax2.set_ylabel(ylabel= '[kg CO2eq/kg H2]')
 plt.xticks(rotation = 90)
@@ -406,7 +424,7 @@ def blue_h2_emissions(Direct_emissions_grey, capture_rate_high, Drive_CO2_emissi
 
     return sensitivity
 
-blue_h2_emissions(Direct_emissions_grey, capture_rate_high, Drive_CO2_emissions_grams_grey, capture_rate_flue_gas_high, Indirect_emissions, leakage_rate_low, Total_methane_SMR, GWP20_CH4)
+blue_h2_emissions(Direct_emissions_grey, capture_rate_high, Drive_CO2_emissions_grams_grey, capture_rate_flue_gas_high, Indirect_emissions, leakage_rate_NOR_Policy, Total_methane_SMR, GWP20_CH4)
 
 leakage_sensi_GWP20 = pd.DataFrame(sensitivity, index=leakage_rate, columns=['Total_Emissions [g CO2eq/MJ H2]'])
 
@@ -426,7 +444,7 @@ def blue_h2_emissions(Direct_emissions_grey, capture_rate_high, Drive_CO2_emissi
 
     return sensitivity
 
-blue_h2_emissions(Direct_emissions_grey, capture_rate_high, Drive_CO2_emissions_grams_grey, capture_rate_flue_gas_high, Indirect_emissions, leakage_rate_low, Total_methane_SMR, GWP20_CH4)
+blue_h2_emissions(Direct_emissions_grey, capture_rate_high, Drive_CO2_emissions_grams_grey, capture_rate_flue_gas_high, Indirect_emissions, leakage_rate_NOR_Policy, Total_methane_SMR, GWP20_CH4)
 
 leakage_sensi_GWP100 = pd.DataFrame(sensitivity, index=leakage_rate, columns=['Total_Emissions [g CO2eq/MJ H2]'])
 
@@ -449,7 +467,7 @@ def blue_h2_emissions(Direct_emissions_grey, capture_rate_high, Drive_CO2_emissi
 
     return sensitivity
 
-blue_h2_emissions(Direct_emissions_grey, capture_rate_high, Drive_CO2_emissions_grams_grey, capture_rate_flue_gas_high, Indirect_emissions, leakage_rate_low, Total_methane_SMR, GWP20_CH4)
+blue_h2_emissions(Direct_emissions_grey, capture_rate_high, Drive_CO2_emissions_grams_grey, capture_rate_flue_gas_high, Indirect_emissions, leakage_rate_NOR_Policy, Total_methane_SMR, GWP20_CH4)
 
 capture_sensi = pd.DataFrame(sensitivity, index=capture_rate, columns=['Total_Emissions [g CO2eq/MJ H2]'])
 #to_csv
@@ -522,7 +540,7 @@ opex_share
 
 # Calculate the amortisation factor alpha
 alpha_ngr = (i * (1 + i) ** l_ngr) / (((1 + i) ** l_ngr) - 1)
-alpha_ngr
+
 #round(alpha, 2)
 
 CF = float(tea_blue.loc['Availability [%]']['NGR with CCS'])
@@ -531,10 +549,6 @@ CF
 # Plant efficiency in %
 n = float(tea_blue.loc['Efficiency [%]']['NGR with CCS'])
 n
-
-# P_ccs is the cost for transporting and storing CO2 in $/t_co2
-P_ccs = float(tea_blue.loc['CO2 transport and storage cost [€/t CO2]']['NGR with CCS'])
-P_ccs
 
 # LHV of hydrogen is 33.33 kWh/kg
 LHV_h2 = float(tea_blue.loc['LHV H2 [kWh/kg]']['NGR with CCS'])
@@ -553,7 +567,7 @@ Q_ue [kgCO2/kgH2]
 P_ccs [€/t CO2]
 P_co2_y [€/t CO2]
 """
-#LCOH REF
+#LCOH Baseline NOR
 def calculate_lcoh_ngr():
 
     result = float(LHV_h2 * ((alpha_ngr * capex_y + opex_y) / (CF * 8760) + P_ng_y / 1000 * n) + (Q_ce_y * P_ccs_y + Q_ue_y * P_co2_y) / 1000)
@@ -571,21 +585,22 @@ for year in years:
     # get capex, opex, natural gas price and CO2 price of specific year
     capex_y = float(tea_blue.loc['Capex [€/kW]'][year])
     opex_y = capex_y * opex_share
-    Q_ce_y = float(GHG.loc['Captured emissions [kg CO2/kg H2]'][year])
-    Q_ue_y = float(GHG.loc['Blue hydrogen emissions [kg CO2/kg H2] - Norway'][year])
-    P_ng_y = float(prices.loc['Gas prices in NOR [€_2020/MWh] medium'][year])
-    P_co2_y = float(prices.loc['EU ETS [€_2020/t_CO2]'][year])
-    P_ccs_y = float(tea_blue.loc['CO2 transport and storage cost pess. [€/t CO2]'][year])
+    Q_ce_y = float(GHG.loc['Captured emissions [kg CO2/kg H2] - NOR Baseline'][year])
+    Q_ue_y = float(GHG.loc['Blue hydrogen emissions [kg CO2/kg H2] - NOR Baseline'][year])
+    P_ng_y = float(prices.loc['Gas prices in NOR [€_2020/MWh] - Baseline'][year])
+    P_co2_y = float(prices.loc['CO2 prices [€/t_CO2] - Baseline'][year])
+    P_ccs_y = float(tea_blue.loc['CO2 transport and storage cost [€/t CO2] -  Baseline'][year])
 
     # calculate lcoe of specific year
     result.LCOH_blue.loc[year] = calculate_lcoh_ngr()
 
 result
 # Create csv file from results dataframe
-output_file = os.path.join(path_csv,'LCOH_blue.csv')
+output_file = os.path.join(path_csv,'LCOH_blue_NOR_Base.csv')
 result.to_csv(output_file, sep = ';')
-LCOH_blue_Ref = result
-#LCOH POL
+LCOH_blue_NOR_Base = result
+
+#LCOH NOR Policy
 alpha_ngr = 0.08
 def calculate_lcoh_ngr():
 
@@ -593,7 +608,6 @@ def calculate_lcoh_ngr():
 
     return result
 
-# Calculation of LCOH from NGR for every year from 2025 to 2050.
 years = np.arange(2025,2051)
 result = pd.DataFrame(index=years, columns=['LCOH_blue'])
 result.index.name = 'Years'
@@ -604,20 +618,20 @@ for year in years:
     # get capex, opex, natural gas price and CO2 price of specific year
     capex_y = float(tea_blue.loc['Capex [€/kW]'][year])
     opex_y = capex_y * opex_share
-    Q_ce_y = float(GHG.loc['Captured emissions [kg CO2/kg H2] - low capture'][year])
-    Q_ue_y = float(GHG.loc['Blue hydrogen emissions [kg CO2/kg H2] - Norway - low capture'][year])
-    P_ng_y = float(prices.loc['Gas prices in NOR [€_2020/MWh] high'][year])
-    P_co2_y = float(prices.loc['EU ETS [€_2020/t_CO2]'][year])
-    P_ccs_y = float(tea_blue.loc['CO2 transport and storage cost pess. [€/t CO2]'][year])
+    Q_ce_y = float(GHG.loc['Captured emissions [kg CO2/kg H2] - NOR Policy'][year])
+    Q_ue_y = float(GHG.loc['Blue hydrogen emissions [kg CO2/kg H2] - NOR Policy'][year])
+    P_ng_y = float(prices.loc['Gas prices in NOR [€_2020/MWh] - Policy'][year])
+    P_co2_y = float(prices.loc['CO2 prices [€/t_CO2] - Policy'][year])
+    P_ccs_y = float(tea_blue.loc['CO2 transport and storage cost [€/t CO2] - Policy'][year])
 
     # calculate lcoe of specific year
     result.LCOH_blue.loc[year] = calculate_lcoh_ngr()
 
 result
 # Create csv file from results dataframe
-output_file = os.path.join(path_csv,'LCOH_blue_Pol.csv')
+output_file = os.path.join(path_csv,'LCOH_blue_NOR_Policy.csv')
 result.to_csv(output_file, sep = ';')
-LCOH_blue_Pol = result
+LCOH_blue_NOR_Policy = result
 
 # Plot cost curve of hydrogen production from NGR with CCS
 fig, ax = plt.subplots(figsize=(10,6))
@@ -627,18 +641,18 @@ ax.set_axisbelow(True)
 #plt.title('Cost curve for blue hydrogen production', fontweight='bold')
 plt.ylabel('[€/kg H2]')
 
-title = '\LLCOH_blue_Pol'
+title = '\LLCOH_blue_NOR_Policy'
 plt.savefig(path_plt + title + '.png', transparent=True)
 
 plt.show()
 
 
 """## Green LCOH"""
-LCOH_green_low = ((lcoh_green_source.loc['Norway_Onshore_2_low_temp_optimistic', 2025:2050]).mul(0.89))
-LCOH_green_df = pd.DataFrame(LCOH_green_low)
+LCOH_green_NOR_Policy= ((lcoh_green_source.loc['Norway_Onshore_2_low_temp_optimistic', 2025:2050]).mul(0.89))
+LCOH_green_df = pd.DataFrame(LCOH_green_NOR_Policy)
 LCOH_green_df.index.name = 'Years'
 
-LCOH_green_ref = ((lcoh_green_source.loc['Norway_Onshore_2_low_temp_baseline', 2025:2050]).mul(0.89))
+LCOH_green_NOR_Base = ((lcoh_green_source.loc['Norway_Onshore_2_low_temp_baseline', 2025:2050]).mul(0.89))
 
 # Create csv file from results dataframe
 output_file = os.path.join(path_csv,'LCOH_green.csv')
@@ -657,42 +671,38 @@ title = '\LCOH_green'
 plt.savefig(path_plt + title + '.png', transparent=True)
 plt.show()
 
-"""## Green and blue
-
-"""
-
-
-
+# Green and blue LCOH
 # Plot cost curves of hydrogen production from NGR with CCS and RES
 fig, ax = plt.subplots(figsize=(10,5))
-plt.plot(LCOH_green_ref, color = 'green', linestyle = 'solid', label='Green H2 - Reference')
+plt.plot(LCOH_green_NOR_Base, color ='green', linestyle ='solid', label='Green H2 - Baseline')
 
-plt.plot(LCOH_green_low, color = 'lime', linestyle = 'solid', label='Green H2 - Policy')
+plt.plot(LCOH_green_NOR_Policy, color ='lime', linestyle ='solid', label='Green H2 - Policy')
 
-plt.plot(LCOH_blue_Pol, color ='dodgerblue', linestyle ='solid', label='Blue H2 - Policy')
-plt.plot(LCOH_blue_Ref, color ='blue', linestyle ='solid', label='Blue H2 - Reference')
+plt.plot(LCOH_blue_NOR_Policy, color ='dodgerblue', linestyle ='solid', label='Blue H2 - Policy')
+plt.plot(LCOH_blue_NOR_Base, color ='blue', linestyle ='solid', label='Blue H2 - Baseline')
 plt.grid(True, axis = 'y')
 ax.set_axisbelow(True)
 #plt.title('LCOH green and blue', fontweight='bold')
 ax.legend()
 #plt.xlabel('Year')
 plt.ylabel('LCOH [€/kg H2]')
-
+plt.ylim(1.5,3)
+plt.xlim(2025,2050)
 title = '\LCOH_green_blue'
 plt.savefig(path_plt + title + '.png', transparent=True)
 plt.show()
 
-"""## Sensitivity analysis production"""
+"""## LCOH blue Sensi - Baseline"""
 sensi_year = 2030
 
 capex_y = float(tea_blue.loc['Capex [€/kW]'][sensi_year])
 opex_y = capex_y * opex_share
-Q_grey = float(GHG.loc['Grey hydrogen emissions [kg CO2/kg H2] - Norway']['Value'])
-Q_ce_y = float(GHG.loc['Captured emissions [kg CO2/kg H2]'][sensi_year])
-Q_ue_y = float(GHG.loc['Blue hydrogen emissions [kg CO2/kg H2] - Norway'][sensi_year])
-P_ng_y = float(prices.loc['Gas prices in NOR [€_2020/MWh] medium'][sensi_year])
-P_co2_y = float(prices.loc['EU ETS [€_2020/t_CO2]'][sensi_year])
-P_ccs_y = float(tea_blue.loc['CO2 transport and storage cost pess. [€/t CO2]'][sensi_year])
+Q_grey = float(GHG.loc['Grey hydrogen emissions [kg CO2/kg H2] - NOR Baseline']['Value'])
+Q_ce_y = float(GHG.loc['Captured emissions [kg CO2/kg H2] - NOR Baseline'][sensi_year])
+Q_ue_y = float(GHG.loc['Blue hydrogen emissions [kg CO2/kg H2] - NOR Baseline'][sensi_year])
+P_ng_y = float(prices.loc['Gas prices in NOR [€_2020/MWh] - Baseline'][sensi_year])
+P_co2_y = float(prices.loc['CO2 prices [€/t_CO2] - Baseline'][sensi_year])
+P_ccs_y = float(tea_blue.loc['CO2 transport and storage cost [€/t CO2] -  Baseline'][sensi_year])
 
 capture_rate = np.arange(0,1.01,0.1)
 lifetime = np.arange(1,30,2)
@@ -726,10 +736,10 @@ for year in years:
     # get capex, opex, natural gas price and CO2 price of specific year
     capex_y = float(tea_blue.loc['Capex [€/kW]'][year])
     opex_y = capex_y * opex_share
-    Q_ce_y = float(GHG.loc['Captured emissions [kg CO2/kg H2]'][year])
-    Q_ue_y = float(GHG.loc['Blue hydrogen emissions [kg CO2/kg H2] - Norway'][year])
-    P_ng_y = float(prices.loc['Gas prices in NOR [€_2020/MWh] medium'][year])
-    P_ccs_y = float(tea_blue.loc['CO2 transport and storage cost pess. [€/t CO2]'][year])
+    Q_ce_y = float(GHG.loc['Captured emissions [kg CO2/kg H2] - NOR Baseline'][year])
+    Q_ue_y = float(GHG.loc['Blue hydrogen emissions [kg CO2/kg H2] - NOR Baseline'][year])
+    P_ng_y = float(prices.loc['Gas prices in NOR [€_2020/MWh] - Baseline'][year])
+    P_ccs_y = float(tea_blue.loc['CO2 transport and storage cost [€/t CO2] -  Baseline'][year])
     for P_co2_y in P_CO2_range:
         result = calculate_lcoh_ngr_sensi_P_CO2()
         sensitivity.append(result)
@@ -1020,7 +1030,7 @@ for year in years:
     # get all costs
 
     LCOH_green = float(LCOH_green_df.loc[year]['Norway_Onshore_2_low_temp_optimistic'])
-    LCOH_blue = float(LCOH_blue_Ref.loc[year]['LCOH_blue'])
+    LCOH_blue = float(LCOH_blue_NOR_Base.loc[year]['LCOH_blue'])
 
     # calculate costs of specific year
     result.Minimal_production_costs.loc[year] = choose_minimal_production_costs()
@@ -1042,7 +1052,7 @@ for year in years:
     # get all costs
 
     LCOH_green = float(LCOH_green_df.loc[year]['Norway_Onshore_2_low_temp_optimistic'])
-    LCOH_blue = float(LCOH_blue_Ref.loc[year]['LCOH_blue'])
+    LCOH_blue = float(LCOH_blue_NOR_Base.loc[year]['LCOH_blue'])
 
     # calculate costs of specific year
     result.Minimal_production_costs.loc[year] = choose_minimal_production_costs()
@@ -1064,7 +1074,7 @@ LCOH_min = result
 fig, ax = plt.subplots(figsize=(10, 6))
 
 plt.plot(LCOH_green, color='green', linestyle='solid', label='Green hydrogen')
-plt.plot(LCOH_blue_Ref, color='blue', linestyle='solid', label='Blue hydrogen')
+plt.plot(LCOH_blue_NOR_Base, color='blue', linestyle='solid', label='Blue hydrogen')
 plt.grid(True, axis='y')
 ax.set_axisbelow(True)
 #plt.title('Cost curves for green and blue hydrogen production', fontweight='bold')

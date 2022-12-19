@@ -615,7 +615,7 @@ for year in years:
 
 result
 # Create csv file from results dataframe
-output_file = os.path.join(path_csv,'LCOH_blue_Pol.csv')
+output_file = os.path.join(path_csv,'LCOH_blue_NOR_Policy.csv')
 result.to_csv(output_file, sep = ';')
 LCOH_blue_Pol = result
 
@@ -627,7 +627,7 @@ ax.set_axisbelow(True)
 #plt.title('Cost curve for blue hydrogen production', fontweight='bold')
 plt.ylabel('[€/kg H2]')
 
-title = '\LLCOH_blue_Pol'
+title = '\LLCOH_blue_NOR_Policy'
 plt.savefig(path_plt + title + '.png', transparent=True)
 
 plt.show()
