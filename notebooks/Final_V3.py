@@ -674,19 +674,20 @@ plt.show()
 # Green and blue LCOH
 # Plot cost curves of hydrogen production from NGR with CCS and RES
 fig, ax = plt.subplots(figsize=(10,5))
-plt.plot(LCOH_green_NOR_Base, color ='green', linestyle ='solid', label='Green H2 - Baseline')
+plt.plot(LCOH_green_NOR_Base, color ='green', linestyle ='-', label='Green H2 - Baseline')
 
-plt.plot(LCOH_green_NOR_Policy, color ='lime', linestyle ='solid', label='Green H2 - Policy')
+plt.plot(LCOH_green_NOR_Policy, color ='green', linestyle ='--', label='Green H2 - Policy')
 
-plt.plot(LCOH_blue_NOR_Policy, color ='dodgerblue', linestyle ='solid', label='Blue H2 - Policy')
-plt.plot(LCOH_blue_NOR_Base, color ='blue', linestyle ='solid', label='Blue H2 - Baseline')
+plt.plot(LCOH_blue_NOR_Base, color ='blue', linestyle ='-', label='Blue H2 - Baseline')
+
+plt.plot(LCOH_blue_NOR_Policy, color ='blue', linestyle ='--', label='Blue H2 - Policy')
 plt.grid(True, axis = 'y')
 ax.set_axisbelow(True)
 #plt.title('LCOH green and blue', fontweight='bold')
 ax.legend()
 #plt.xlabel('Year')
 plt.ylabel('LCOH [€/kg H2]')
-plt.ylim(1.5,3)
+plt.ylim(1.5,)
 plt.xlim(2025,2050)
 title = '\LCOH_green_blue'
 plt.savefig(path_plt + title + '.png', transparent=True)
@@ -831,18 +832,16 @@ plt.subplot(1,2,1)
 
 plt.plot(lcoh_ngr_sensi_Lifetime, color='blue', linestyle='solid')
 plt.grid(True, axis='y')
-#plt.grid(True, axis='x')
+plt.grid(True, axis='x')
 ax.set_axisbelow(True)
 #plt.locator_params(axis='x', nbins=5)
 plt.ylabel('LCOH [€/kg H2]')
 plt.xlabel('Plant lifetime in years')
-#plt.legend()
-
 
 plt.subplot(1,2,2)
 plt.plot(lcoh_ngr_sensi_capture_rate, color='blue', linestyle='solid')
 plt.grid(True, axis='y')
-#plt.grid(True, axis='x')
+plt.grid(True, axis='x')
 ax.set_axisbelow(True)
 plt.xticks([0,0.25,0.5,0.75,1], ['0%','25%', '50%', '75%', '100%'])
 plt.locator_params(axis='x', nbins=5)
@@ -982,7 +981,7 @@ plt.plot(lcoh_ngr_sensi_P_NG, color='blue', linestyle='-', label = 'Gas Price [�
 plt.plot(lcoh_ngr_sensi_P_CO2, color='dodgerblue',linestyle='-', label = 'CO2 Price [€/t CO2]')
 plt.plot(lcoh_ngr_sensi_P_CCS, color='royalblue',linestyle='-', label = 'CCS Cost [€/t CO2]')
 plt.plot(lcoh_ngr_sensi_WACC, color='aqua',linestyle='-', label = 'WACC [%]')
-plt.plot(lcoh_ngr_sensi_WACC, color='slategrey',linestyle='-', label = 'CAPEX [€/kW]')
+plt.plot(lcoh_ngr_sensi_capex, color='slategrey',linestyle='-', label = 'CAPEX [€/kW]')
 plt.grid(True, axis='y')
 plt.grid(True, axis='x')
 ax.set_axisbelow(True)
@@ -990,6 +989,8 @@ ax.xaxis.set_major_formatter(mtick.PercentFormatter(10, decimals=None))
 plt.locator_params(axis='x', nbins=5)
 plt.ylabel('LCOH [€/kg H2]')
 plt.xlabel('Change')
+plt.xlim(0,20)
+
 plt.legend()
 
 title = '\LCOH_blue_sensi'
@@ -1038,10 +1039,10 @@ for year in years:
 
 result
 
-LCOH_min_cost_tech = result
+LCOH_min_cost_tech_Base = result
 
 # Create csv file from results dataframe
-output_file = os.path.join(path_csv, 'LCOH_min_cost_tech.csv')
+output_file = os.path.join(path_csv, 'LCOH_min_cost_tech_Base.csv')
 result.to_csv(output_file, sep=';')
 
 years = np.arange(2025, 2051)
@@ -1098,9 +1099,8 @@ plt.xlabel('Year')
 plt.ylabel('Cost')
 plt.show()
 
-"""## Respective production emissions"""
-
-blue_emissions = pd.DataFrame(GHG.loc['Blue hydrogen emissions [kg CO2/kg H2] - Norway', 2025:2050])
+"""##Baseline - Respective production emissions"""
+blue_emissions = pd.DataFrame(GHG.loc['Blue hydrogen emissions [kg CO2/kg H2] - NOR Baseline', 2025:2050])
 blue_emissions.index.name = 'Years'
 blue_emissions.columns= ['Emissions']
 blue_emissions
@@ -1111,7 +1111,7 @@ result = x.add(1*blue_prod_leakage*GWP20_H2)
 result"""
 
 # Create csv file from results dataframe
-output_file = os.path.join(path_csv, 'Blue_production_emissions_H2_leakage.csv')
+output_file = os.path.join(path_csv, 'Blue_production_emissions_H2_leakage_Base.csv')
 result.to_csv(output_file, sep=';')
 
 
@@ -1120,7 +1120,7 @@ emissions = []
 def append_emissions():
     for year in years:
 
-        if LCOH_min_cost_tech.loc[year]['Production_Technology'] == 'Green':
+        if LCOH_min_cost_tech_Base.loc[year]['Production_Technology'] == 'Green':
             result = 0
         else:
             result = blue_emissions.loc[year]['Emissions']
@@ -1131,11 +1131,11 @@ def append_emissions():
 
 append_emissions()
 
-LCOH_min_tech_em = LCOH_min_cost_tech.assign(Emissions=emissions)
+LCOH_min_tech_em_Base = LCOH_min_cost_tech_Base.assign(Emissions=emissions)
 
 # Create csv file from results dataframe
-output_file = os.path.join(path_csv, 'LCOH_min_tech_em.csv')
-LCOH_min_tech_em.to_csv(output_file, sep=';')
+output_file = os.path.join(path_csv, 'LCOH_min_tech_em_Base.csv')
+LCOH_min_tech_em_Base.to_csv(output_file, sep=';')
 
 """# Transport cost"""
 
@@ -1310,7 +1310,7 @@ retro_pipe_sensi_P_el
 output_file = os.path.join(path_csv, 'retro_pipe_sensi_P_el.csv')
 retro_pipe_sensi_P_el.to_csv(output_file, sep=';')
 
-"""### Transport distance sensi"""
+"""### Transport distance sensi Costs"""
 
 transport_distance = np.arange(0,10001, 500)
 sensitivity = []
@@ -1325,13 +1325,13 @@ def calculate_off_pipe_retrofit_sensi_distance():
 
 calculate_off_pipe_retrofit_sensi_distance()
 
-retro_pipe_sensi_distance = pd.DataFrame(sensitivity, transport_distance, columns=['Retrofit pipeline transport costs [€/kg H2]'])
-retro_pipe_sensi_distance.index.name = 'Transport distance in km'
+retro_pipe_sensi_distance_LCOT = pd.DataFrame(sensitivity, transport_distance, columns=['Retrofit pipeline transport costs [€/kg H2]'])
+retro_pipe_sensi_distance_LCOT.index.name = 'Transport distance in km'
 
 
 # Create csv file from results dataframe
-output_file = os.path.join(path_csv, 'retro_pipe_sensi_distance.csv')
-retro_pipe_sensi_distance.to_csv(output_file, sep=';')
+output_file = os.path.join(path_csv, 'retro_pipe_sensi_distance_LCOT.csv')
+retro_pipe_sensi_distance_LCOT.to_csv(output_file, sep=';')
 
 """### Sensitivity
 #### Electricity price sensi
@@ -1381,13 +1381,13 @@ def calculate_off_pipe_retrofit_sensi_distance():
 
 calculate_off_pipe_retrofit_sensi_distance()
 
-new_pipe_sensi_distance = pd.DataFrame(sensitivity, transport_distance, columns=['New pipeline transport costs [€/kg H2]'])
-new_pipe_sensi_distance.index.name = 'Transport distance in km'
-new_pipe_sensi_distance
+new_pipe_sensi_distance_LCOT = pd.DataFrame(sensitivity, transport_distance, columns=['New pipeline transport costs [€/kg H2]'])
+new_pipe_sensi_distance_LCOT.index.name = 'Transport distance in km'
+new_pipe_sensi_distance_LCOT
 
 # Create csv file from results dataframe
-output_file = os.path.join(path_csv, 'new_pipe_sensi_distance.csv')
-new_pipe_sensi_distance.to_csv(output_file, sep=';')
+output_file = os.path.join(path_csv, 'new_pipe_sensi_distance_LCOT.csv')
+new_pipe_sensi_distance_LCOT.to_csv(output_file, sep=';')
 
 """## LH2 transport"""
 
@@ -1569,7 +1569,7 @@ opex_ship_share
 """Fuel cost calculation"""
 
 # Cost of transported hydrogen carrier in [€/kg_h2] in year y
-H2_costs = (LCOH_min_tech_em.loc[::]['Minimal_production_costs']).apply(pd.to_numeric)
+H2_costs = (LCOH_min_tech_em_Base.loc[::]['Minimal_production_costs']).apply(pd.to_numeric)
 Con_costs = (LH2_Liquefaction_costs.loc[::]['LH2_Liquefaction_costs']).apply(pd.to_numeric)
 ET_costs =  (LH2_Export_terminal_costs.loc[::]['LH2_Export_terminal_costs']).apply(pd.to_numeric)
 
@@ -1884,7 +1884,7 @@ lh2_transport_sensi_P_el.to_csv(output_file, sep = ';')
 transport_distance = np.arange(0,10001, 500)
 sensitivity = []
 
-def lh2_transport_d(p_el_y, alpha_liq, alpha_et, alpha_ship, alpha_it, alpha_recon,capex_liq_y, capex_et_y,capex_ship_y, capex_it_y,  bog_ship, capex_recon_y, d_sea ,v_ship, f_ship, el_et ,el_it ,t_it ,el_recon_y):
+def lh2_transport_distance(p_el_y, alpha_liq, alpha_et, alpha_ship, alpha_it, alpha_recon,capex_liq_y, capex_et_y,capex_ship_y, capex_it_y,  bog_ship, capex_recon_y, d_sea ,v_ship, f_ship, el_et ,el_it ,t_it ,el_recon_y):
 
     for d_sea in transport_distance:
 
@@ -1899,15 +1899,18 @@ def lh2_transport_d(p_el_y, alpha_liq, alpha_et, alpha_ship, alpha_it, alpha_rec
 
     return sensitivity
 
-lh2_transport_d(p_el_y, alpha_liq, alpha_et, alpha_ship, alpha_it, alpha_recon,capex_liq_y, capex_et_y,capex_ship_y, capex_it_y,  bog_ship, capex_recon_y, d_sea ,v_ship, f_ship, el_et ,el_it ,t_it ,el_recon_y)
 
-lh2_transport_sensi_distance= pd.DataFrame(sensitivity, transport_distance, columns=['LH2 transport costs [€/kg H2]'])
-lh2_transport_sensi_distance.index.name = 'Transport distance in km'
-lh2_transport_sensi_distance
+lh2_transport_distance(p_el_y, alpha_liq, alpha_et, alpha_ship, alpha_it, alpha_recon, capex_liq_y, capex_et_y,
+                       capex_ship_y, capex_it_y, bog_ship, capex_recon_y, d_sea, v_ship, f_ship, el_et, el_it, t_it,
+                       el_recon_y)
+
+lh2_transport_sensi_distance_LCOT= pd.DataFrame(sensitivity, transport_distance, columns=['LH2 transport costs [€/kg H2]'])
+lh2_transport_sensi_distance_LCOT.index.name = 'Transport distance in km'
+lh2_transport_sensi_distance_LCOT
 
 # Create csv file from results dataframe
-output_file = os.path.join(path_csv,'lh2_transport_sensi_distance.csv')
-lh2_transport_sensi_distance.to_csv(output_file, sep = ';')
+output_file = os.path.join(path_csv,'lh2_transport_sensi_distance_LCOT.csv')
+lh2_transport_sensi_distance_LCOT.to_csv(output_file, sep = ';')
 
 """## NH3 Transport"""
 
@@ -2109,7 +2112,7 @@ opex_ship_share
 # Cost of transported hydrogen in [$/kg_h2] in year y
 
 # Cost of transported hydrogen carrier in [€/kg_h2] in year y
-H2_costs = (LCOH_min_tech_em.loc[::]['Minimal_production_costs']).apply(pd.to_numeric)
+H2_costs = (LCOH_min_tech_em_Base.loc[::]['Minimal_production_costs']).apply(pd.to_numeric)
 Con_costs = (LNH3_Conversion_costs.loc[::]['LNH3_Conversion_costs']).apply(pd.to_numeric)
 ET_costs = (LNH3_Export_terminal_costs.loc[::]['LNH3_Export_terminal_costs']).apply(pd.to_numeric)
 
@@ -2495,13 +2498,13 @@ def nh3_transport_sensi_distance(p_el_y, alpha_con, alpha_et, alpha_ship, alpha_
 
 nh3_transport_sensi_distance(p_el_y, alpha_con, alpha_et, alpha_ship, alpha_it, alpha_recon,capex_con_y, capex_et_y,capex_ship_y, capex_it_y,  bog_ship, capex_recon_y, d_sea ,v_ship, f_ship, el_et ,el_it ,t_it ,el_recon_y)
 
-lnh3_transport_sensi_distance= pd.DataFrame(sensitivity, transport_distance, columns=['LNH3 transport costs [€/kg H2]'])
-lnh3_transport_sensi_distance.index.name = 'Transport distance in km'
-lnh3_transport_sensi_distance
+lnh3_transport_sensi_distance_LCOT= pd.DataFrame(sensitivity, transport_distance, columns=['LNH3 transport costs [€/kg H2]'])
+lnh3_transport_sensi_distance_LCOT.index.name = 'Transport distance in km'
+lnh3_transport_sensi_distance_LCOT
 
 # Create csv file from results dataframe
-output_file = os.path.join(path_csv,'lnh3_transport_sensi_distance.csv')
-lnh3_transport_sensi_distance.to_csv(output_file, sep = ';')
+output_file = os.path.join(path_csv,'lnh3_transport_sensi_distance_LCOT.csv')
+lnh3_transport_sensi_distance_LCOT.to_csv(output_file, sep =';')
 
 """## Sensitivity Plots
 
@@ -2546,28 +2549,29 @@ plt.savefig(path_plt + title + '.png', transparent=True)
 
 plt.show()
 
-"""### Plot Transport distance sensi"""
+"""### Plot Transport distance sensi LCOT"""
 
 fig, ax = plt.subplots(figsize=(10,4))
 #plt.subplot(1,2,1)
 
 
-plt.plot(lh2_transport_sensi_distance, color='blue', linestyle='-', label = 'LH2')
-plt.plot(lnh3_transport_sensi_distance, color='darkorange', linestyle='-', label = 'NH3')
-plt.plot(new_pipe_sensi_distance, color='dodgerblue',linestyle='-', label = 'New pipeline')
-plt.plot(retro_pipe_sensi_distance, color='royalblue',linestyle='-', label = 'Retrofit pipeline')
+plt.plot(lh2_transport_sensi_distance_LCOT, color='blue', linestyle='-', label = 'LH2')
+plt.plot(lnh3_transport_sensi_distance_LCOT, color='darkorange', linestyle='-', label ='NH3')
+plt.plot(new_pipe_sensi_distance_LCOT, color='dodgerblue', linestyle='-', label ='New pipeline')
+plt.plot(retro_pipe_sensi_distance_LCOT, color='royalblue', linestyle='-', label ='Retrofit pipeline')
 plt.grid(True, axis='y')
 #plt.grid(True, axis='x')
 ax.set_axisbelow(True)
 plt.locator_params(axis='x', nbins=12)
 plt.ylabel('[€/kg H2]')
-plt.ylim(top = 4)
+plt.xlim(0,10000)
+plt.ylim(0,)
 plt.xlabel('Transport Distance in km')
 plt.legend()
 
 
 
-title = '\Transport_distance_sensi'
+title = '\Transport_distance_sensi_prices'
 plt.savefig(path_plt + title + '.png', transparent=True)
 
 plt.show()
@@ -2629,7 +2633,7 @@ Pipeline_emissions.to_csv(output_file, sep=';')
 
 EF_sensi = np.arange(0,301,20)
 sensitivity = []
-def Pipeline_emissions_sensi_EF():
+def Pipeline_emissions_sensi():
 
     for EF_y_n in EF_sensi:
 
@@ -2639,15 +2643,40 @@ def Pipeline_emissions_sensi_EF():
 
     return result
 
-Pipeline_emissions_sensi_EF()
+
+Pipeline_emissions_sensi()
 
 Pipeline_emissions_sensi_EF = pd.DataFrame(sensitivity, EF_sensi, columns=['Pipeline transport emission [g CO2eq/kg H2]'])
 Pipeline_emissions_sensi_EF.index.name = 'Electricity emission factor [g CO2eq/kWh]'
 Pipeline_emissions_sensi_EF
 
 # Create csv file from results dataframe
-output_file = os.path.join(path_csv, 'pipe_EF_sensi.csv')
+output_file = os.path.join(path_csv, 'Pipeline_emissions_sensi_EF.csv')
 Pipeline_emissions_sensi_EF.to_csv(output_file, sep=';')
+
+# Transport sensi emissions
+sensitivity = []
+def Pipeline_emissions_sensi():
+
+    for d_sea_sensi in transport_distance:
+
+        result = capa_comp * 1000 * pipe_use * 8760 / capa_pipe / 1000 * (d_sea_sensi) * EF_y_n
+
+        sensitivity.append(result)
+
+    return result
+
+
+Pipeline_emissions_sensi()
+
+Pipeline_sensi_distance_LEOT = pd.DataFrame(sensitivity, transport_distance, columns=['Pipeline transport emission [g CO2eq/kg H2]'])
+Pipeline_sensi_distance_LEOT.index.name = 'Transport distance in km'
+Pipeline_sensi_distance_LEOT
+
+# Create csv file from results dataframe
+output_file = os.path.join(path_csv, 'Pipeline_sensi_distance_LEOT.csv')
+Pipeline_sensi_distance_LEOT.to_csv(output_file, sep=';')
+
 
 """Plot emission breakdown for pipeline transport
 
@@ -2727,7 +2756,7 @@ Cost of transported hydrogen in [$/kg_h2] in year y
 
 
 # Emissions of transported hydrogen carrier in [g CO2eq/kg_H2] in year y
-H2_emissions = (LCOH_min_tech_em.loc[::]['Emissions']).apply(pd.to_numeric) * 1000
+H2_emissions = (LCOH_min_tech_em_Base.loc[::]['Emissions']).apply(pd.to_numeric) * 1000
 Con_emissions = (LH2_Conversion_emissions.loc[::]['LH2_Conversion_emissions']).apply(pd.to_numeric)
 ET_emissions = (LH2_Export_terminal_emissions.loc[::]['LH2_Export_terminal_emissions']).apply(pd.to_numeric)
 
@@ -2914,7 +2943,7 @@ plt.show()
 
 """@ 10.000 km shipping distance. Large contributers to total emissions are emissions factors for grid electricity in import/exporting countries (assumed zero from 2045).
 
-### Sensitivity
+### Sensitivity of LH2 to transport distance
 """
 
 year = 2030
@@ -2924,9 +2953,8 @@ LH2_cargo_ghg = float(LH2_cargo_emissions.loc[year]['LH2_cargo_emissions'])
 el_recon_y = float(tea_lh2.loc['Reconversion - Electricity consumption opt. [kWh/kg H2]'][year])
 #EF_y_G = float(GHG.loc['GHG intensity of electricity generation [g CO2eq/kWh] - Germany'][year])
 
-EF_sensi = np.arange(0,301,20)
 sensitivity = []
-def lh2_transport_sensi_EF(el_liq_y, EF_y_n, el_et, el_reliq, t_et, bog_ship, d_sea ,v_ship, f_ship, LH2_cargo_ghg ,el_it ,t_it ,el_recon_y):
+def lh2_transport_sensi(el_liq_y, EF_y_n, el_et, el_reliq, t_et, bog_ship, d_sea ,v_ship, f_ship, LH2_cargo_ghg ,el_it ,t_it ,el_recon_y):
 
     for EF_y_n in EF_sensi:
 
@@ -2941,7 +2969,9 @@ def lh2_transport_sensi_EF(el_liq_y, EF_y_n, el_et, el_reliq, t_et, bog_ship, d_
 
     return sensitivity
 
-lh2_transport_sensi_EF(el_liq_y, EF_y_n, el_et, el_reliq, t_et, bog_ship, d_sea ,v_ship, f_ship, LH2_cargo_ghg ,el_it ,t_it ,el_recon_y)
+
+lh2_transport_sensi(el_liq_y, EF_y_n, el_et, el_reliq, t_et, bog_ship, d_sea, v_ship, f_ship, LH2_cargo_ghg, el_it,
+                    t_it, el_recon_y)
 
 lh2_transport_sensi_EF= pd.DataFrame(sensitivity, EF_sensi, columns=['LH2 transport emission [g CO2eq/kg H2]'])
 lh2_transport_sensi_EF.index.name = 'Electricity emission [g CO2eq/kWh]'
@@ -2949,16 +2979,43 @@ lh2_transport_sensi_EF
 
 # Create csv file from results dataframe
 output_file = os.path.join(path_csv,'LH2_EF_sensi.csv')
-lh2_transport_sensi_EF.to_csv(output_file, sep = ';')
+lh2_transport_sensi_EF.to_csv(output_file, sep =';')
 
 import matplotlib.ticker as mtick
 
+# Transport distance sensi
+sensitivity = []
+def lh2_transport_sensi(el_liq_y, EF_y_n, el_et, el_reliq, t_et, bog_ship, d_sea ,v_ship, f_ship, LH2_cargo_ghg ,el_it ,t_it ,el_recon_y):
+
+    for d_sea_sensi in transport_distance:
+
+        result = \
+        (el_liq_y * EF_y_n )\
+        + ((el_et + el_reliq * t_et) * EF_y_n )\
+        + (1 / (1 - (bog_ship * d_sea_sensi / v_ship) - (f_ship * d_sea_sensi)) + (bog_ship * d_sea_sensi / v_ship + f_ship * d_sea_sensi) * LH2_cargo_ghg)\
+        + ((el_it + el_reliq * t_it) * EF_y_n )\
+        + (el_recon_y * EF_y_n )
+
+        sensitivity.append(result)
+
+    return sensitivity
+
+
+lh2_transport_sensi(el_liq_y, EF_y_n, el_et, el_reliq, t_et, bog_ship, d_sea, v_ship, f_ship, LH2_cargo_ghg, el_it,
+                    t_it, el_recon_y)
+
+lh2_transport_sensi_distance_LEOT= pd.DataFrame(sensitivity, transport_distance, columns=['LH2 transport emission [g CO2eq/kg H2]'])
+lh2_transport_sensi_distance_LEOT.index.name = 'Transport distance in km'
+lh2_transport_sensi_distance_LEOT
+
+# Create csv file from results dataframe
+output_file = os.path.join(path_csv,'lh2_transport_sensi_distance_LEOT.csv')
+lh2_transport_sensi_distance_LEOT.to_csv(output_file, sep =';')
 
 """## NH3 transport
 
 ### Conversion emissions
 """
-
 def Conversion_emissions():
     result = el_con_y * EF_y_n
     return result
@@ -3046,7 +3103,7 @@ Calc. emission factor for cargo/fuel
 """
 
 # Emissions of transported hydrogen carrier in [g CO2eq/kg_H2] in year y
-H2_emissions = (LCOH_min_tech_em.loc[::]['Emissions']).apply(pd.to_numeric) * 1000
+H2_emissions = (LCOH_min_tech_em_Base.loc[::]['Emissions']).apply(pd.to_numeric) * 1000
 Con_emissions = (NH3_Conversion_emissions.loc[::]['NH3_Conversion_emissions']).apply(pd.to_numeric)
 ET_emissions = (NH3_Export_terminal_emissions.loc[::]['NH3_Export_terminal_emissions']).apply(pd.to_numeric)
 # Emission of cargo in [g CO2eq/kg_H2]
@@ -3249,10 +3306,10 @@ el_recon_y = float(tea_lnh3.loc['Reconversion - Electricity consumption opt. [kW
 heat_recon_y = float(tea_lnh3.loc['Reconversion - Heat consumption opt. [kWh/kg H2]'][year])
 EF_y_n = 118  # float(GHG.loc['GHG intensity of electricity generation [g CO2eq/kWh] - Norway'][year])
 
-EF_sensi = np.arange(0,301,20)
+
 sensitivity = []
 
-def NH3_EF_sensi_w_recon(el_con_y, EF_y_n, el_et_nh3, el_reliq_nh3, t_et, bog_ship, d_sea, v_ship, f_ship, NH3_cargo_ghg, el_it, heat_recon_y, t_it, el_recon_y):
+def NH3_sensi_w_recon(el_con_y, EF_y_n, el_et_nh3, el_reliq_nh3, t_et, bog_ship, d_sea, v_ship, f_ship, NH3_cargo_ghg, el_it, heat_recon_y, t_it, el_recon_y):
 
     for EF_y_n in EF_sensi:
 
@@ -3268,16 +3325,18 @@ def NH3_EF_sensi_w_recon(el_con_y, EF_y_n, el_et_nh3, el_reliq_nh3, t_et, bog_sh
 
     return sensitivity
 
-NH3_EF_sensi_w_recon(el_con_y, EF_y_n, el_et_nh3, el_reliq_nh3, t_et, bog_ship, d_sea, v_ship, f_ship, NH3_cargo_ghg, el_it, heat_recon_y, t_it, el_recon_y)
 
-NH3_EF_sensi_w_recon = pd.DataFrame(sensitivity, EF_sensi, columns=['NH3 transport emission [g CO2eq/kg H2]'])
-NH3_EF_sensi_w_recon.index.name = 'Electricity emission [g CO2eq/KWh]]'
+NH3_sensi_w_recon(el_con_y, EF_y_n, el_et_nh3, el_reliq_nh3, t_et, bog_ship, d_sea, v_ship, f_ship, NH3_cargo_ghg,
+                  el_it, heat_recon_y, t_it, el_recon_y)
+
+NH3_sensi_w_recon_EF = pd.DataFrame(sensitivity, EF_sensi, columns=['NH3 transport emission [g CO2eq/kg H2]'])
+NH3_sensi_w_recon_EF.index.name = 'Electricity emission [g CO2eq/KWh]]'
 # Create csv file from results dataframe
-output_file = os.path.join(path_csv, 'NH3_EF_sensi_w_recon.csv')
-NH3_EF_sensi_w_recon.to_csv(output_file, sep=';')
+output_file = os.path.join(path_csv, 'NH3_sensi_w_recon_EF.csv')
+NH3_sensi_w_recon_EF.to_csv(output_file, sep=';')
 
 sensitivity = []
-def NH3_EF_sensi_wo_recon(el_con_y, EF_y_n, el_et_nh3, el_reliq_nh3, t_et, bog_ship, d_sea, v_ship, f_ship, NH3_cargo_ghg, el_it, heat_recon_y, t_it, el_recon_y):
+def NH3_sensi_wo_recon(el_con_y, EF_y_n, el_et_nh3, el_reliq_nh3, t_et, bog_ship, d_sea, v_ship, f_ship, NH3_cargo_ghg, el_it, heat_recon_y, t_it, el_recon_y):
 
     for EF_y_n in EF_sensi:
 
@@ -3294,24 +3353,80 @@ def NH3_EF_sensi_wo_recon(el_con_y, EF_y_n, el_et_nh3, el_reliq_nh3, t_et, bog_s
     return sensitivity
 
 # recall function
-NH3_EF_sensi_wo_recon(el_con_y, EF_y_n, el_et_nh3, el_reliq_nh3, t_et, bog_ship, d_sea, v_ship, f_ship, NH3_cargo_ghg, el_it, heat_recon_y, t_it, el_recon_y)
+NH3_sensi_wo_recon(el_con_y, EF_y_n, el_et_nh3, el_reliq_nh3, t_et, bog_ship, d_sea, v_ship, f_ship, NH3_cargo_ghg,
+                   el_it, heat_recon_y, t_it, el_recon_y)
 
-NH3_EF_sensi_wo_recon = pd.DataFrame(sensitivity, EF_sensi, columns=['NH3 transport emission w/o recon [g CO2eq/kg H2]'])
-NH3_EF_sensi_wo_recon.index.name = 'Electricity emission factor [g CO2eq/kWh]'
+NH3_sensi_wo_recon_EF = pd.DataFrame(sensitivity, EF_sensi, columns=['NH3 transport emission w/o recon [g CO2eq/kg H2]'])
+NH3_sensi_wo_recon_EF.index.name = 'Electricity emission factor [g CO2eq/kWh]'
 # Create csv file from results dataframe
-output_file = os.path.join(path_csv, 'NH3_EF_sensi_wo_recon.csv')
-NH3_EF_sensi_wo_recon.to_csv(output_file, sep=';')
+output_file = os.path.join(path_csv, 'NH3_sensi_wo_recon_EF.csv')
+NH3_sensi_wo_recon_EF.to_csv(output_file, sep=';')
+
+# Transport distance sensi NH3 emissions
+sensitivity = []
+def NH3_sensi_w_recon(el_con_y, EF_y_n, el_et_nh3, el_reliq_nh3, t_et, bog_ship, d_sea, v_ship, f_ship, NH3_cargo_ghg, el_it, heat_recon_y, t_it, el_recon_y):
+
+    for d_sea_sensi in transport_distance:
+
+        result =\
+            (el_con_y * EF_y_n )\
+        + ((el_et_nh3 + el_reliq_nh3 * (NH3_lhv/H2_lhv) * t_et) * EF_y_n )\
+        + (1 / (1 - (bog_ship * d_sea_sensi / v_ship) - (f_ship * d_sea_sensi)) + (bog_ship * d_sea_sensi / v_ship + f_ship * d_sea_sensi) * NH3_cargo_ghg)\
+        + ((el_it + el_reliq * (NH3_lhv/H2_lhv) * t_it) * EF_y_n )\
+        + ((heat_recon_y + el_recon_y) * EF_y_n )
+
+        sensitivity.append(result)
+
+
+    return sensitivity
+
+
+NH3_sensi_w_recon(el_con_y, EF_y_n, el_et_nh3, el_reliq_nh3, t_et, bog_ship, d_sea, v_ship, f_ship, NH3_cargo_ghg,
+                  el_it, heat_recon_y, t_it, el_recon_y)
+
+NH3_sensi_w_recon_distance_LEOT = pd.DataFrame(sensitivity, transport_distance, columns=['NH3 transport emission [g CO2eq/kg H2]'])
+NH3_sensi_w_recon_distance_LEOT.index.name = 'Transport distance in km'
+# Create csv file from results dataframe
+output_file = os.path.join(path_csv, 'NH3_sensi_w_recon_distance_LEOT.csv')
+NH3_sensi_w_recon_distance_LEOT.to_csv(output_file, sep=';')
+
+sensitivity = []
+def NH3_sensi_wo_recon(el_con_y, EF_y_n, el_et_nh3, el_reliq_nh3, t_et, bog_ship, d_sea, v_ship, f_ship, NH3_cargo_ghg, el_it, heat_recon_y, t_it, el_recon_y):
+
+    for d_sea_sensi in transport_distance:
+
+        result =\
+            (el_con_y * EF_y_n )\
+        + ((el_et_nh3 + el_reliq_nh3 * (NH3_lhv/H2_lhv) * t_et) * EF_y_n )\
+        + (1 / (1 - (bog_ship * d_sea_sensi / v_ship) - (f_ship * d_sea_sensi)) + (bog_ship * d_sea_sensi / v_ship + f_ship * d_sea_sensi) * NH3_cargo_ghg)\
+        + ((el_it + el_reliq * (NH3_lhv/H2_lhv) * t_it) * EF_y_n )
+        #+ ((heat_recon_y + el_recon_y) * EF_y_n )
+
+        sensitivity.append(result)
+
+
+    return sensitivity
+
+# recall function
+NH3_sensi_wo_recon(el_con_y, EF_y_n, el_et_nh3, el_reliq_nh3, t_et, bog_ship, d_sea, v_ship, f_ship, NH3_cargo_ghg,
+                   el_it, heat_recon_y, t_it, el_recon_y)
+
+NH3_sensi_wo_recon_distance_LEOT = pd.DataFrame(sensitivity, transport_distance, columns=['NH3 transport emission w/o recon [g CO2eq/kg H2]'])
+NH3_sensi_wo_recon_distance_LEOT.index.name = 'Electricity emission factor [g CO2eq/kWh]'
+# Create csv file from results dataframe
+output_file = os.path.join(path_csv, 'NH3_sensi_wo_recon_distance_LEOT.csv')
+NH3_sensi_wo_recon_distance_LEOT.to_csv(output_file, sep=';')
 
 """## Plots"""
-# PLot EF_sensi
+# Plot transport sensi EF
 fig, ax = plt.subplots(figsize=(10,4))
 #plt.subplot(1,2,1)
 
 
-plt.plot(lh2_transport_sensi_EF, color='blue', linestyle='solid', label = 'LH2')
-plt.plot(NH3_EF_sensi_w_recon, color='darkorange',linestyle='-', label = 'NH3')
-plt.plot(NH3_EF_sensi_wo_recon, color='darkorange',linestyle='--', label = 'NH3 w/o cracking')
-plt.plot(Pipeline_emissions_sensi_EF, color='cornflowerblue',linestyle='-', label = 'Pipeline')
+plt.plot(lh2_transport_sensi_EF, color='blue', linestyle='solid', label ='LH2')
+plt.plot(NH3_sensi_w_recon_EF, color='darkorange', linestyle='-', label ='NH3')
+plt.plot(NH3_sensi_wo_recon_EF, color='darkorange', linestyle='--', label ='NH3 w/o cracking')
+plt.plot(Pipeline_sensi_distance_LEOT, color='cornflowerblue', linestyle='-', label ='Pipeline')
 
 plt.axvline(x=30, color='grey', linestyle = '--')
 plt.axvline(x=275, color='grey', linestyle = '--')
@@ -3334,6 +3449,34 @@ title = '\Transport_EF_sensi'
 plt.savefig(path_plt + title + '.png', transparent=True)
 
 plt.show()
+
+"""### Plot Transport distance sensi Emissions"""
+
+fig, ax = plt.subplots(figsize=(10,4))
+#plt.subplot(1,2,1)
+
+
+plt.plot(lh2_transport_sensi_distance_LEOT, color='blue', linestyle='-', label = 'LH2')
+plt.plot(NH3_sensi_wo_recon_distance_LEOT, color='darkorange', linestyle='--', label ='NH3')
+plt.plot(NH3_sensi_w_recon_distance_LEOT, color='darkorange', linestyle='-', label ='NH3')
+plt.plot(Pipeline_sensi_distance_LEOT, color='royalblue', linestyle='-', label ='Pipeline')
+plt.grid(True, axis='y')
+#plt.grid(True, axis='x')
+ax.set_axisbelow(True)
+plt.locator_params(axis='x', nbins=12)
+plt.ylabel('[g CO2eq/kg H2]')
+plt.xlim(0,10000)
+#plt.ylim(0,)
+plt.xlabel('Transport Distance in km')
+plt.legend()
+
+
+
+title = '\Transport_distance_sensi_emissions'
+plt.savefig(path_plt + title + '.png', transparent=True)
+
+plt.show()
+
 
 """## Transport inputs"""
 
@@ -3464,7 +3607,8 @@ plt.axvline(x=av_new, color='dodgerblue', linestyle = '--')
 plt.axvline(x=av_retro, color='royalblue', linestyle = '--')
 plt.text(av_new, 2.8, 'New pipeline\navailable', horizontalalignment='center', verticalalignment='center')
 plt.text(av_retro,2.8,  'Retrofit pipeline\navailable', horizontalalignment='center', verticalalignment='center')
-
+plt.xlim(2025,2050)
+plt.ylim(0,)
 plt.grid(True, axis='y')
 ax.set_axisbelow(True)
 #plt.title('Hydrogen transport costs ', fontweight='bold')
@@ -3546,7 +3690,7 @@ result.index.name = 'Years'
 for year in years:
     # get all emissions
 
-    PE = float(LCOH_min_tech_em.loc[year]['Emissions'])
+    PE = float(LCOH_min_tech_em_Base.loc[year]['Emissions'])
     TE = float(LCOT_min_tech_em.loc[year]['Emissions'])
 
 
@@ -3613,7 +3757,7 @@ plt.grid(True, axis = 'y')
 ax.set_axisbelow(True)
 x = np.arange(2025, 2051, step=5)
 
-PE = (LCOH_min_tech_em.loc[::5]['Emissions']).apply(pd.to_numeric)
+PE = (LCOH_min_tech_em_Base.loc[::5]['Emissions']).apply(pd.to_numeric)
 TE = (LCOT_min_tech_em.loc[::5]['Emissions']).apply(pd.to_numeric)
 width = 2       # the width of the bars: can also be len(x) sequence
 
@@ -3632,7 +3776,7 @@ plt.show()
 
 
 # Final supply df
-Supply_df = pd.concat([LCOH_min_tech_em, LCOT_min_tech_em, Supply_costs, Supply_emissions], axis=1)
+Supply_df = pd.concat([LCOH_min_tech_em_Base, LCOT_min_tech_em, Supply_costs, Supply_emissions], axis=1)
 
 # Create csv file from results dataframe
 output_file = os.path.join(path_csv, 'Supply_df.csv')

@@ -1031,7 +1031,7 @@ result
 LCOH_min_cost_tech = result
 
 # Create csv file from results dataframe
-output_file = os.path.join(path_csv, 'LCOH_min_cost_tech.csv')
+output_file = os.path.join(path_csv, 'LCOH_min_cost_tech_Base.csv')
 result.to_csv(output_file, sep=';')
 
 years = np.arange(2025, 2051)
@@ -1320,7 +1320,7 @@ retro_pipe_sensi_distance.index.name = 'Transport distance in km'
 
 
 # Create csv file from results dataframe
-output_file = os.path.join(path_csv, 'retro_pipe_sensi_distance.csv')
+output_file = os.path.join(path_csv, 'retro_pipe_sensi_distance_LCOT.csv')
 retro_pipe_sensi_distance.to_csv(output_file, sep=';')
 
 """### Sensitivity
@@ -1376,7 +1376,7 @@ new_pipe_sensi_distance.index.name = 'Transport distance in km'
 new_pipe_sensi_distance
 
 # Create csv file from results dataframe
-output_file = os.path.join(path_csv, 'new_pipe_sensi_distance.csv')
+output_file = os.path.join(path_csv, 'new_pipe_sensi_distance_LCOT.csv')
 new_pipe_sensi_distance.to_csv(output_file, sep=';')
 
 """## LH2 transport"""
@@ -2490,7 +2490,7 @@ lnh3_transport_sensi_distance.index.name = 'Transport distance in km'
 lnh3_transport_sensi_distance
 
 # Create csv file from results dataframe
-output_file = os.path.join(path_csv,'lnh3_transport_sensi_distance.csv')
+output_file = os.path.join(path_csv,'lnh3_transport_sensi_distance_LCOT.csv')
 lnh3_transport_sensi_distance.to_csv(output_file, sep = ';')
 
 """## Sensitivity Plots
@@ -3263,7 +3263,7 @@ NH3_EF_sensi_w_recon(el_con_y, EF_y_n, el_et_nh3, el_reliq_nh3, t_et, bog_ship, 
 NH3_EF_sensi_w_recon = pd.DataFrame(sensitivity, EF_sensi, columns=['NH3 transport emission [g CO2eq/kg H2]'])
 NH3_EF_sensi_w_recon.index.name = 'Electricity emission [g CO2eq/KWh]]'
 # Create csv file from results dataframe
-output_file = os.path.join(path_csv, 'NH3_EF_sensi_w_recon.csv')
+output_file = os.path.join(path_csv, 'NH3_sensi_w_recon_EF.csv')
 NH3_EF_sensi_w_recon.to_csv(output_file, sep=';')
 
 sensitivity = []
@@ -3289,7 +3289,7 @@ NH3_EF_sensi_wo_recon(el_con_y, EF_y_n, el_et_nh3, el_reliq_nh3, t_et, bog_ship,
 NH3_EF_sensi_wo_recon = pd.DataFrame(sensitivity, EF_sensi, columns=['NH3 transport emission w/o recon [g CO2eq/kg H2]'])
 NH3_EF_sensi_wo_recon.index.name = 'Electricity emission factor [g CO2eq/kWh]'
 # Create csv file from results dataframe
-output_file = os.path.join(path_csv, 'NH3_EF_sensi_wo_recon.csv')
+output_file = os.path.join(path_csv, 'NH3_sensi_wo_recon_EF.csv')
 NH3_EF_sensi_wo_recon.to_csv(output_file, sep=';')
 
 """## Plots"""

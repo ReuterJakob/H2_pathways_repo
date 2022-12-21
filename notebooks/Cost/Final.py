@@ -375,7 +375,7 @@ retro_pipe_sensi_distance.index.name = 'Transport distance in km'
 retro_pipe_sensi_distance
 
 # Create csv file from results dataframe
-output_file = os.path_excel.join(path_csv, 'retro_pipe_sensi_distance.csv')
+output_file = os.path_excel.join(path_csv, 'retro_pipe_sensi_distance_LCOT.csv')
 retro_pipe_sensi_distance.to_csv(output_file, sep=';')
 
 """## Retrofit offshore pipeline cost"""
@@ -471,7 +471,7 @@ new_pipe_sensi_distance.index.name = 'Transport distance in km'
 new_pipe_sensi_distance
 
 # Create csv file from results dataframe
-output_file = os.path_excel.join(path_csv, 'new_pipe_sensi_distance.csv')
+output_file = os.path_excel.join(path_csv, 'new_pipe_sensi_distance_LCOT.csv')
 new_pipe_sensi_distance.to_csv(output_file, sep=';')
 
 """## LH2 transport"""
@@ -1605,7 +1605,7 @@ lnh3_transport_sensi_distance.index.name = 'Transport distance in km'
 lnh3_transport_sensi_distance
 
 # Create csv file from results dataframe
-output_file = os.path_excel.join(path_csv, 'lnh3_transport_sensi_distance.csv')
+output_file = os.path_excel.join(path_csv, 'lnh3_transport_sensi_distance_LCOT.csv')
 lnh3_transport_sensi_distance.to_csv(output_file, sep = ';')
 
 """## Sensitivity Plots
@@ -2533,7 +2533,7 @@ nh3_transport_sensi_wo_recon.index.name = 'Electricity emission factor [g CO2eq/
 nh3_transport_sensi_wo_recon
 
 # Create csv file from results dataframe
-output_file = os.path_excel.join(path_csv, 'NH3_EF_sensi_wo_recon.csv')
+output_file = os.path_excel.join(path_csv, 'NH3_sensi_wo_recon_EF.csv')
 nh3_transport_sensi_wo_recon.to_csv(output_file, sep=';')
 
 """## Plots"""
