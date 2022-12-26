@@ -2528,7 +2528,7 @@ nh3_transport_sensi_EF = pd.DataFrame(sensitivity, EF_sensi, columns=['NH3 trans
 nh3_transport_sensi_EF.index.name = 'Electricity emission [g CO2eq/KWh]]'
 nh3_transport_sensi_EF
 
-#nh3_transport_sensi_wo_recon = pd.DataFrame(sensitivity, EF_sensi, columns=['NH3 transport emission w/o recon [g CO2eq/kg H2]'])
+#nh3_transport_sensi_wo_recon = pd.DataFrame(sensitivity, EF_sensi_fixed, columns=['NH3 transport emission w/o recon [g CO2eq/kg H2]'])
 nh3_transport_sensi_wo_recon.index.name = 'Electricity emission factor [g CO2eq/kWh]'
 nh3_transport_sensi_wo_recon
 

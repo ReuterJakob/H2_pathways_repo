@@ -9,7 +9,7 @@ import xlwings as xl
 
 #Directory
 
-path_excel = r'\\dena.de\Daten\Home\Reuter\Desktop\H2_pathways_repo\data\raw\H2_supply_route_assessment.xlsx'
+path_excel = r'\\dena.de\Daten\Home\Reuter\Desktop\H2_pathways_repo\data\raw\H2_supply_route_assessment_V2.xlsx'
 path_csv = r'\\dena.de\Daten\Home\Reuter\Desktop\H2_pathways_repo\data\interim'
 path_plt = r'\\dena.de\Daten\Home\Reuter\Desktop\H2_pathways_repo\Plots_v3'
 
@@ -21,12 +21,12 @@ params = {'font.size':11,
     }
 plt.rcParams.update(params)
 
-def df_from_excel(path):
+def df_from_excel(path_excel):
     app = xl.App(visible=False)
-    book = app.books.open(path)
+    book = app.books.open(path_excel)
     book.save()
     app.kill()
-    return pd.read_excel(path)
+    return pd.read_excel(path_excel)
 
 df = df_from_excel(path_excel)
 
@@ -38,13 +38,44 @@ df = df_from_excel(path_excel)
 
 prices = pd.read_excel(path_excel, sheet_name='Commodity Prices', decimal=',', index_col=0)
 
-
 GHG = pd.read_excel(path_excel, sheet_name='GHG Footprint', decimal=',', index_col=0)
 
 tea_blue = pd.read_excel(path_excel, sheet_name='LCOH_NGR', decimal=',', index_col=0)
 
 lcoh_green_source = pd.read_excel(path_excel, sheet_name='LCOH_RES', decimal=',', index_col=0)
 
+## Plot price inputs.
+co2_prices_baseline = prices.loc['CO2 prices [€/t_CO2] - Baseline', 2025:2050]
+co2_prices_policy = prices.loc['CO2 prices [€/t_CO2] - Policy',2025:2050]
+el_prices_baseline_nor = prices.loc['Electricity prices in Norway [€_2021/MWh] Baseline', 2025:2050]
+el_prices_policy_nor = prices.loc['Electricity prices in Norway [€_2021/MWh] Policy',2025:2050]
+el_prices_baseline_ger = prices.loc['Electricity prices in Germany [€_2020/MWh] Baseline', 2025:2050]
+el_prices_policy_ger = prices.loc['Electricity prices in Germany [€_2020/MWh] Policy',2025:2050]
+gas_prices_baseline_nor = prices.loc['Gas prices in NOR [€_2020/MWh] - Baseline', 2025:2050]
+gas_prices_policy_nor = prices.loc['Gas prices in NOR [€_2020/MWh] - Policy',2025:2050]
+
+fig, ax = plt.subplots(figsize=(10,6), frameon=False, layout = 'constrained')
+plt.plot(co2_prices_baseline, color= 'red', linestyle= '-', label= ' CO2 prices Baseline')
+plt.plot(co2_prices_policy, color='red', linestyle= '--',label='CO2 prices Policy')
+plt.plot(el_prices_baseline_nor, color= 'yellow', linestyle= '-',label= 'Electricity prices NOR Baseline')
+plt.plot(el_prices_policy_nor, color='yellow', linestyle= '--',label='Electricity prices NOR Policy')
+plt.plot(el_prices_baseline_ger, color= 'gold', linestyle= '-',label= ' Electricity prices GER Baseline')
+plt.plot(el_prices_policy_ger, color='gold', linestyle= '--',label='Electricity prices GER Policy')
+plt.plot(gas_prices_baseline_nor, color='blue', linestyle= '-',label='Gas prices NOR Baseline')
+plt.plot(gas_prices_policy_nor, color='blue', linestyle= '--',label='Gas prices NOR Policy')
+ax2 = ax.secondary_yaxis('right')
+ax2.set_ylabel('[€/MWh]')
+plt.grid(True, axis = 'y')
+ax.set_ylabel(ylabel= ('[€/t CO2]'))
+#ax.yaxis.set_major_locator(mtick.LinearLocator(18))
+ax.set_ylim(0,)
+plt.xlim(2025,2050)
+ax.set_axisbelow(True)
+plt.legend()
+
+title = '\Inputs'
+plt.savefig(path_plt + title + '.png', transparent=True)
+plt.show()
 
 """# Production emissions
 
@@ -705,10 +736,6 @@ P_ng_y = float(prices.loc['Gas prices in NOR [€_2020/MWh] - Baseline'][sensi_y
 P_co2_y = float(prices.loc['CO2 prices [€/t_CO2] - Baseline'][sensi_year])
 P_ccs_y = float(tea_blue.loc['CO2 transport and storage cost [€/t CO2] -  Baseline'][sensi_year])
 
-capture_rate = np.arange(0,1.01,0.1)
-lifetime = np.arange(1,30,2)
-
-
 ## Green vs blue
 
 # Green costs from EWI adjusted to EUR_2022
@@ -718,7 +745,7 @@ LCOH_green_NOR_opt = (lcoh_green.filter(regex ='Norway.*', axis = 'index').filte
 # Calculation of LCOH from NGR for every year from 2025 to 2050.
 years = np.arange(2025,2051)
 n_years = len(years)
-P_CO2_range = np.arange(0,301,50)
+P_CO2_range = np.arange(0,501,100)
 n_prices =len(P_CO2_range)
 # get capex, opex, natural gas price and CO2 price of specific year
 
@@ -760,6 +787,7 @@ price_sensitivities = pd.DataFrame(
     columns=cols,
 )
 price_sensitivities
+
 # Plot green vs blue sensi
 fig, ax = plt.subplots(figsize=(10,4))
 years = np.arange(2025,2051,5)
@@ -771,6 +799,7 @@ plt.plot(price_sensitivities, color='blue', linestyle='solid', label = 'H2 from 
 plt.grid(True, axis='y')
 plt.grid(True, axis='x')
 ax.set_axisbelow(True)
+plt.xlim(2025,2050)
 #ax.xaxis.set_major_formatter(mtick.PercentFormatter(10, decimals=None))
 #plt.locator_params(axis='x', nbins=10)
 plt.ylabel('[€/kg H2]')
@@ -784,8 +813,9 @@ plt.savefig(output_file+'.png', transparent = True)
 
 plt.show()
 
-
 # Lifetime sensi
+
+lifetime = np.arange(1,30,1)
 sensitivity = []
 def calculate_lcoh_ngr_sensi_Lifetime(alpha_ngr, capex_y, opex_y, CF, P_ng_y, n, Q_ce_y, P_ccs_y, Q_ue_y, P_co2_y, LHV_h2):
 
@@ -806,6 +836,7 @@ lcoh_ngr_sensi_Lifetime= pd.DataFrame(sensitivity, index= lifetime, columns=['LC
 lcoh_ngr_sensi_Lifetime.index.name = 'Lifetime of plant in years'
 
 # Capture rate sensi on costs
+capture_rate = np.arange(0,1.01,0.1)
 sensitivity = []
 def calculate_lcoh_ngr_sensi_Lifetime(alpha_ngr, capex_y, opex_y, CF, P_ng_y, n, Q_ce_y, P_ccs_y, Q_ue_y, P_co2_y, LHV_h2):
 
@@ -825,7 +856,7 @@ lcoh_ngr_sensi_capture_rate= pd.DataFrame(sensitivity, index= capture_rate, colu
 lcoh_ngr_sensi_capture_rate.index.name = 'capture rate in %'
 lcoh_ngr_sensi_capture_rate
 
-#lifetime and capture rate sensi LCOH blue
+#Plot lifetime and capture rate sensi LCOH blue
 fig, ax = plt.subplots(figsize=(10,4))
 plt.subplot(1,2,1)
 
@@ -833,6 +864,7 @@ plt.subplot(1,2,1)
 plt.plot(lcoh_ngr_sensi_Lifetime, color='blue', linestyle='solid')
 plt.grid(True, axis='y')
 plt.grid(True, axis='x')
+plt.xlim(0,30)
 ax.set_axisbelow(True)
 #plt.locator_params(axis='x', nbins=5)
 plt.ylabel('LCOH [€/kg H2]')
@@ -845,7 +877,8 @@ plt.grid(True, axis='x')
 ax.set_axisbelow(True)
 plt.xticks([0,0.25,0.5,0.75,1], ['0%','25%', '50%', '75%', '100%'])
 plt.locator_params(axis='x', nbins=5)
-plt.ylabel('[€/kg H2]')
+plt.xlim(0,1)
+plt.ylabel('LCOH [€/kg H2]')
 plt.xlabel('Capture rate')
 #plt.legend()
 
@@ -1146,8 +1179,9 @@ tea_pipe
 tra_d = pd.read_excel(path_excel, sheet_name='Transport Distances', decimal=',')
 tra_d
 
-el_price = pd.read_excel(path_excel, sheet_name='Commodity Prices', index_col=0, decimal=',')
-el_price
+prices = pd.read_excel(path_excel, sheet_name='Commodity Prices', index_col=0, decimal=',')
+prices
+
 
 # WACC for all transport investments (pipelines, terminals, liquefaction plants)
 i_tra = float(tea_pipe.loc['Discount rate [%]']['Parameter'])
@@ -1229,7 +1263,7 @@ result = pd.DataFrame(index=years, columns=['New_Pipeline_costs_off'])
 result.index.name = 'Years'
 
 for year in years:
-    p_el_y = float(el_price.loc['Electricity prices in Norway [€_2021/MWh]'][year])
+    p_el_y = float(prices.loc['Electricity prices in Norway [€_2021/MWh] Baseline'][year])
 
     result.New_Pipeline_costs_off.loc[year] = calculate_off_pipe_new()
 
@@ -1268,7 +1302,7 @@ result = pd.DataFrame(index=years, columns=['Retrofit_pipeline_costs_off'])
 result.index.name = 'Years'
 
 for year in years:
-    p_el_y = float(el_price.loc['Electricity prices in Norway [€_2021/MWh]'][year])
+    p_el_y = float(prices.loc['Electricity prices in Norway [€_2021/MWh] Baseline'][year])
 
     result.Retrofit_pipeline_costs_off.loc[year] = calculate_off_pipe_retrofit()
 
@@ -1286,7 +1320,7 @@ Retrofit_pipeline_costs_off.to_csv(output_file, sep = ';')
 
 sensi_year = 2030
 d_sea_sensi = 1000
-p_el_y = float(el_price.loc['Electricity prices in Norway [€_2021/MWh]'][sensi_year])
+p_el_y = float(prices.loc['Electricity prices in Norway [€_2021/MWh] Baseline'][sensi_year])
 
 P_el_sensi = np.arange(0,121,10)
 sensitivity = []
@@ -1338,7 +1372,7 @@ retro_pipe_sensi_distance_LCOT.to_csv(output_file, sep=';')
 """
 
 sensi_year = 2030
-#p_el_y = float(el_price.loc['Electricity prices in Norway [€_2021/MWh]'][year])
+#p_el_y = float(prices.loc['Electricity prices in Norway [€_2021/MWh] Baseline'b][year])
 
 P_el_sensi = np.arange(0,121,10)
 sensitivity = []
@@ -1366,7 +1400,7 @@ new_pipe_sensi_P_el.to_csv(output_file, sep=';')
 """#### Transport distance sensi"""
 
 sensi_year = 2030
-p_el_y = float(el_price.loc['Electricity prices in Norway [€_2021/MWh]'][sensi_year])
+p_el_y = float(prices.loc['Electricity prices in Norway [€_2021/MWh] Baseline'][sensi_year])
 
 transport_distance = np.arange(0,10001, 500)
 sensitivity = []
@@ -1431,7 +1465,7 @@ for year in years:
     capex_liq_y = float(tea_lh2.loc['Liquefaction - Capex opt. [€/t/a]'][year])
     opex_liq_y = capex_liq_y * opex_liq_share
     el_liq_y = float(tea_lh2.loc['Liquefaction - Electricity consumption opt. [kWh/kgH2]'][year])
-    p_el_y = float(el_price.loc['Electricity prices in Norway [€_2021/MWh]'][year])
+    p_el_y = float(prices.loc['Electricity prices in Norway [€_2021/MWh] Baseline'][year])
 
     # calculate costs of specific year
     result.LH2_Liquefaction_costs.loc[year] = calculate_liq_costs_LH2(alpha_liq=alpha_liq, capex_liq_y=capex_liq_y, opex_liq_y=opex_liq_y, el_liq_y=el_liq_y, p_el_y=p_el_y)
@@ -1508,7 +1542,7 @@ for year in years:
     # get capex, opex, xx
     capex_et_y = float(tea_lh2.loc['Export Terminal - CAPEX/tank [€/t/a]'][year])
     opex_et_y = capex_et_y * opex_et_share
-    p_el_y = float(el_price.loc['Electricity prices in Norway [€_2021/MWh]'][year])
+    p_el_y = float(prices.loc['Electricity prices in Norway [€_2021/MWh] Baseline'][year])
 
 
     # calculate costs of specific year
@@ -1681,7 +1715,7 @@ for year in years:
     # get capex, opex, xx
     capex_it_y = float(tea_lh2.loc['Import Terminal - CAPEX [€/t/a]'][year])
     opex_it_y = capex_it_y * opex_it_share
-    p_el_y = float(el_price.loc['Electricity prices in Germany [€_2020/MWh] medium'][year])
+    p_el_y = float(prices.loc['Electricity prices in Germany [€_2020/MWh] Baseline'][year])
 
 
     # calculate costs of specific year
@@ -1741,7 +1775,7 @@ for year in years:
     capex_recon_y = float(tea_lh2.loc['Reconversion - Capex opt. [€/t/a]'][year])
     opex_recon_y = capex_recon_y * opex_recon_share
     el_recon_y = float(tea_lh2.loc['Reconversion - Electricity consumption opt. [kWh/kg H2]'][year])
-    p_el_y = float(el_price.loc['Electricity prices in Germany [€_2020/MWh] medium'][year])
+    p_el_y = float(prices.loc['Electricity prices in Germany [€_2020/MWh] Baseline'][year])
 
     # calculate costs of specific year
     result.LH2_Reconversion_costs.loc[year] = calculate_recon_costs_LH2(alpha_recon=alpha_recon, capex_recon_y=capex_recon_y,
@@ -1842,14 +1876,16 @@ capex_it_y = float(tea_lh2.loc['Import Terminal - CAPEX [€/t/a]'][year])
 opex_it_y = capex_it_y * opex_it_share
 capex_ship_y = float(tea_lh2.loc['Shipping - Capex/Ship opt. [€/t/a]'][year])/1000
 opex_ship_y = capex_ship_y * opex_ship_share
-lcoh = float(LH2_cargo_cost.loc[year]['LH2_cargo_cost'])
+
 capex_recon_y = float(tea_lh2.loc['Reconversion - Capex opt. [€/t/a]'][year])
 opex_recon_y = capex_recon_y * opex_recon_share
 el_recon_y = float(tea_lh2.loc['Reconversion - Electricity consumption opt. [kWh/kg H2]'][year])
 
-p_el_y = float(el_price.loc['Electricity prices in Norway [€_2021/MWh]'][year])
+p_el_y = float(prices.loc['Electricity prices in Norway [€_2021/MWh] Baseline'][year])
 
 """#### Electricity price sensi"""
+lcoh = 3
+LH2_cargo_costs_sensi = (lcoh+((alpha_liq * capex_liq_y/1000 + opex_liq_y/1000) + el_liq_y * p_el_y/1000) + (alpha_et * capex_et_y/1000 + opex_et_y/1000) + (el_et + el_reliq * t_et) * p_el_y/1000)
 
 P_el_sensi = np.arange(0,121,10)
 sensitivity = []
@@ -1861,7 +1897,7 @@ def lh2_transport_sensi_P_el(p_el_y, alpha_liq, alpha_et, alpha_ship, alpha_it, 
         result = \
         ((alpha_liq * capex_liq_y/1000 + opex_liq_y/1000) + el_liq_y * p_el_y/1000)\
         + (alpha_et * capex_et_y/1000 + opex_et_y/1000) + (el_et + el_reliq * t_et) * p_el_y/1000 \
-        + (alpha_ship * capex_ship_y + opex_ship_y) / (8760/(2*(d_sea_seni/v_ship + h_ship)))/(1-(bog_ship * d_sea_seni/v_ship) - (f_ship  * d_sea_seni)) + (bog_ship * d_sea_seni/v_ship + f_ship * d_sea_seni) * lcoh\
+        + (alpha_ship * capex_ship_y + opex_ship_y) / (8760/(2*(d_sea_seni/v_ship + h_ship)))/(1-(bog_ship * d_sea_seni/v_ship) - (f_ship  * d_sea_seni)) + (bog_ship * d_sea_seni/v_ship + f_ship * d_sea_seni) * LH2_cargo_costs_sensi\
         + (alpha_it * capex_it_y/1000 + opex_it_y/1000) + (el_it + el_reliq * t_it) * p_el_y/1000 \
         + (alpha_recon * capex_recon_y / 1000 + opex_recon_y / 1000) + el_recon_y * p_el_y / 1000                 # Reconversion
 
@@ -1891,7 +1927,7 @@ def lh2_transport_distance(p_el_y, alpha_liq, alpha_et, alpha_ship, alpha_it, al
         result = \
         ((alpha_liq * capex_liq_y/1000 + opex_liq_y/1000) + el_liq_y * p_el_y/1000)\
         + (alpha_et * capex_et_y/1000 + opex_et_y/1000) + (el_et + el_reliq * t_et) * p_el_y/1000\
-        + (alpha_ship * capex_ship_y + opex_ship_y) / (8760/(2*(d_sea/v_ship + h_ship)))/(1-(bog_ship * d_sea/v_ship) - (f_ship  * d_sea)) + (bog_ship * d_sea/v_ship + f_ship * d_sea) * lcoh\
+        + (alpha_ship * capex_ship_y + opex_ship_y) / (8760/(2*(d_sea/v_ship + h_ship)))/(1-(bog_ship * d_sea/v_ship) - (f_ship  * d_sea)) + (bog_ship * d_sea/v_ship + f_ship * d_sea) * LH2_cargo_costs_sensi\
         + (alpha_it * capex_it_y/1000 + opex_it_y/1000) + (el_it + el_reliq * t_it) * p_el_y/1000\
         + (alpha_recon * capex_recon_y / 1000 + opex_recon_y / 1000) + el_recon_y * p_el_y / 1000\
 
@@ -1959,7 +1995,7 @@ for year in years:
     capex_con_y = float(tea_lnh3.loc['Conversion - Capex opt. [€/t/a]'][year])
     opex_con_y = capex_con_y * opex_con_share
     el_con_y = float(tea_lnh3.loc['Conversion - Electricity consumption opt. [kWh/kgH2]'][year])
-    p_el_y = float(el_price.loc['Electricity prices in Norway [€_2021/MWh]'][year])
+    p_el_y = float(prices.loc['Electricity prices in Norway [€_2021/MWh] Baseline'][year])
 
     # calculate costs of specific year
     result.LNH3_Conversion_costs.loc[year] = calculate_con_costs_NH3()
@@ -2047,7 +2083,7 @@ for year in years:
     # get capex, opex, xx
     capex_et_y = float(tea_lnh3.loc['Export Terminal - CAPEX for storage tanks [€/t/a]'][year])
     opex_et_y = float(tea_lnh3.loc['Export Terminal - Annual OPEX [€/t/a]'][year])
-    p_el_y = float(el_price.loc['Electricity prices in Norway [€_2021/MWh]'][year])
+    p_el_y = float(prices.loc['Electricity prices in Norway [€_2021/MWh] Baseline'][year])
 
     # calculate costs of specific year
     result.LNH3_Export_terminal_costs.loc[year] = calculate_export_terminal_costs_NH3()
@@ -2100,8 +2136,8 @@ NH3_lhv
 H2_lhv = 33.33
 
 # Boil-off when shipping in [%_NH3/day] to [%/hour]
-bog_ship = float(tea_lnh3.loc['Shipping - Boil off opt. [%/day]']['NH3'])/24 * (NH3_lhv/H2_lhv)
-bog_ship
+bog_ship_nh3 = float(tea_lnh3.loc['Shipping - Boil off opt. [%/day]']['NH3'])/24 * (NH3_lhv/H2_lhv)
+
 
 # Fuel consumption of a ship in [kg_NH3/t_NH3/km]
 #f_ship = float(tea_lnh3.loc['Shipping - Fuel use [kg NH3/t/km]']['NH3'])/1000 * (NH3_lhv/H2_lhv)
@@ -2130,15 +2166,15 @@ alpha [%]
 d_sea [km]
 v_ship [km/h]
 h_ship [h] berthing time
-bog_ship [%_H2/day]
-f_ship [kg_H2/kg_NH3/km]] Fuel use
+bog_ship_nh3 [%_H2/day]
+f_ship_nh3 [kg_H2/kg_NH3/km]] Fuel use
 
 """
 
-def calculate_ship_costs_NH3(alpha_ship, capex_ship_y, opex_ship_y, d_sea, v_ship, h_ship, bog_ship, f_ship, LNH3_costs_y):
+def calculate_ship_costs_NH3(alpha_ship, capex_ship_y, opex_ship_y, d_sea, v_ship, h_ship, bog_ship_nh3, f_ship_nh3, LNH3_costs_y):
     result = (alpha_ship * capex_ship_y + opex_ship_y)/(8760/(2*(d_sea/v_ship + h_ship)))\
-             /(1-(bog_ship * d_sea/v_ship) - (f_ship  * d_sea))\
-             + (bog_ship * d_sea/v_ship + f_ship * d_sea) * LNH3_costs_y
+             /(1-(bog_ship_nh3 * d_sea/v_ship) - (f_ship_nh3  * d_sea))\
+             + (bog_ship_nh3 * d_sea/v_ship + f_ship_nh3 * d_sea) * LNH3_costs_y
 
     return result
 
@@ -2151,11 +2187,11 @@ for year in years:
     # get capex, opex, xx
     capex_ship_y = float(tea_lnh3.loc['Shipping - Capex/Ship opt. [€/t/a]'][year])/1000
     opex_ship_y = capex_ship_y * opex_ship_share
-    f_ship = float(tea_lnh3.loc['Shipping - Fuel use [kg NH3/t/km]'][year])/1000 * (NH3_lhv/H2_lhv)
+    f_ship_nh3 = float(tea_lnh3.loc['Shipping - Fuel use [kg NH3/t/km]'][year])/1000 * (NH3_lhv/H2_lhv)
     LNH3_costs_y = float(LNH3_cargo_cost.loc[year])
 
     # calculate costs of specific year
-    result.LNH3_Shipping_costs.loc[year] = calculate_ship_costs_NH3(alpha_ship=alpha_ship, capex_ship_y=capex_ship_y, opex_ship_y=opex_ship_y, d_sea=d_sea, v_ship=v_ship, h_ship=h_ship, bog_ship=bog_ship, f_ship=f_ship, LNH3_costs_y=LNH3_costs_y)
+    result.LNH3_Shipping_costs.loc[year] = calculate_ship_costs_NH3(alpha_ship=alpha_ship, capex_ship_y=capex_ship_y, opex_ship_y=opex_ship_y, d_sea=d_sea, v_ship=v_ship, h_ship=h_ship, bog_ship_nh3=bog_ship_nh3, f_ship_nh3=f_ship_nh3, LNH3_costs_y=LNH3_costs_y)
 
 result
 
@@ -2223,7 +2259,7 @@ for year in years:
     # get capex, opex, xx
     capex_it_y = float(tea_lnh3.loc['Import Terminal - CAPEX for storage tanks [€/t/a]'][year])
     opex_it_y = float(tea_lnh3.loc['Import Terminal - Annual OPEX [€/t/a]'][year])
-    p_el_y = float(el_price.loc['Electricity prices in Germany [€_2020/MWh] medium'][year])
+    p_el_y = float(prices.loc['Electricity prices in Germany [€_2020/MWh] Baseline'][year])
 
 
     # calculate costs of specific year
@@ -2292,7 +2328,7 @@ for year in years:
     opex_recon_y = capex_recon_y * opex_recon_share
     el_recon_y = float(tea_lnh3.loc['Reconversion - Electricity consumption opt. [kWh/kg H2]'][year])
     heat_recon_y = float(tea_lnh3.loc['Reconversion - Heat consumption opt. [kWh/kg H2]'][year])
-    p_el_y = float(el_price.loc['Electricity prices in Germany [€_2020/MWh] medium'][year])
+    p_el_y = float(prices.loc['Electricity prices in Germany [€_2020/MWh] Baseline'][year])
 
     # calculate costs of specific year
     result.LNH3_Reconversion_costs.loc[year] = calculate_recon_costs_NH3(alpha_recon=alpha_recon, capex_recon_y=capex_recon_y,
@@ -2335,9 +2371,43 @@ result
 
 LNH3_transport_costs =result
 
-# Create csv file from results dataframe
-output_file = os.path.join(path_csv, 'LNH3_transport_costs.csv')
-result.to_csv(output_file, sep=';')
+# Nh3 transport costs w/o cracking
+years = np.arange(2025, 2051)
+result = pd.DataFrame(index=years, columns=['LNH3_transport_costs_wo_cracking'])
+result.index.name = 'Years'
+def nh3_transport_costs_wo_cracking():
+
+    result = \
+            (alpha_con * capex_con_y/1000 + opex_con_y/1000) + el_con_y * p_el_y_N / 1000 \
+            + (alpha_et * capex_et_y/1000 + opex_et_y/1000) + (el_et + el_reliq * (NH3_lhv/H2_lhv) * t_et) * p_el_y_N / 1000 \
+            + (alpha_ship * capex_ship_y + opex_ship_y) / (8760 / (2 * (d_sea / v_ship + h_ship))) / (1 - (bog_ship_nh3 * d_sea / v_ship) - (f_ship_nh3 * d_sea)) + (bog_ship_nh3 * d_sea / v_ship + f_ship_nh3 * d_sea) * LNH3_cargo_cost \
+            + (alpha_it * capex_it_y/1000 + opex_it_y/1000) + (el_it + el_reliq * (NH3_lhv/H2_lhv) * t_it) * p_el_y_G / 1000 \
+            #+ (alpha_recon * capex_recon_y / 1000 + opex_recon_y / 1000) + (heat_recon_y + el_recon_y) * p_el_y / 1000
+    return result
+
+    for year in years:
+        # get capex, opex, xx
+        capex_con_y = float(tea_lnh3.loc['Conversion - Capex opt. [€/t/a]'][year])
+        opex_con_y = capex_con_y * opex_con_share
+        el_con_y = float(tea_lnh3.loc['Conversion - Electricity consumption opt. [kWh/kgH2]'][year])
+        p_el_y_N = float(prices.loc['Electricity prices in Norway [€_2021/MWh] Baseline'][year])
+        capex_et_y = float(tea_lnh3.loc['Export Terminal - CAPEX for storage tanks [€/t/a]'][year])
+        opex_et_y = float(tea_lnh3.loc['Export Terminal - Annual OPEX [€/t/a]'][year])
+        capex_ship_y = float(tea_lnh3.loc['Shipping - Capex/Ship opt. [€/t/a]'][year]) / 1000
+        opex_ship_y = capex_ship_y * opex_ship_share
+        f_ship_nh3 = float(tea_lnh3.loc['Shipping - Fuel use [kg NH3/t/km]'][year]) / 1000 * (NH3_lhv / H2_lhv)
+        # LNH3_costs_y = float(LNH3_cargo_cost.loc[year])
+        capex_it_y = float(tea_lnh3.loc['Import Terminal - CAPEX for storage tanks [€/t/a]'][year])
+        opex_it_y = float(tea_lnh3.loc['Import Terminal - Annual OPEX [€/t/a]'][year])
+        p_el_y_G = float(prices.loc['Electricity prices in Germany [€_2020/MWh] Baseline'][year])
+
+        result.LNH3_transport_costs_wo_cracking.loc[year] = nh3_transport_costs_wo_cracking()
+
+    # Create csv file from results dataframe
+output_file = os.path.join(path_csv, 'LNH3_transport_costs_wo_recon.csv')
+    # transport.to_csv(output_file, sep=';')
+
+LNH3_transport_costs_wo_recon = result
 
 # Cost breakdown for NH3 shipping w/ recon
 fig, ax = plt.subplots(figsize=(10,6))
@@ -2409,29 +2479,29 @@ opex_it_y = capex_it_y * opex_it_share
 
 capex_ship_y = float(tea_lnh3.loc['Shipping - Capex/Ship opt. [€/t/a]'][year])/1000
 opex_ship_y = capex_ship_y * opex_ship_share
-f_ship = float(tea_lnh3.loc['Shipping - Fuel use [kg NH3/t/km]'][year])/1000 * (NH3_lhv/H2_lhv)
-LNH3_costs_y = float(LNH3_cargo_cost.loc[year])
+f_ship_nh3 = float(tea_lnh3.loc['Shipping - Fuel use [kg NH3/t/km]'][year])/1000 * (NH3_lhv/H2_lhv)
+
 
 capex_recon_y = float(tea_lnh3.loc['Reconversion - Capex opt. [€/t/a]'][year])
 opex_recon_y = capex_recon_y * opex_recon_share
 el_recon_y = float(tea_lnh3.loc['Reconversion - Electricity consumption opt. [kWh/kg H2]'][year])
 heat_recon_y = float(tea_lnh3.loc['Reconversion - Heat consumption opt. [kWh/kg H2]'][year])
 
-p_el_y = float(el_price.loc['Electricity prices in Norway [€_2021/MWh]'][year])
+p_el_y = float(prices.loc['Electricity prices in Norway [€_2021/MWh] Baseline'][year])
 
 """#### Electricity price sensi"""
-
+LNH3_cargo_cost_sensi = (lcoh + (alpha_con * capex_con_y/1000 + opex_con_y/1000) + el_con_y * p_el_y / 1000+ (alpha_et * capex_et_y/1000 + opex_et_y/1000) + (el_et + el_reliq * (NH3_lhv/H2_lhv) * t_et) * p_el_y / 1000)
 P_el_sensi = np.arange(0,121,10)
 sensitivity = []
 
-def nh3_transport_sensi_P_el(p_el_y, alpha_con, alpha_et, alpha_ship, alpha_it, alpha_recon,capex_con_y, capex_et_y,capex_ship_y, capex_it_y,  bog_ship, capex_recon_y, d_sea ,v_ship, f_ship, el_et ,el_it ,t_it ,el_recon_y):
+def nh3_transport_sensi_P_el(p_el_y, alpha_con, alpha_et, alpha_ship, alpha_it, alpha_recon,capex_con_y, capex_et_y,capex_ship_y, capex_it_y,  bog_ship_nh3, capex_recon_y, d_sea ,v_ship, f_ship_nh3, el_et ,el_it ,t_it ,el_recon_y):
 
     for p_el_y in P_el_sensi:
 
         result = \
             (alpha_con * capex_con_y/1000 + opex_con_y/1000) + el_con_y * p_el_y / 1000 \
             + (alpha_et * capex_et_y/1000 + opex_et_y/1000) + (el_et + el_reliq * (NH3_lhv/H2_lhv) * t_et) * p_el_y / 1000 \
-            + (alpha_ship * capex_ship_y + opex_ship_y) / (8760 / (2 * (d_sea_sensi / v_ship + h_ship))) / (1 - (bog_ship * d_sea_sensi / v_ship) - (f_ship * d_sea_sensi)) + (bog_ship * d_sea_sensi / v_ship + f_ship * d_sea_sensi) * LNH3_costs_y \
+            + (alpha_ship * capex_ship_y + opex_ship_y) / (8760 / (2 * (d_sea_sensi / v_ship + h_ship))) / (1 - (bog_ship_nh3 * d_sea_sensi / v_ship) - (f_ship_nh3 * d_sea_sensi)) + (bog_ship_nh3 * d_sea_sensi / v_ship + f_ship_nh3 * d_sea_sensi) * LNH3_cargo_cost_sensi \
             + (alpha_it * capex_it_y/1000 + opex_it_y/1000) + (el_it + el_reliq * (NH3_lhv/H2_lhv) * t_it) * p_el_y / 1000 \
             + (alpha_recon * capex_recon_y / 1000 + opex_recon_y / 1000) + (heat_recon_y + el_recon_y) * p_el_y / 1000
 
@@ -2439,7 +2509,7 @@ def nh3_transport_sensi_P_el(p_el_y, alpha_con, alpha_et, alpha_ship, alpha_it, 
 
     return sensitivity
 
-nh3_transport_sensi_P_el(p_el_y, alpha_con, alpha_et, alpha_ship, alpha_it, alpha_recon,capex_con_y, capex_et_y,capex_ship_y, capex_it_y,  bog_ship, capex_recon_y, d_sea ,v_ship, f_ship, el_et ,el_it ,t_it ,el_recon_y)
+nh3_transport_sensi_P_el(p_el_y, alpha_con, alpha_et, alpha_ship, alpha_it, alpha_recon,capex_con_y, capex_et_y,capex_ship_y, capex_it_y,  bog_ship_nh3, capex_recon_y, d_sea ,v_ship, f_ship_nh3, el_et ,el_it ,t_it ,el_recon_y)
 
 lnh3_transport_sensi_P_el= pd.DataFrame(sensitivity, P_el_sensi, columns=['LNH3 transport costs [€/kg H2]'])
 lnh3_transport_sensi_P_el.index.name = 'Electricity price [€/MWh]'
@@ -2452,14 +2522,14 @@ lnh3_transport_sensi_P_el.to_csv(output_file, sep = ';')
 # Pel sensi w/o recon
 sensitivity = []
 
-def nh3_transport_sensi_P_el_wo_recon(p_el_y, alpha_con, alpha_et, alpha_ship, alpha_it, alpha_recon,capex_con_y, capex_et_y,capex_ship_y, capex_it_y,  bog_ship, capex_recon_y, d_sea ,v_ship, f_ship, el_et ,el_it ,t_it ,el_recon_y):
+def nh3_transport_sensi_P_el_wo_recon(p_el_y, alpha_con, alpha_et, alpha_ship, alpha_it, alpha_recon,capex_con_y, capex_et_y,capex_ship_y, capex_it_y,  bog_ship_nh3, capex_recon_y, d_sea ,v_ship, f_ship_nh3, el_et ,el_it ,t_it ,el_recon_y):
 
     for p_el_y in P_el_sensi:
 
         result = \
             (alpha_con * capex_con_y/1000 + opex_con_y/1000) + el_con_y * p_el_y / 1000 \
             + (alpha_et * capex_et_y/1000 + opex_et_y/1000) + (el_et + el_reliq * (NH3_lhv/H2_lhv) * t_et) * p_el_y / 1000 \
-            + (alpha_ship * capex_ship_y + opex_ship_y) / (8760 / (2 * (d_sea_sensi / v_ship + h_ship))) / (1 - (bog_ship * d_sea_sensi / v_ship) - (f_ship * d_sea_sensi)) + (bog_ship * d_sea_sensi / v_ship + f_ship * d_sea_sensi) * LNH3_costs_y \
+            + (alpha_ship * capex_ship_y + opex_ship_y) / (8760 / (2 * (d_sea_sensi / v_ship + h_ship))) / (1 - (bog_ship_nh3 * d_sea_sensi / v_ship) - (f_ship_nh3 * d_sea_sensi)) + (bog_ship_nh3 * d_sea_sensi / v_ship + f_ship_nh3 * d_sea_sensi) * LNH3_cargo_cost_sensi \
             + (alpha_it * capex_it_y/1000 + opex_it_y/1000) + (el_it + el_reliq * (NH3_lhv/H2_lhv) * t_it) * p_el_y / 1000 \
         #+ (alpha_recon * capex_recon_y / 1000 + opex_recon_y / 1000) + (heat_recon_y + el_recon_y) * p_el_y / 1000
 
@@ -2467,7 +2537,7 @@ def nh3_transport_sensi_P_el_wo_recon(p_el_y, alpha_con, alpha_et, alpha_ship, a
 
     return sensitivity
 
-nh3_transport_sensi_P_el_wo_recon(p_el_y, alpha_con, alpha_et, alpha_ship, alpha_it, alpha_recon,capex_con_y, capex_et_y,capex_ship_y, capex_it_y,  bog_ship, capex_recon_y, d_sea ,v_ship, f_ship, el_et ,el_it ,t_it ,el_recon_y)
+nh3_transport_sensi_P_el_wo_recon(p_el_y, alpha_con, alpha_et, alpha_ship, alpha_it, alpha_recon,capex_con_y, capex_et_y,capex_ship_y, capex_it_y,  bog_ship_nh3, capex_recon_y, d_sea ,v_ship, f_ship, el_et ,el_it ,t_it ,el_recon_y)
 
 nh3_transport_sensi_P_el_wo_recon= pd.DataFrame(sensitivity, P_el_sensi, columns=['LNH3 transport costs [€/kg H2]'])
 nh3_transport_sensi_P_el_wo_recon.index.name = 'Electricity price [€/MWh]'
@@ -2481,14 +2551,14 @@ nh3_transport_sensi_P_el_wo_recon.to_csv(output_file, sep = ';')
 
 transport_distance = np.arange(0,10001, 500)
 sensitivity = []
-def nh3_transport_sensi_distance(p_el_y, alpha_con, alpha_et, alpha_ship, alpha_it, alpha_recon,capex_con_y, capex_et_y,capex_ship_y, capex_it_y,  bog_ship, capex_recon_y, d_sea ,v_ship, f_ship, el_et ,el_it ,t_it ,el_recon_y):
+def nh3_transport_sensi_distance(p_el_y, alpha_con, alpha_et, alpha_ship, alpha_it, alpha_recon,capex_con_y, capex_et_y,capex_ship_y, capex_it_y,  bog_ship_nh3, capex_recon_y, d_sea ,v_ship, f_ship_nh3, el_et ,el_it ,t_it ,el_recon_y):
 
     for d_sea in transport_distance:
 
         result = \
         (alpha_con * capex_con_y/1000 + opex_con_y/1000) + el_con_y * p_el_y/1000 \
         + (alpha_et * capex_et_y/1000 + opex_et_y/1000) + (el_et + el_reliq * (NH3_lhv/H2_lhv) * t_et) * p_el_y /1000 \
-        + (alpha_ship * capex_ship_y + opex_ship_y)/(8760/(2*(d_sea/v_ship + h_ship)))/(1-(bog_ship * d_sea/v_ship) - (f_ship  * d_sea))+ (bog_ship * d_sea/v_ship + f_ship * d_sea) * LNH3_costs_y\
+        + (alpha_ship * capex_ship_y + opex_ship_y)/(8760/(2*(d_sea/v_ship + h_ship)))/(1-(bog_ship_nh3 * d_sea/v_ship) - (f_ship_nh3  * d_sea))+ (bog_ship_nh3 * d_sea/v_ship + f_ship_nh3 * d_sea) * LNH3_cargo_cost_sensi\
         + (alpha_it * capex_it_y/1000 + opex_it_y/1000) + (el_it + el_reliq * (NH3_lhv/H2_lhv) * t_it) * p_el_y /1000\
         + (alpha_recon * capex_recon_y / 1000 + opex_recon_y / 1000) + (heat_recon_y + el_recon_y) * p_el_y / 1000
 
@@ -2496,7 +2566,7 @@ def nh3_transport_sensi_distance(p_el_y, alpha_con, alpha_et, alpha_ship, alpha_
 
     return sensitivity
 
-nh3_transport_sensi_distance(p_el_y, alpha_con, alpha_et, alpha_ship, alpha_it, alpha_recon,capex_con_y, capex_et_y,capex_ship_y, capex_it_y,  bog_ship, capex_recon_y, d_sea ,v_ship, f_ship, el_et ,el_it ,t_it ,el_recon_y)
+nh3_transport_sensi_distance(p_el_y, alpha_con, alpha_et, alpha_ship, alpha_it, alpha_recon,capex_con_y, capex_et_y,capex_ship_y, capex_it_y,  bog_ship_nh3, capex_recon_y, d_sea ,v_ship, f_ship, el_et ,el_it ,t_it ,el_recon_y)
 
 lnh3_transport_sensi_distance_LCOT= pd.DataFrame(sensitivity, transport_distance, columns=['LNH3 transport costs [€/kg H2]'])
 lnh3_transport_sensi_distance_LCOT.index.name = 'Transport distance in km'
@@ -2629,13 +2699,13 @@ Pipeline_emissions.to_csv(output_file, sep=';')
 
 """### Sensitivity"""
 
-#EF_y_n = 118
 
-EF_sensi = np.arange(0,301,20)
+
+EF_sensi_range = np.arange(0, 401, 20)
 sensitivity = []
 def Pipeline_emissions_sensi():
 
-    for EF_y_n in EF_sensi:
+    for EF_y_n in EF_sensi_range:
 
         result = capa_comp * 1000 * pipe_use * 8760 / capa_pipe / 1000 * (d_sea_sensi) * EF_y_n
 
@@ -2646,7 +2716,7 @@ def Pipeline_emissions_sensi():
 
 Pipeline_emissions_sensi()
 
-Pipeline_emissions_sensi_EF = pd.DataFrame(sensitivity, EF_sensi, columns=['Pipeline transport emission [g CO2eq/kg H2]'])
+Pipeline_emissions_sensi_EF = pd.DataFrame(sensitivity, EF_sensi_range, columns=['Pipeline transport emission [g CO2eq/kg H2]'])
 Pipeline_emissions_sensi_EF.index.name = 'Electricity emission factor [g CO2eq/kWh]'
 Pipeline_emissions_sensi_EF
 
@@ -2654,13 +2724,14 @@ Pipeline_emissions_sensi_EF
 output_file = os.path.join(path_csv, 'Pipeline_emissions_sensi_EF.csv')
 Pipeline_emissions_sensi_EF.to_csv(output_file, sep=';')
 
+EF_sensi_fixed = 118
 # Transport sensi emissions
 sensitivity = []
 def Pipeline_emissions_sensi():
 
     for d_sea_sensi in transport_distance:
 
-        result = capa_comp * 1000 * pipe_use * 8760 / capa_pipe / 1000 * (d_sea_sensi) * EF_y_n
+        result = capa_comp * 1000 * pipe_use * 8760 / capa_pipe / 1000 * (d_sea_sensi) * EF_sensi_fixed
 
         sensitivity.append(result)
 
@@ -2949,19 +3020,20 @@ plt.show()
 year = 2030
 el_liq_y = float(tea_lh2.loc['Liquefaction - Electricity consumption opt. [kWh/kgH2]'][year])
 EF_y_n = 118# float(GHG.loc['GHG intensity of electricity generation [g CO2eq/kWh] - Norway'][year])
-LH2_cargo_ghg = float(LH2_cargo_emissions.loc[year]['LH2_cargo_emissions'])
+
 el_recon_y = float(tea_lh2.loc['Reconversion - Electricity consumption opt. [kWh/kg H2]'][year])
 #EF_y_G = float(GHG.loc['GHG intensity of electricity generation [g CO2eq/kWh] - Germany'][year])
-
+H2_emissions_sensi = 2500
+LH2_cargo_ghg_sensi = (H2_emissions_sensi + (el_liq_y * EF_y_n ) + ((el_et + el_reliq * t_et) * EF_y_n ))
 sensitivity = []
 def lh2_transport_sensi(el_liq_y, EF_y_n, el_et, el_reliq, t_et, bog_ship, d_sea ,v_ship, f_ship, LH2_cargo_ghg ,el_it ,t_it ,el_recon_y):
 
-    for EF_y_n in EF_sensi:
+    for EF_y_n in EF_sensi_range:
 
         result = \
         (el_liq_y * EF_y_n )\
         + ((el_et + el_reliq * t_et) * EF_y_n )\
-        + (1 / (1 - (bog_ship * d_sea_sensi / v_ship) - (f_ship * d_sea_sensi)) + (bog_ship * d_sea_sensi / v_ship + f_ship * d_sea_sensi) * LH2_cargo_ghg)\
+        + (1 / (1 - (bog_ship * d_sea_sensi / v_ship) - (f_ship * d_sea_sensi)) + (bog_ship * d_sea_sensi / v_ship + f_ship * d_sea_sensi) * LH2_cargo_ghg_sensi)\
         + ((el_it + el_reliq * t_it) * EF_y_n )\
         + (el_recon_y * EF_y_n )
 
@@ -2973,7 +3045,7 @@ def lh2_transport_sensi(el_liq_y, EF_y_n, el_et, el_reliq, t_et, bog_ship, d_sea
 lh2_transport_sensi(el_liq_y, EF_y_n, el_et, el_reliq, t_et, bog_ship, d_sea, v_ship, f_ship, LH2_cargo_ghg, el_it,
                     t_it, el_recon_y)
 
-lh2_transport_sensi_EF= pd.DataFrame(sensitivity, EF_sensi, columns=['LH2 transport emission [g CO2eq/kg H2]'])
+lh2_transport_sensi_EF= pd.DataFrame(sensitivity, EF_sensi_range, columns=['LH2 transport emission [g CO2eq/kg H2]'])
 lh2_transport_sensi_EF.index.name = 'Electricity emission [g CO2eq/kWh]'
 lh2_transport_sensi_EF
 
@@ -2983,18 +3055,18 @@ lh2_transport_sensi_EF.to_csv(output_file, sep =';')
 
 import matplotlib.ticker as mtick
 
-# Transport distance sensi
+# Transport distance sensi emissions
 sensitivity = []
 def lh2_transport_sensi(el_liq_y, EF_y_n, el_et, el_reliq, t_et, bog_ship, d_sea ,v_ship, f_ship, LH2_cargo_ghg ,el_it ,t_it ,el_recon_y):
 
     for d_sea_sensi in transport_distance:
 
         result = \
-        (el_liq_y * EF_y_n )\
-        + ((el_et + el_reliq * t_et) * EF_y_n )\
-        + (1 / (1 - (bog_ship * d_sea_sensi / v_ship) - (f_ship * d_sea_sensi)) + (bog_ship * d_sea_sensi / v_ship + f_ship * d_sea_sensi) * LH2_cargo_ghg)\
-        + ((el_it + el_reliq * t_it) * EF_y_n )\
-        + (el_recon_y * EF_y_n )
+        (el_liq_y * EF_sensi_fixed)\
+        + ((el_et + el_reliq * t_et) * EF_sensi_fixed)\
+        + (1 / (1 - (bog_ship * d_sea_sensi / v_ship) - (f_ship * d_sea_sensi)) + (bog_ship * d_sea_sensi / v_ship + f_ship * d_sea_sensi) * LH2_cargo_ghg_sensi)\
+        + ((el_it + el_reliq * t_it) * EF_sensi_fixed)\
+        + (el_recon_y * EF_sensi_fixed)
 
         sensitivity.append(result)
 
@@ -3011,6 +3083,37 @@ lh2_transport_sensi_distance_LEOT
 # Create csv file from results dataframe
 output_file = os.path.join(path_csv,'lh2_transport_sensi_distance_LEOT.csv')
 lh2_transport_sensi_distance_LEOT.to_csv(output_file, sep =';')
+
+# LH2 transport distance sensi cargo emissions
+cargo_emissions_range = np.arange(0, 10001, 500)
+d_sea_sensi_cargo = 10000
+sensitivity = []
+def lh2_transport_sensi(el_liq_y, EF_y_n, el_et, el_reliq, t_et, bog_ship, d_sea ,v_ship, f_ship, LH2_cargo_ghg ,el_it ,t_it ,el_recon_y):
+
+    for H2_sensi_emissions in cargo_emissions_range:
+
+        result = \
+        (el_liq_y * EF_sensi_fixed)\
+        + ((el_et + el_reliq * t_et) * EF_sensi_fixed)\
+        + (1 / (1 - (bog_ship * d_sea_sensi_cargo / v_ship) - (f_ship * d_sea_sensi_cargo)) + (bog_ship * d_sea_sensi_cargo / v_ship + f_ship * d_sea_sensi_cargo) * ((el_liq_y * EF_sensi_fixed ) + ((el_et + el_reliq * t_et) * EF_sensi_fixed ) + H2_sensi_emissions))\
+        + ((el_it + el_reliq * t_it) * EF_sensi_fixed)\
+        + (el_recon_y * EF_sensi_fixed)
+
+        sensitivity.append(result)
+
+    return sensitivity
+
+
+lh2_transport_sensi(el_liq_y, EF_y_n, el_et, el_reliq, t_et, bog_ship, d_sea, v_ship, f_ship, LH2_cargo_ghg, el_it,
+                    t_it, el_recon_y)
+
+lh2_transport_sensi_cargo_emissions= pd.DataFrame(sensitivity, cargo_emissions_range, columns=['LH2 transport emission [g CO2eq/kg H2]'])
+lh2_transport_sensi_cargo_emissions.index.name = 'H2 Emissions [g CO2eq/kg H2]'
+lh2_transport_sensi_cargo_emissions
+
+# Create csv file from results dataframe
+output_file = os.path.join(path_csv,'lh2_transport_sensi_cargo_emissions.csv')
+lh2_transport_sensi_cargo_emissions.to_csv(output_file, sep =';')
 
 """## NH3 transport
 
@@ -3090,12 +3193,12 @@ NH3_Export_terminal_emissions = pd.read_csv(
 """
 
 # Boil-off when shipping in [%/day] to [%/hour]
-bog_ship = float(tea_lnh3.loc['Shipping - Boil off opt. [%/day]']['NH3']) / 24 * (NH3_lhv/H2_lhv)
-bog_ship
+bog_ship_nh3 = float(tea_lnh3.loc['Shipping - Boil off opt. [%/day]']['NH3']) / 24 * (NH3_lhv/H2_lhv)
+bog_ship_nh3
 
 # Fuel consumption of a ship in [kg_h2/t/km]
-f_ship = float(tea_lnh3.loc['Shipping - Fuel use [kg NH3/t/km]']['NH3']) / 1000 * (NH3_lhv/H2_lhv)
-f_ship
+f_ship_nh3 = float(tea_lnh3.loc['Shipping - Fuel use [kg NH3/t/km]']['NH3']) / 1000 * (NH3_lhv/H2_lhv)
+
 
 """d_sea and v_ship are equivalent to LH2 transport
 
@@ -3116,8 +3219,8 @@ result.to_csv(output_file, sep=';')
 
 # Calc.NH3 shipping emissions
 def calculate_ship_emissions():
-    result = 1 / (1 - (bog_ship * d_sea / v_ship) - (f_ship * d_sea))\
-             + (bog_ship * d_sea / v_ship + f_ship * d_sea) * NH3_cargo_ghg
+    result = 1 / (1 - (bog_ship_nh3 * d_sea / v_ship) - (f_ship_nh3 * d_sea))\
+             + (bog_ship_nh3 * d_sea / v_ship + f_ship_nh3 * d_sea) * NH3_cargo_ghg
     return result
 
 # Calculation of shipping emissions [g CO2eq/kg_h2] from 2025 to 2050.
@@ -3127,7 +3230,7 @@ result.index.name = 'Years'
 
 for year in years:
     NH3_cargo_ghg = float(LH2_cargo_emissions.loc[year]['LH2_cargo_emissions'])
-    f_ship = float(tea_lnh3.loc['Shipping - Fuel use [kg NH3/t/km]'][year])/1000 * (NH3_lhv/H2_lhv)
+    f_ship_nh3 = float(tea_lnh3.loc['Shipping - Fuel use [kg NH3/t/km]'][year])/1000 * (NH3_lhv/H2_lhv)
     # calculate emissions of specific year
     result.NH3_Shipping_emissions.loc[year] = calculate_ship_emissions()
 
@@ -3301,22 +3404,22 @@ year = 2030
 
 el_con_y = float(tea_lnh3.loc['Conversion - Electricity consumption opt. [kWh/kgH2]'][year])
 NH3_cargo_ghg = float(LH2_cargo_emissions.loc[year]['LH2_cargo_emissions'])
-f_ship = float(tea_lnh3.loc['Shipping - Fuel use [kg NH3/t/km]'][year])/1000 * (NH3_lhv/H2_lhv)
+f_ship_nh3 = float(tea_lnh3.loc['Shipping - Fuel use [kg NH3/t/km]'][year])/1000 * (NH3_lhv/H2_lhv)
 el_recon_y = float(tea_lnh3.loc['Reconversion - Electricity consumption opt. [kWh/kg H2]'][year])
 heat_recon_y = float(tea_lnh3.loc['Reconversion - Heat consumption opt. [kWh/kg H2]'][year])
 EF_y_n = 118  # float(GHG.loc['GHG intensity of electricity generation [g CO2eq/kWh] - Norway'][year])
 
-
+NH3_cargo_ghg_sensi = (H2_emissions_sensi + (el_con_y * EF_y_n ) + ((el_et_nh3 + el_reliq_nh3 * (NH3_lhv/H2_lhv) * t_et) * EF_y_n ))
 sensitivity = []
 
-def NH3_sensi_w_recon(el_con_y, EF_y_n, el_et_nh3, el_reliq_nh3, t_et, bog_ship, d_sea, v_ship, f_ship, NH3_cargo_ghg, el_it, heat_recon_y, t_it, el_recon_y):
+def NH3_sensi_w_recon(el_con_y, EF_y_n, el_et_nh3, el_reliq_nh3, t_et, bog_ship_nh3, d_sea, v_ship, f_ship_nh3, NH3_cargo_ghg, el_it, heat_recon_y, t_it, el_recon_y):
 
-    for EF_y_n in EF_sensi:
+    for EF_y_n in EF_sensi_range:
 
         result =\
             (el_con_y * EF_y_n )\
         + ((el_et_nh3 + el_reliq_nh3 * (NH3_lhv/H2_lhv) * t_et) * EF_y_n )\
-        + (1 / (1 - (bog_ship * d_sea_sensi / v_ship) - (f_ship * d_sea_sensi)) + (bog_ship * d_sea_sensi / v_ship + f_ship * d_sea_sensi) * NH3_cargo_ghg)\
+        + (1 / (1 - (bog_ship_nh3 * d_sea_sensi / v_ship) - (f_ship_nh3 * d_sea_sensi)) + (bog_ship_nh3 * d_sea_sensi / v_ship + f_ship_nh3 * d_sea_sensi) * NH3_cargo_ghg_sensi)\
         + ((el_it + el_reliq * (NH3_lhv/H2_lhv) * t_it) * EF_y_n )\
         + ((heat_recon_y + el_recon_y) * EF_y_n )
 
@@ -3326,24 +3429,24 @@ def NH3_sensi_w_recon(el_con_y, EF_y_n, el_et_nh3, el_reliq_nh3, t_et, bog_ship,
     return sensitivity
 
 
-NH3_sensi_w_recon(el_con_y, EF_y_n, el_et_nh3, el_reliq_nh3, t_et, bog_ship, d_sea, v_ship, f_ship, NH3_cargo_ghg,
+NH3_sensi_w_recon(el_con_y, EF_y_n, el_et_nh3, el_reliq_nh3, t_et, bog_ship_nh3, d_sea, v_ship, f_ship_nh3, NH3_cargo_ghg,
                   el_it, heat_recon_y, t_it, el_recon_y)
 
-NH3_sensi_w_recon_EF = pd.DataFrame(sensitivity, EF_sensi, columns=['NH3 transport emission [g CO2eq/kg H2]'])
+NH3_sensi_w_recon_EF = pd.DataFrame(sensitivity, EF_sensi_range, columns=['NH3 transport emission [g CO2eq/kg H2]'])
 NH3_sensi_w_recon_EF.index.name = 'Electricity emission [g CO2eq/KWh]]'
 # Create csv file from results dataframe
 output_file = os.path.join(path_csv, 'NH3_sensi_w_recon_EF.csv')
 NH3_sensi_w_recon_EF.to_csv(output_file, sep=';')
 
 sensitivity = []
-def NH3_sensi_wo_recon(el_con_y, EF_y_n, el_et_nh3, el_reliq_nh3, t_et, bog_ship, d_sea, v_ship, f_ship, NH3_cargo_ghg, el_it, heat_recon_y, t_it, el_recon_y):
+def NH3_sensi_wo_recon(el_con_y, EF_y_n, el_et_nh3, el_reliq_nh3, t_et, bog_ship_nh3, d_sea, v_ship, f_ship_nh3, NH3_cargo_ghg, el_it, heat_recon_y, t_it, el_recon_y):
 
-    for EF_y_n in EF_sensi:
+    for EF_y_n in EF_sensi_range:
 
         result =\
             (el_con_y * EF_y_n )\
         + ((el_et_nh3 + el_reliq_nh3 * (NH3_lhv/H2_lhv) * t_et) * EF_y_n )\
-        + (1 / (1 - (bog_ship * d_sea_sensi / v_ship) - (f_ship * d_sea_sensi)) + (bog_ship * d_sea_sensi / v_ship + f_ship * d_sea_sensi) * NH3_cargo_ghg)\
+        + (1 / (1 - (bog_ship_nh3 * d_sea_sensi / v_ship) - (f_ship_nh3 * d_sea_sensi)) + (bog_ship_nh3 * d_sea_sensi / v_ship + f_ship_nh3 * d_sea_sensi) * NH3_cargo_ghg_sensi)\
         + ((el_it + el_reliq * (NH3_lhv/H2_lhv) * t_it) * EF_y_n )
         #+ ((heat_recon_y + el_recon_y) * EF_y_n )
 
@@ -3353,10 +3456,10 @@ def NH3_sensi_wo_recon(el_con_y, EF_y_n, el_et_nh3, el_reliq_nh3, t_et, bog_ship
     return sensitivity
 
 # recall function
-NH3_sensi_wo_recon(el_con_y, EF_y_n, el_et_nh3, el_reliq_nh3, t_et, bog_ship, d_sea, v_ship, f_ship, NH3_cargo_ghg,
+NH3_sensi_wo_recon(el_con_y, EF_y_n, el_et_nh3, el_reliq_nh3, t_et, bog_ship_nh3, d_sea, v_ship, f_ship_nh3, NH3_cargo_ghg,
                    el_it, heat_recon_y, t_it, el_recon_y)
 
-NH3_sensi_wo_recon_EF = pd.DataFrame(sensitivity, EF_sensi, columns=['NH3 transport emission w/o recon [g CO2eq/kg H2]'])
+NH3_sensi_wo_recon_EF = pd.DataFrame(sensitivity, EF_sensi_range, columns=['NH3 transport emission w/o recon [g CO2eq/kg H2]'])
 NH3_sensi_wo_recon_EF.index.name = 'Electricity emission factor [g CO2eq/kWh]'
 # Create csv file from results dataframe
 output_file = os.path.join(path_csv, 'NH3_sensi_wo_recon_EF.csv')
@@ -3364,16 +3467,16 @@ NH3_sensi_wo_recon_EF.to_csv(output_file, sep=';')
 
 # Transport distance sensi NH3 emissions
 sensitivity = []
-def NH3_sensi_w_recon(el_con_y, EF_y_n, el_et_nh3, el_reliq_nh3, t_et, bog_ship, d_sea, v_ship, f_ship, NH3_cargo_ghg, el_it, heat_recon_y, t_it, el_recon_y):
+def NH3_sensi_w_recon(el_con_y, EF_y_n, el_et_nh3, el_reliq_nh3, t_et, bog_ship_nh3, d_sea, v_ship, f_ship_nh3, NH3_cargo_ghg, el_it, heat_recon_y, t_it, el_recon_y):
 
     for d_sea_sensi in transport_distance:
 
         result =\
-            (el_con_y * EF_y_n )\
-        + ((el_et_nh3 + el_reliq_nh3 * (NH3_lhv/H2_lhv) * t_et) * EF_y_n )\
-        + (1 / (1 - (bog_ship * d_sea_sensi / v_ship) - (f_ship * d_sea_sensi)) + (bog_ship * d_sea_sensi / v_ship + f_ship * d_sea_sensi) * NH3_cargo_ghg)\
-        + ((el_it + el_reliq * (NH3_lhv/H2_lhv) * t_it) * EF_y_n )\
-        + ((heat_recon_y + el_recon_y) * EF_y_n )
+            (el_con_y * EF_sensi_fixed)\
+        + ((el_et_nh3 + el_reliq_nh3 * (NH3_lhv/H2_lhv) * t_et) * EF_sensi_fixed)\
+        + (1 / (1 - (bog_ship_nh3 * d_sea_sensi / v_ship) - (f_ship_nh3 * d_sea_sensi)) + (bog_ship_nh3 * d_sea_sensi / v_ship + f_ship_nh3 * d_sea_sensi) * NH3_cargo_ghg_sensi)\
+        + ((el_it + el_reliq * (NH3_lhv/H2_lhv) * t_it) * EF_sensi_fixed)\
+        + ((heat_recon_y + el_recon_y) * EF_sensi_fixed)
 
         sensitivity.append(result)
 
@@ -3381,7 +3484,7 @@ def NH3_sensi_w_recon(el_con_y, EF_y_n, el_et_nh3, el_reliq_nh3, t_et, bog_ship,
     return sensitivity
 
 
-NH3_sensi_w_recon(el_con_y, EF_y_n, el_et_nh3, el_reliq_nh3, t_et, bog_ship, d_sea, v_ship, f_ship, NH3_cargo_ghg,
+NH3_sensi_w_recon(el_con_y, EF_y_n, el_et_nh3, el_reliq_nh3, t_et, bog_ship_nh3, d_sea, v_ship, f_ship_nh3, NH3_cargo_ghg,
                   el_it, heat_recon_y, t_it, el_recon_y)
 
 NH3_sensi_w_recon_distance_LEOT = pd.DataFrame(sensitivity, transport_distance, columns=['NH3 transport emission [g CO2eq/kg H2]'])
@@ -3391,15 +3494,15 @@ output_file = os.path.join(path_csv, 'NH3_sensi_w_recon_distance_LEOT.csv')
 NH3_sensi_w_recon_distance_LEOT.to_csv(output_file, sep=';')
 
 sensitivity = []
-def NH3_sensi_wo_recon(el_con_y, EF_y_n, el_et_nh3, el_reliq_nh3, t_et, bog_ship, d_sea, v_ship, f_ship, NH3_cargo_ghg, el_it, heat_recon_y, t_it, el_recon_y):
+def NH3_sensi_wo_recon(el_con_y, EF_y_n, el_et_nh3, el_reliq_nh3, t_et, bog_ship_nh3, d_sea, v_ship, f_ship_nh3, NH3_cargo_ghg, el_it, heat_recon_y, t_it, el_recon_y):
 
     for d_sea_sensi in transport_distance:
 
         result =\
-            (el_con_y * EF_y_n )\
-        + ((el_et_nh3 + el_reliq_nh3 * (NH3_lhv/H2_lhv) * t_et) * EF_y_n )\
-        + (1 / (1 - (bog_ship * d_sea_sensi / v_ship) - (f_ship * d_sea_sensi)) + (bog_ship * d_sea_sensi / v_ship + f_ship * d_sea_sensi) * NH3_cargo_ghg)\
-        + ((el_it + el_reliq * (NH3_lhv/H2_lhv) * t_it) * EF_y_n )
+            (el_con_y * EF_sensi_fixed)\
+        + ((el_et_nh3 + el_reliq_nh3 * (NH3_lhv/H2_lhv) * t_et) * EF_sensi_fixed)\
+        + (1 / (1 - (bog_ship_nh3 * d_sea_sensi / v_ship) - (f_ship_nh3 * d_sea_sensi)) + (bog_ship_nh3 * d_sea_sensi / v_ship + f_ship_nh3 * d_sea_sensi) * NH3_cargo_ghg_sensi)\
+        + ((el_it + el_reliq * (NH3_lhv/H2_lhv) * t_it) * EF_sensi_fixed)
         #+ ((heat_recon_y + el_recon_y) * EF_y_n )
 
         sensitivity.append(result)
@@ -3408,7 +3511,7 @@ def NH3_sensi_wo_recon(el_con_y, EF_y_n, el_et_nh3, el_reliq_nh3, t_et, bog_ship
     return sensitivity
 
 # recall function
-NH3_sensi_wo_recon(el_con_y, EF_y_n, el_et_nh3, el_reliq_nh3, t_et, bog_ship, d_sea, v_ship, f_ship, NH3_cargo_ghg,
+NH3_sensi_wo_recon(el_con_y, EF_y_n, el_et_nh3, el_reliq_nh3, t_et, bog_ship_nh3, d_sea, v_ship, f_ship_nh3, NH3_cargo_ghg,
                    el_it, heat_recon_y, t_it, el_recon_y)
 
 NH3_sensi_wo_recon_distance_LEOT = pd.DataFrame(sensitivity, transport_distance, columns=['NH3 transport emission w/o recon [g CO2eq/kg H2]'])
@@ -3416,6 +3519,36 @@ NH3_sensi_wo_recon_distance_LEOT.index.name = 'Electricity emission factor [g CO
 # Create csv file from results dataframe
 output_file = os.path.join(path_csv, 'NH3_sensi_wo_recon_distance_LEOT.csv')
 NH3_sensi_wo_recon_distance_LEOT.to_csv(output_file, sep=';')
+
+# NH3 transport sensi cargo emissions
+
+
+sensitivity = []
+def NH3_sensi_w_recon(el_con_y, EF_y_n, el_et_nh3, el_reliq_nh3, t_et, bog_ship_nh3, d_sea, v_ship, f_ship_nh3, NH3_cargo_ghg, el_it, heat_recon_y, t_it, el_recon_y):
+
+    for H2_sensi_emissions in cargo_emissions_range:
+
+        result =\
+            (el_con_y * EF_sensi_fixed)\
+        + ((el_et_nh3 + el_reliq_nh3 * (NH3_lhv/H2_lhv) * t_et) * EF_sensi_fixed)\
+        + (1 / (1 - (bog_ship_nh3 * d_sea_sensi_cargo / v_ship) - (f_ship_nh3 * d_sea_sensi_cargo)) + (bog_ship_nh3 * d_sea_sensi_cargo / v_ship + f_ship_nh3 * d_sea_sensi_cargo) * ((el_con_y * EF_sensi_fixed) + ((el_et_nh3 + el_reliq_nh3 * (NH3_lhv/H2_lhv) * t_et) * EF_sensi_fixed) + H2_sensi_emissions))\
+        + ((el_it + el_reliq * (NH3_lhv/H2_lhv) * t_it) * EF_sensi_fixed)\
+        + ((heat_recon_y + el_recon_y) * EF_sensi_fixed)
+
+        sensitivity.append(result)
+
+
+    return sensitivity
+
+
+NH3_sensi_w_recon(el_con_y, EF_y_n, el_et_nh3, el_reliq_nh3, t_et, bog_ship_nh3, d_sea, v_ship, f_ship_nh3, NH3_cargo_ghg,
+                  el_it, heat_recon_y, t_it, el_recon_y)
+
+NH3_sensi_w_recon_cargo_emissions = pd.DataFrame(sensitivity, cargo_emissions_range, columns=['NH3 transport emission [g CO2eq/kg H2]'])
+NH3_sensi_w_recon_cargo_emissions.index.name = 'H2 Emissions [g CO2eq/kg H2]'
+# Create csv file from results dataframe
+output_file = os.path.join(path_csv, 'NH3_sensi_w_recon_cargo_emissions.csv')
+NH3_sensi_w_recon_cargo_emissions.to_csv(output_file, sep=';')
 
 """## Plots"""
 # Plot transport sensi EF
@@ -3426,14 +3559,14 @@ fig, ax = plt.subplots(figsize=(10,4))
 plt.plot(lh2_transport_sensi_EF, color='blue', linestyle='solid', label ='LH2')
 plt.plot(NH3_sensi_w_recon_EF, color='darkorange', linestyle='-', label ='NH3')
 plt.plot(NH3_sensi_wo_recon_EF, color='darkorange', linestyle='--', label ='NH3 w/o cracking')
-plt.plot(Pipeline_sensi_distance_LEOT, color='cornflowerblue', linestyle='-', label ='Pipeline')
+plt.plot(Pipeline_emissions_sensi_EF, color='cornflowerblue', linestyle='-', label ='Pipeline')
 
 plt.axvline(x=30, color='grey', linestyle = '--')
 plt.axvline(x=275, color='grey', linestyle = '--')
 plt.axvline(x=118, color='grey', linestyle = '--')
-plt.text(30,6000, 'Norway 2021', horizontalalignment='center', verticalalignment='center')
-plt.text(275,6000, 'EU 2021', horizontalalignment='center', verticalalignment='center')
-plt.text(118,6000, 'EU 2030', horizontalalignment='center', verticalalignment='center')
+plt.text(30,7800, 'Norway 2021', horizontalalignment='center', verticalalignment='center')
+plt.text(275,7800, 'EU 2021', horizontalalignment='center', verticalalignment='center')
+plt.text(118,7800, 'EU 2030', horizontalalignment='center', verticalalignment='center')
 
 plt.grid(True, axis='y')
 #plt.grid(True, axis='x')
@@ -3457,13 +3590,13 @@ fig, ax = plt.subplots(figsize=(10,4))
 
 
 plt.plot(lh2_transport_sensi_distance_LEOT, color='blue', linestyle='-', label = 'LH2')
-plt.plot(NH3_sensi_wo_recon_distance_LEOT, color='darkorange', linestyle='--', label ='NH3')
 plt.plot(NH3_sensi_w_recon_distance_LEOT, color='darkorange', linestyle='-', label ='NH3')
+plt.plot(NH3_sensi_wo_recon_distance_LEOT, color='darkorange', linestyle='--', label ='NH3')
 plt.plot(Pipeline_sensi_distance_LEOT, color='royalblue', linestyle='-', label ='Pipeline')
 plt.grid(True, axis='y')
 #plt.grid(True, axis='x')
 ax.set_axisbelow(True)
-plt.locator_params(axis='x', nbins=12)
+
 plt.ylabel('[g CO2eq/kg H2]')
 plt.xlim(0,10000)
 #plt.ylim(0,)
@@ -3473,6 +3606,30 @@ plt.legend()
 
 
 title = '\Transport_distance_sensi_emissions'
+plt.savefig(path_plt + title + '.png', transparent=True)
+
+plt.show()
+
+"""### Plot Transport sensi Cargo emissions"""
+
+fig, ax = plt.subplots(figsize=(10,4))
+#plt.subplot(1,2,1)
+plt.plot(lh2_transport_sensi_cargo_emissions, color='blue', linestyle='-', label = 'LH2')
+plt.plot(NH3_sensi_w_recon_cargo_emissions, color='darkorange', linestyle='-', label ='NH3')
+
+plt.grid(True, axis='y')
+#plt.grid(True, axis='x')
+ax.set_axisbelow(True)
+
+plt.ylabel('[g CO2eq/kg H2]')
+#plt.xlim(0,10000)
+#plt.ylim(0,)
+plt.xlabel('Cargo H2 emissions [g CO2eq/kg H2]')
+plt.legend()
+
+
+
+title = '\Transport_sensi_cargo_emissions'
 plt.savefig(path_plt + title + '.png', transparent=True)
 
 plt.show()
@@ -3598,6 +3755,7 @@ plt.show()
 fig, ax = plt.subplots(figsize=(10, 6))
 plt.plot(LH2_transport_costs, color='blue', linestyle='solid', label='LH2')
 plt.plot(LNH3_transport_costs, color='darkorange', linestyle='solid', label='NH3')
+plt.plot(LNH3_transport_costs_wo_recon, color='green', linestyle='-', label='NH3 w/o cracking')
 plt.plot(New_Pipeline_costs_off, color='dodgerblue', linestyle='solid', label='New pipeline')
 plt.plot(Retrofit_pipeline_costs_off, color='royalblue', linestyle='solid', label='Retrofit pipeline')
 av_new = this_year + AV_pipe_new
@@ -3605,8 +3763,8 @@ av_retro = this_year + AV_pipe_retro
 #ax.yaxis.set_major_locator(mtick.LinearLocator(7))
 plt.axvline(x=av_new, color='dodgerblue', linestyle = '--')
 plt.axvline(x=av_retro, color='royalblue', linestyle = '--')
-plt.text(av_new, 2.8, 'New pipeline\navailable', horizontalalignment='center', verticalalignment='center')
-plt.text(av_retro,2.8,  'Retrofit pipeline\navailable', horizontalalignment='center', verticalalignment='center')
+plt.text(av_new, 3, 'New pipeline\navailable', horizontalalignment='center', verticalalignment='center')
+plt.text(av_retro,3,  'Retrofit pipeline\navailable', horizontalalignment='center', verticalalignment='center')
 plt.xlim(2025,2050)
 plt.ylim(0,)
 plt.grid(True, axis='y')

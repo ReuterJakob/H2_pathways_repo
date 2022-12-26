@@ -3293,7 +3293,7 @@ output_file = os.path.join(path_csv, 'NH3_sensi_wo_recon_EF.csv')
 NH3_EF_sensi_wo_recon.to_csv(output_file, sep=';')
 
 """## Plots"""
-# PLot EF_sensi
+# PLot EF_sensi_fixed
 fig, ax = plt.subplots(figsize=(10,4))
 #plt.subplot(1,2,1)
 
