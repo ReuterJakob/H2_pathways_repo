@@ -14,7 +14,7 @@ path_csv = r'\\dena.de\Daten\Home\Reuter\Desktop\H2_pathways_repo\data\interim'
 path_plt = r'\\dena.de\Daten\Home\Reuter\Desktop\H2_pathways_repo\Plots_v3'
 
 # adjust plotsize and font
-params = {'font.size':11,
+params = {'font.size':9,
 'font.weight':'normal',
 'font.family':'arial',
 'lines.linewidth':2
@@ -54,26 +54,33 @@ el_prices_policy_ger = prices.loc['Electricity prices in Germany [€_2020/MWh] 
 gas_prices_baseline_nor = prices.loc['Gas prices in NOR [€_2020/MWh] - Baseline', 2025:2050]
 gas_prices_policy_nor = prices.loc['Gas prices in NOR [€_2020/MWh] - Policy',2025:2050]
 
-fig, ax = plt.subplots(figsize=(10,6), frameon=False, layout = 'constrained')
+fig, ax = plt.subplots(figsize=(10,4), frameon=False, layout = 'constrained')
+plt.subplot(1,2,1)
 plt.plot(co2_prices_baseline, color= 'red', linestyle= '-', label= ' CO2 prices Baseline')
 plt.plot(co2_prices_policy, color='red', linestyle= '--',label='CO2 prices Policy')
-plt.plot(el_prices_baseline_nor, color= 'yellow', linestyle= '-',label= 'Electricity prices NOR Baseline')
-plt.plot(el_prices_policy_nor, color='yellow', linestyle= '--',label='Electricity prices NOR Policy')
+plt.grid(True, axis = 'y')
+plt.xlim(2025,2050)
+plt.ylim(0,)
+ax.set_axisbelow(True)
+plt.ylabel('[€/t CO2]')
+plt.legend()
+
+plt.subplot(1,2,2)
 plt.plot(el_prices_baseline_ger, color= 'gold', linestyle= '-',label= ' Electricity prices GER Baseline')
 plt.plot(el_prices_policy_ger, color='gold', linestyle= '--',label='Electricity prices GER Policy')
+plt.plot(el_prices_baseline_nor, color= 'orange', linestyle= '-',label= 'Electricity prices NOR Baseline')
+plt.plot(el_prices_policy_nor, color='orange', linestyle= '--',label='Electricity prices NOR Policy')
 plt.plot(gas_prices_baseline_nor, color='blue', linestyle= '-',label='Gas prices NOR Baseline')
 plt.plot(gas_prices_policy_nor, color='blue', linestyle= '--',label='Gas prices NOR Policy')
-ax2 = ax.secondary_yaxis('right')
-ax2.set_ylabel('[€/MWh]')
+plt.ylabel('[€/MWh]')
 plt.grid(True, axis = 'y')
-ax.set_ylabel(ylabel= ('[€/t CO2]'))
 #ax.yaxis.set_major_locator(mtick.LinearLocator(18))
-ax.set_ylim(0,)
+plt.ylim(0,)
 plt.xlim(2025,2050)
 ax.set_axisbelow(True)
 plt.legend()
 
-title = '\Inputs'
+title = '\Inputs_V2'
 plt.savefig(path_plt + title + '.png', transparent=True)
 plt.show()
 
@@ -509,14 +516,19 @@ capture_sensi.to_csv(output_file, sep = ';')
 fig = plt.figure(figsize=(10,4))
 
 ax = fig.add_subplot(1, 2, 1)
+#plt.subplot(1,2,1)
 ax2 = ax.secondary_yaxis('right', functions=(lambda MJ: MJ*120/1000, lambda kg: kg/120))
+#ax2.set_ylabel(ylabel= '[kg CO2eq/kg H2]')
 plt.locator_params(axis='y', nbins=10)
 plt.plot(leakage_sensi_GWP20, color='blue', linestyle='solid', label = 'GWP20' )
 plt.plot(leakage_sensi_GWP100, color='dodgerblue',linestyle='-', label = 'GWP100')
 
 plt.grid(True, axis='y')
 ax.set_axisbelow(True)
+
+
 plt.xticks(np.arange(0,0.105, 0.02), ['0%', '2%', '4%', '6%', '8%', '10%'] )
+
 plt.ylabel('[g CO2eq/MJ H2]')
 plt.xlabel('Leakage rate')
 plt.legend()
@@ -540,7 +552,7 @@ plt.show()
 
 
 # Plot capture sensi
-fig, ax = plt.subplots()
+fig, ax = plt.subplots(layout = 'constrained')
 plt.plot(capture_sensi, color='blue', linestyle='solid')
 plt.grid(True, axis='y')
 ax.set_axisbelow(True)
@@ -665,7 +677,7 @@ result.to_csv(output_file, sep = ';')
 LCOH_blue_NOR_Policy = result
 
 # Plot cost curve of hydrogen production from NGR with CCS
-fig, ax = plt.subplots(figsize=(10,6))
+fig, ax = plt.subplots(figsize=(10,6), layout = 'constrained')
 plt.plot(result, color = 'blue', linestyle = 'solid')
 plt.grid(True, axis = 'y')
 ax.set_axisbelow(True)
@@ -690,7 +702,7 @@ output_file = os.path.join(path_csv,'LCOH_green.csv')
 LCOH_green_df.to_csv(output_file, sep = ';')
 
 # Plot cost curve of hydrogen production from RES
-fig, ax = plt.subplots(figsize=(10,6))
+fig, ax = plt.subplots(figsize=(10,6), layout = 'constrained')
 plt.plot(LCOH_green_df, color = 'green', linestyle = 'solid')
 plt.grid(True, axis = 'y')
 ax.set_axisbelow(True)
@@ -704,7 +716,7 @@ plt.show()
 
 # Green and blue LCOH
 # Plot cost curves of hydrogen production from NGR with CCS and RES
-fig, ax = plt.subplots(figsize=(10,5))
+fig, ax = plt.subplots(figsize=(10,5), layout = 'constrained')
 plt.plot(LCOH_green_NOR_Base, color ='green', linestyle ='-', label='Green H2 - Baseline')
 
 plt.plot(LCOH_green_NOR_Policy, color ='green', linestyle ='--', label='Green H2 - Policy')
@@ -789,7 +801,7 @@ price_sensitivities = pd.DataFrame(
 price_sensitivities
 
 # Plot green vs blue sensi
-fig, ax = plt.subplots(figsize=(10,4))
+fig, ax = plt.subplots(figsize=(10,4), layout = 'constrained')
 years = np.arange(2025,2051,5)
 #plt.subplot(1,2,1)
 plt.plot(LCOH_green_NOR_opt, color='green', linestyle='solid', label = 'H2 from RES')
@@ -857,10 +869,7 @@ lcoh_ngr_sensi_capture_rate.index.name = 'capture rate in %'
 lcoh_ngr_sensi_capture_rate
 
 #Plot lifetime and capture rate sensi LCOH blue
-fig, ax = plt.subplots(figsize=(10,4))
-plt.subplot(1,2,1)
-
-
+fig, ax = plt.subplots(figsize=(5,4), layout = 'constrained')
 plt.plot(lcoh_ngr_sensi_Lifetime, color='blue', linestyle='solid')
 plt.grid(True, axis='y')
 plt.grid(True, axis='x')
@@ -870,7 +879,11 @@ ax.set_axisbelow(True)
 plt.ylabel('LCOH [€/kg H2]')
 plt.xlabel('Plant lifetime in years')
 
-plt.subplot(1,2,2)
+title = 'LCOH_ngr_lifetime'
+output_file = os.path.join(path_plt,title)
+plt.savefig(output_file+'.png', transparent = True)
+
+fig, ax = plt.subplots(figsize=(5,4), layout = 'constrained')
 plt.plot(lcoh_ngr_sensi_capture_rate, color='blue', linestyle='solid')
 plt.grid(True, axis='y')
 plt.grid(True, axis='x')
@@ -882,8 +895,7 @@ plt.ylabel('LCOH [€/kg H2]')
 plt.xlabel('Capture rate')
 #plt.legend()
 
-
-title = 'LCOH_ngr_lifetime_capture'
+title = 'LCOH_ngr_capture'
 output_file = os.path.join(path_plt,title)
 plt.savefig(output_file+'.png', transparent = True)
 
@@ -1006,7 +1018,7 @@ lcoh_ngr_sensi_capex.to_csv(output_file, sep = ';')
 # Plot LCOH sensi
 import matplotlib.ticker as mtick
 
-fig, ax = plt.subplots(figsize=(5,4))
+fig, ax = plt.subplots(figsize=(5,4), layout = 'constrained')
 #plt.subplot(1,2,1)
 
 
@@ -1105,7 +1117,7 @@ LCOH_min = result
 
 
 # Plot cost curves of hydrogen production from NGR with CCS and RES
-fig, ax = plt.subplots(figsize=(10, 6))
+fig, ax = plt.subplots(figsize=(10, 6), layout = 'constrained')
 
 plt.plot(LCOH_green, color='green', linestyle='solid', label='Green hydrogen')
 plt.plot(LCOH_blue_NOR_Base, color='blue', linestyle='solid', label='Blue hydrogen')
@@ -1123,7 +1135,7 @@ plt.savefig(path_plt+title+'.png', transparent = True)
 plt.show()
 
 # Plot cost curve for production cost
-fig, ax = plt.subplots(figsize=(10,6))
+fig, ax = plt.subplots(figsize=(10,6), layout = 'constrained')
 plt.grid(True, axis = 'y')
 ax.set_axisbelow(True)
 plt.plot(result, color='black', linestyle='solid')
@@ -1481,7 +1493,7 @@ result.to_csv(output_file, sep = ';')
 """Plot liquefaction costs"""
 
 # Plot cost curve for liquefaction
-fig, ax = plt.subplots(figsize=(10,6))
+fig, ax = plt.subplots(figsize=(10,6), layout = 'constrained')
 plt.plot(result, color = 'cyan', linestyle = 'solid')
 plt.grid(True, axis = 'y')
 ax.set_axisbelow(True)
@@ -1560,7 +1572,7 @@ result.to_csv(output_file, sep=';')
 #"Plot export terminal costs"
 
 # Plot cost curve for export terminal costs
-fig, ax = plt.subplots(figsize=(10,6))
+fig, ax = plt.subplots(figsize=(10,6), layout = 'constrained')
 plt.plot(result, color = 'red', linestyle = 'solid')
 plt.grid(True, axis = 'y')
 ax.set_axisbelow(True)
@@ -1663,7 +1675,7 @@ result.to_csv(output_file, sep=';')
 """Plot shipping costs"""
 
 # Plot cost curve of hydrogen production from NGR with CCS
-fig, ax = plt.subplots(figsize=(10,6))
+fig, ax = plt.subplots(figsize=(10,6), layout = 'constrained')
 plt.plot(result, color = 'green', linestyle = 'solid')
 plt.grid(True, axis = 'y')
 ax.set_axisbelow(True)
@@ -1733,7 +1745,7 @@ result.to_csv(output_file, sep=';')
 
 """Plot import terminal costs"""
 
-fig, ax = plt.subplots(figsize=(10,6))
+fig, ax = plt.subplots(figsize=(10,6), layout = 'constrained')
 plt.plot(result, color = 'red', linestyle = 'solid')
 plt.grid(True, axis = 'y')
 ax.set_axisbelow(True)
@@ -1827,7 +1839,7 @@ output_file = os.path.join(path_csv, 'LH2_transport_costs.csv')
 result.to_csv(output_file, sep=';')
 
 # Plot cost curve for LH2 transport
-fig, ax = plt.subplots(figsize=(10,6))
+fig, ax = plt.subplots(figsize=(10,6), layout = 'constrained')
 plt.plot(result, color = 'green', linestyle = 'solid')
 plt.grid(True, axis = 'y')
 ax.set_axisbelow(True)
@@ -1837,7 +1849,7 @@ plt.ylabel('Cost')
 plt.show()
 
 # Cost breakdown for LH2 shipping
-fig, ax = plt.subplots(figsize=(10,6))
+fig, ax = plt.subplots(figsize=(10,6), layout = 'constrained')
 plt.grid(True, axis = 'y')
 ax.set_axisbelow(True)
 x = np.arange(2025, 2051, step=5)
@@ -2012,7 +2024,7 @@ result.to_csv(output_file, sep = ';')
 """Plot conversion costs"""
 
 # Plot cost curve for conversion of H2 to NH3
-fig, ax = plt.subplots(figsize=(10,6))
+fig, ax = plt.subplots(figsize=(10,6), layout = 'constrained')
 plt.plot(result, color = 'cyan', linestyle = 'solid')
 plt.grid(True, axis = 'y')
 ax.set_axisbelow(True)
@@ -2100,7 +2112,7 @@ result.to_csv(output_file, sep=';')
 """Plot export terminal costs"""
 
 # Plot cost curve for export terminal costs
-fig, ax = plt.subplots(figsize=(10,6))
+fig, ax = plt.subplots(figsize=(10,6), layout = 'constrained')
 plt.plot(result, color = 'red', linestyle = 'solid')
 plt.grid(True, axis = 'y')
 ax.set_axisbelow(True)
@@ -2204,7 +2216,7 @@ result.to_csv(output_file, sep=';')
 """Plot shipping costs"""
 
 # Plot cost curve of hydrogen production from NGR with CCS
-fig, ax = plt.subplots(figsize=(10,6))
+fig, ax = plt.subplots(figsize=(10,6), layout = 'constrained')
 plt.plot(result, color = 'green', linestyle = 'solid')
 plt.grid(True, axis = 'y')
 ax.set_axisbelow(True)
@@ -2277,7 +2289,7 @@ result.to_csv(output_file, sep=';')
 """
 Plot import terminal costs"""
 
-fig, ax = plt.subplots(figsize=(10,6))
+fig, ax = plt.subplots(figsize=(10,6), layout = 'constrained')
 plt.plot(result, color = 'red', linestyle = 'solid')
 plt.grid(True, axis = 'y')
 ax.set_axisbelow(True)
@@ -2410,7 +2422,7 @@ output_file = os.path.join(path_csv, 'LNH3_transport_costs_wo_recon.csv')
 LNH3_transport_costs_wo_recon = result
 
 # Cost breakdown for NH3 shipping w/ recon
-fig, ax = plt.subplots(figsize=(10,6))
+fig, ax = plt.subplots(figsize=(10,6), layout = 'constrained')
 plt.grid(True, axis = 'y')
 ax.set_axisbelow(True)
 x = np.arange(2025, 2051, step=5)
@@ -2437,7 +2449,7 @@ plt.savefig(path_plt + title + '.png', transparent=True)
 plt.show()
 
 # Cost breakdown for LNH3 shipping w/0 recon
-fig, ax = plt.subplots(figsize=(10,6))
+fig, ax = plt.subplots(figsize=(10,6), layout = 'constrained')
 plt.grid(True, axis = 'y')
 ax.set_axisbelow(True)
 x = np.arange(2025, 2051, step=5)
@@ -2583,7 +2595,7 @@ lnh3_transport_sensi_distance_LCOT.to_csv(output_file, sep =';')
 
 lh2_transport_sensi_P_el
 
-fig, ax = plt.subplots(figsize=(10,4))
+fig, ax = plt.subplots(figsize=(10,4), layout = 'constrained')
 #plt.subplot(1,2,1)
 
 plt.plot(lh2_transport_sensi_P_el, color='blue', linestyle='solid', label = 'LH2')
@@ -2621,7 +2633,7 @@ plt.show()
 
 """### Plot Transport distance sensi LCOT"""
 
-fig, ax = plt.subplots(figsize=(10,4))
+fig, ax = plt.subplots(figsize=(10,4), layout = 'constrained')
 #plt.subplot(1,2,1)
 
 
@@ -2985,7 +2997,7 @@ LH2_transport_emissions = result
 
 
 # Emission breakdown for LH2 seaborne transport
-fig, ax = plt.subplots(figsize=(10,6))
+fig, ax = plt.subplots(figsize=(10,6), layout = 'constrained')
 plt.grid(True, axis = 'y')
 ax.set_axisbelow(True)
 x = np.arange(2025, 2051, step=5)
@@ -3342,7 +3354,7 @@ result.to_csv(output_file, sep=';')
 NH3_transport_emissions = result
 
 # Emission breakdown for NH3 seaborne transport with cracking
-fig, ax = plt.subplots(figsize=(10, 6))
+fig, ax = plt.subplots(figsize=(10, 6), layout = 'constrained')
 plt.grid(True, axis='y')
 ax.set_axisbelow(True)
 x = np.arange(2025, 2051, step=5)
@@ -3371,7 +3383,7 @@ plt.show()
 """Largest contributer is reconversion at around 15 kWh/kg H2 are required to crack ammonia and it is assumed that electricity and heat are sourced from grid electricity, which has a high emission factor of around 300 g CO2eq/kWh in 2025 (in Germany).
 """
 # Emission breakdown for NH3 seaborne transport without cracking
-fig, ax = plt.subplots(figsize=(10, 6))
+fig, ax = plt.subplots(figsize=(10, 6), layout = 'constrained')
 plt.grid(True, axis='y')
 ax.set_axisbelow(True)
 x = np.arange(2025, 2051, step=5)
@@ -3552,7 +3564,7 @@ NH3_sensi_w_recon_cargo_emissions.to_csv(output_file, sep=';')
 
 """## Plots"""
 # Plot transport sensi EF
-fig, ax = plt.subplots(figsize=(10,4))
+fig, ax = plt.subplots(figsize=(10,4), layout = 'constrained')
 #plt.subplot(1,2,1)
 
 
@@ -3585,7 +3597,7 @@ plt.show()
 
 """### Plot Transport distance sensi Emissions"""
 
-fig, ax = plt.subplots(figsize=(10,4))
+fig, ax = plt.subplots(figsize=(10,4), layout = 'constrained')
 #plt.subplot(1,2,1)
 
 
@@ -3612,7 +3624,7 @@ plt.show()
 
 """### Plot Transport sensi Cargo emissions"""
 
-fig, ax = plt.subplots(figsize=(10,4))
+fig, ax = plt.subplots(figsize=(10,4), layout = 'constrained')
 #plt.subplot(1,2,1)
 plt.plot(lh2_transport_sensi_cargo_emissions, color='blue', linestyle='-', label = 'LH2')
 plt.plot(NH3_sensi_w_recon_cargo_emissions, color='darkorange', linestyle='-', label ='NH3')
@@ -3741,7 +3753,7 @@ LCOT_min_plt = LCOT_min_tech.drop(columns='Technology')
 """### Plot transport costs"""
 
 # Plot cost curve for seaborne transport
-fig, ax = plt.subplots(figsize=(10,6))
+fig, ax = plt.subplots(figsize=(10,6), layout = 'constrained')
 plt.grid(True, axis = 'y')
 ax.set_axisbelow(True)
 plt.plot(LCOT_min_plt, color='cyan', linestyle='dashed')
@@ -3752,10 +3764,11 @@ plt.ylabel('Cost')
 plt.show()
 
 # Plot cost curves of hydrogen transport
-fig, ax = plt.subplots(figsize=(10, 6))
+fig, ax = plt.subplots(figsize=(10, 6), layout = 'constrained')
 plt.plot(LH2_transport_costs, color='blue', linestyle='solid', label='LH2')
 plt.plot(LNH3_transport_costs, color='darkorange', linestyle='solid', label='NH3')
 plt.plot(LNH3_transport_costs_wo_recon, color='green', linestyle='-', label='NH3 w/o cracking')
+
 plt.plot(New_Pipeline_costs_off, color='dodgerblue', linestyle='solid', label='New pipeline')
 plt.plot(Retrofit_pipeline_costs_off, color='royalblue', linestyle='solid', label='Retrofit pipeline')
 av_new = this_year + AV_pipe_new
@@ -3864,7 +3877,7 @@ result.to_csv(output_file, sep=';')
 Supply_emissions = result
 
 # Plot cost curve for total supply costs
-fig, ax = plt.subplots(figsize=(10, 6))
+fig, ax = plt.subplots(figsize=(10, 6), layout = 'constrained')
 plt.grid(True, axis='y')
 ax.set_axisbelow(True)
 plt.plot(result, color='cyan', linestyle='dashed')
@@ -3876,7 +3889,7 @@ plt.savefig(path_plt + title + '.png', transparent=True)
 plt.show()
 
 # Cost breakdown for H2 supply
-fig, ax = plt.subplots(figsize=(10,6))
+fig, ax = plt.subplots(figsize=(10,6), layout = 'constrained')
 plt.grid(True, axis = 'y')
 ax.set_axisbelow(True)
 x = np.arange(2025, 2051, step=5)
@@ -3910,7 +3923,7 @@ plt.savefig(path_plt + title + '.png', transparent=True)
 plt.show()
 
 # Emission breakdown for H2 supply
-fig, ax = plt.subplots(figsize=(10,6))
+fig, ax = plt.subplots(figsize=(10,6), layout = 'constrained')
 plt.grid(True, axis = 'y')
 ax.set_axisbelow(True)
 x = np.arange(2025, 2051, step=5)
