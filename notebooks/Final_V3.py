@@ -552,7 +552,7 @@ plt.show()
 
 
 # Plot capture sensi
-fig, ax = plt.subplots(layout = 'constrained')
+fig, ax = plt.subplots(figsize = (5,4), layout = 'constrained')
 plt.plot(capture_sensi, color='blue', linestyle='solid')
 plt.grid(True, axis='y')
 ax.set_axisbelow(True)
@@ -716,7 +716,7 @@ plt.show()
 
 # Green and blue LCOH
 # Plot cost curves of hydrogen production from NGR with CCS and RES
-fig, ax = plt.subplots(figsize=(10,5), layout = 'constrained')
+fig, ax = plt.subplots(figsize=(5,4), layout = 'constrained')
 plt.plot(LCOH_green_NOR_Base, color ='green', linestyle ='-', label='Green H2 - Baseline')
 
 plt.plot(LCOH_green_NOR_Policy, color ='green', linestyle ='--', label='Green H2 - Policy')
@@ -732,7 +732,7 @@ ax.legend()
 plt.ylabel('LCOH [€/kg H2]')
 plt.ylim(1.5,)
 plt.xlim(2025,2050)
-title = '\LCOH_green_blue'
+title = '\LCOH_green_blue_Small'
 plt.savefig(path_plt + title + '.png', transparent=True)
 plt.show()
 
@@ -2697,7 +2697,7 @@ result.index.name = 'Years'
 
 for year in years:
 
-    EF_y_n = float(GHG.loc['GHG intensity of electricity generation [g CO2eq/kWh] - Norway'][year])
+    EF_y_n = float(GHG.loc['Grid electricity emission factor NOR [g CO2eq/kWh] Baseline'][year])
 
     result.Pipeline_emissions.loc[year] = Pipeline_emissions()
 
@@ -2782,7 +2782,7 @@ years = np.arange(2025, 2051)
 result = pd.DataFrame(index=years, columns=['LH2_Conversion_emissions'])
 for year in years:
     el_liq_y = float(tea_lh2.loc['Liquefaction - Electricity consumption opt. [kWh/kgH2]'][year])
-    EF_y_n = float(GHG.loc['GHG intensity of electricity generation [g CO2eq/kWh] - Norway'][year])
+    EF_y_n = float(GHG.loc['Grid electricity emission factor NOR [g CO2eq/kWh] Baseline'][year])
 
     result.LH2_Conversion_emissions.loc[year] = Conversion_emissions()
 
@@ -2816,7 +2816,7 @@ result = pd.DataFrame(index=years, columns=['LH2_Export_terminal_emissions'])
 result.index.name = 'Years'
 
 for year in years:
-    EF_y_n = float(GHG.loc['GHG intensity of electricity generation [g CO2eq/kWh] - Norway'][year])
+    EF_y_n = float(GHG.loc['Grid electricity emission factor NOR [g CO2eq/kWh] Baseline'][year])
 
     result.LH2_Export_terminal_emissions.loc[year] = ET_emissions()
 
@@ -2920,7 +2920,7 @@ result = pd.DataFrame(index=years, columns=['LH2_Import_terminal_emissions'])
 result.index.name = 'Years'
 
 for year in years:
-    EF_y_n = float(GHG.loc['GHG intensity of electricity generation [g CO2eq/kWh] - Germany'][year])
+    EF_y_n = float(GHG.loc['Grid electricity emission factor GER [g CO2eq/kWh] Baseline'][year])
 
     result.LH2_Import_terminal_emissions.loc[year] = IT_emissions()
 
@@ -2948,7 +2948,7 @@ result.index.name = 'Years'
 for year in years:
 
     el_recon_y = float(tea_lh2.loc['Reconversion - Electricity consumption opt. [kWh/kg H2]'][year])
-    EF_y_n = float(GHG.loc['GHG intensity of electricity generation [g CO2eq/kWh] - Germany'][year])
+    EF_y_n = float(GHG.loc['Grid electricity emission factor GER [g CO2eq/kWh] Baseline'][year])
 
     # calculate emissions of specific year
     result.LH2_Reconversion_emissions.loc[year] = calculate_recon_emissions()
@@ -2996,7 +2996,7 @@ result.to_csv(output_file, sep=';')
 LH2_transport_emissions = result
 
 
-# Emission breakdown for LH2 seaborne transport
+# Emission breakdown for LH2 seaborne transport - Bar chart
 fig, ax = plt.subplots(figsize=(10,6), layout = 'constrained')
 plt.grid(True, axis = 'y')
 ax.set_axisbelow(True)
@@ -3024,6 +3024,32 @@ plt.savefig(path_plt + title + '.png', transparent = True)
 
 plt.show()
 
+# Emission breakdown for LH2 seaborne transport - Line chart
+fig, ax = plt.subplots(figsize=(10,6), layout = 'constrained')
+plt.grid(True, axis = 'y')
+plt.grid(True, axis = 'x')
+ax.set_axisbelow(False)
+x = np.arange(2025, 2051)
+CE = (LH2_Conversion_emissions.loc[::]['LH2_Conversion_emissions']).apply(pd.to_numeric)
+EE = (LH2_Export_terminal_emissions.loc[::]['LH2_Export_terminal_emissions']).apply(pd.to_numeric)
+SE = (LH2_Shipping_emissions.loc[::]['LH2_Shipping_emissions']).apply(pd.to_numeric)
+IE = (LH2_Import_terminal_emissions.loc[::]['LH2_Import_terminal_emissions']).apply(pd.to_numeric)
+RE = (LH2_Reconversion_emissions.loc[::]['LH2_Reconversion_emissions']).apply(pd.to_numeric)
+width = 2       # the width of the bars: can also be len(x) sequence
+
+labels = ['Liquefaction', 'Export Terminal', 'Shipping', 'Import Terminal', 'Regasification']
+colors = ['darkblue', 'cornflowerblue', 'crimson', 'wheat', 'orange']
+plt.stackplot(x, CE, EE, SE, IE, RE, labels = labels, colors = colors )
+
+plt.xlim(2025,2050)
+plt.legend(loc='upper right')
+plt.ylabel('[g CO2eq/kg H2]')
+
+title = '\LH2_emissions_lines'
+plt.savefig(path_plt + title + '.png', transparent = True)
+
+plt.show()
+
 """@ 10.000 km shipping distance. Large contributers to total emissions are emissions factors for grid electricity in import/exporting countries (assumed zero from 2045).
 
 ### Sensitivity of LH2 to transport distance
@@ -3031,10 +3057,10 @@ plt.show()
 
 year = 2030
 el_liq_y = float(tea_lh2.loc['Liquefaction - Electricity consumption opt. [kWh/kgH2]'][year])
-EF_y_n = 118# float(GHG.loc['GHG intensity of electricity generation [g CO2eq/kWh] - Norway'][year])
+EF_y_n = 118# float(GHG.loc['Grid electricity emission factor NOR [g CO2eq/kWh] Baseline'][year])
 
 el_recon_y = float(tea_lh2.loc['Reconversion - Electricity consumption opt. [kWh/kg H2]'][year])
-#EF_y_G = float(GHG.loc['GHG intensity of electricity generation [g CO2eq/kWh] - Germany'][year])
+#EF_y_G = float(GHG.loc['Grid electricity emission factor GER [g CO2eq/kWh] Baseline'][year])
 H2_emissions_sensi = 2500
 LH2_cargo_ghg_sensi = (H2_emissions_sensi + (el_liq_y * EF_y_n ) + ((el_et + el_reliq * t_et) * EF_y_n ))
 sensitivity = []
@@ -3140,7 +3166,7 @@ years = np.arange(2025, 2051)
 result = pd.DataFrame(index=years, columns=['NH3_Conversion_emissions'])
 for year in years:
     el_con_y = float(tea_lnh3.loc['Conversion - Electricity consumption opt. [kWh/kgH2]'][year])
-    EF_y_n = float(GHG.loc['GHG intensity of electricity generation [g CO2eq/kWh] - Norway'][year])
+    EF_y_n = float(GHG.loc['Grid electricity emission factor NOR [g CO2eq/kWh] Baseline'][year])
 
     result.NH3_Conversion_emissions.loc[year] = Conversion_emissions()
 
@@ -3181,7 +3207,7 @@ result = pd.DataFrame(index=years, columns=['NH3_Export_terminal_emissions'])
 result.index.name = 'Years'
 
 for year in years:
-    EF_y_n = float(GHG.loc['GHG intensity of electricity generation [g CO2eq/kWh] - Norway'][year])
+    EF_y_n = float(GHG.loc['Grid electricity emission factor NOR [g CO2eq/kWh] Baseline'][year])
 
     result.NH3_Export_terminal_emissions.loc[year] = ET_emissions()
 
@@ -3277,7 +3303,7 @@ result = pd.DataFrame(index=years, columns=['NH3_Import_terminal_emissions'])
 result.index.name = 'Years'
 
 for year in years:
-    EF_y_n = float(GHG.loc['GHG intensity of electricity generation [g CO2eq/kWh] - Germany'][year])
+    EF_y_n = float(GHG.loc['Grid electricity emission factor GER [g CO2eq/kWh] Baseline'][year])
 
     result.NH3_Import_terminal_emissions.loc[year] = IT_emissions()
 
@@ -3301,7 +3327,7 @@ result.index.name = 'Years'
 for year in years:
     el_recon_y = float(tea_lnh3.loc['Reconversion - Electricity consumption opt. [kWh/kg H2]'][year])
     heat_recon_y = float(tea_lnh3.loc['Reconversion - Heat consumption opt. [kWh/kg H2]'][year])
-    EF_y_n = float(GHG.loc['GHG intensity of electricity generation [g CO2eq/kWh] - Germany'][year])
+    EF_y_n = float(GHG.loc['Grid electricity emission factor GER [g CO2eq/kWh] Baseline'][year])
 
      # calculate emissions of specific year
     result.NH3_Reconversion_emissions.loc[year] = calculate_recon_emissions()
@@ -3419,7 +3445,7 @@ NH3_cargo_ghg = float(LH2_cargo_emissions.loc[year]['LH2_cargo_emissions'])
 f_ship_nh3 = float(tea_lnh3.loc['Shipping - Fuel use [kg NH3/t/km]'][year])/1000 * (NH3_lhv/H2_lhv)
 el_recon_y = float(tea_lnh3.loc['Reconversion - Electricity consumption opt. [kWh/kg H2]'][year])
 heat_recon_y = float(tea_lnh3.loc['Reconversion - Heat consumption opt. [kWh/kg H2]'][year])
-EF_y_n = 118  # float(GHG.loc['GHG intensity of electricity generation [g CO2eq/kWh] - Norway'][year])
+EF_y_n = 118  # float(GHG.loc['Grid electricity emission factor NOR [g CO2eq/kWh] Baseline'][year])
 
 NH3_cargo_ghg_sensi = (H2_emissions_sensi + (el_con_y * EF_y_n ) + ((el_et_nh3 + el_reliq_nh3 * (NH3_lhv/H2_lhv) * t_et) * EF_y_n ))
 sensitivity = []
@@ -3576,11 +3602,14 @@ plt.plot(Pipeline_emissions_sensi_EF, color='cornflowerblue', linestyle='-', lab
 plt.axvline(x=30, color='grey', linestyle = '--')
 plt.axvline(x=275, color='grey', linestyle = '--')
 plt.axvline(x=118, color='grey', linestyle = '--')
-plt.text(30,7800, 'Norway 2021', horizontalalignment='center', verticalalignment='center')
-plt.text(275,7800, 'EU 2021', horizontalalignment='center', verticalalignment='center')
-plt.text(118,7800, 'EU 2030', horizontalalignment='center', verticalalignment='center')
+plt.axvline(x=400, color='grey', linestyle = '--')
+plt.text(30,7600, 'NOR 2021', horizontalalignment='center', verticalalignment='center')
+plt.text(400,7600, 'GER 2021', horizontalalignment='center', verticalalignment='center')
+plt.text(275,7600, 'EU 2021', horizontalalignment='center', verticalalignment='center')
+plt.text(118,7600, 'EU 2030', horizontalalignment='center', verticalalignment='center')
 
 plt.grid(True, axis='y')
+plt.xlim(0,400)
 #plt.grid(True, axis='x')
 ax.set_axisbelow(True)
 plt.locator_params(axis='x', nbins=12)
