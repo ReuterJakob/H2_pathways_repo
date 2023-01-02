@@ -10,8 +10,8 @@ import xlwings as xl
 #Directory
 
 path_excel = r'\\dena.de\Daten\Home\Reuter\Desktop\H2_pathways_repo\data\raw\H2_supply_route_assessment_V2.xlsx'
-path_csv = r'\\dena.de\Daten\Home\Reuter\Desktop\H2_pathways_repo\data\interim'
-path_plt = r'\\dena.de\Daten\Home\Reuter\Desktop\H2_pathways_repo\Plots_v3'
+path_csv = r'\\dena.de\Daten\Home\Reuter\Desktop\H2_pathways_repo\data\Results'
+path_plt = r'\\dena.de\Daten\Home\Reuter\Desktop\H2_pathways_repo\Plots_v3\Policy_Plots'
 
 # adjust plotsize and font
 params = {'font.size':9,
@@ -30,22 +30,9 @@ def df_from_excel(path_excel):
 
 df = df_from_excel(path_excel)
 
-import policy
 
-##Emission comparison
-pipe_em_pol = policy.Pipeline_emissions
 
-lh2_con_pol = policy.LH2_Conversion_emissions
-Lh2_et_pol = policy.LH2_Export_terminal_emissions
-lh2_ship_pol = policy.LH2_Shipping_emissions
-Lh2_it_pol = policy.LH2_Import_terminal_emissions
-lh2_recon_pol =policy.LH2_Reconversion_emissions
 
-NH3_con_pol = policy.NH3_Conversion_emissions
-NH3_et_pol = policy.NH3_Export_terminal_emissions
-NH3_ship_pol = policy.NH3_Shipping_emissions
-NH3_it_pol = policy.NH3_Import_terminal_emissions
-NH3_recon_pol = policy.NH3_Reconversion_emissions
 
 """## Read inputs"""
 
@@ -58,18 +45,18 @@ tea_blue = pd.read_excel(path_excel, sheet_name='LCOH_NGR', decimal=',', index_c
 lcoh_green_source = pd.read_excel(path_excel, sheet_name='LCOH_RES', decimal=',', index_col=0)
 
 ## Plot price inputs.
-co2_prices_baseline = prices.loc['CO2 prices [€/t_CO2] Baseline', 2025:2050]
+co2_prices_Policy = prices.loc['CO2 prices [€/t_CO2] Policy', 2025:2050]
 co2_prices_policy = prices.loc['CO2 prices [€/t_CO2] Policy',2025:2050]
-el_prices_baseline_nor = prices.loc['Electricity prices in Norway [€_2021/MWh] Baseline', 2025:2050]
+el_prices_Policy_nor = prices.loc['Electricity prices in Norway [€_2021/MWh] Policy', 2025:2050]
 el_prices_policy_nor = prices.loc['Electricity prices in Norway [€_2021/MWh] Policy',2025:2050]
-el_prices_baseline_ger = prices.loc['Electricity prices in Germany [€_2020/MWh] Baseline', 2025:2050]
+el_prices_Policy_ger = prices.loc['Electricity prices in Germany [€_2020/MWh] Policy', 2025:2050]
 el_prices_policy_ger = prices.loc['Electricity prices in Germany [€_2020/MWh] Policy',2025:2050]
-gas_prices_baseline_nor = prices.loc['Gas prices in NOR [€_2020/MWh] Baseline', 2025:2050]
+gas_prices_Policy_nor = prices.loc['Gas prices in NOR [€_2020/MWh] Policy', 2025:2050]
 gas_prices_policy_nor = prices.loc['Gas prices in NOR [€_2020/MWh] Policy',2025:2050]
 
 fig, ax = plt.subplots(figsize=(10,4), frameon=False, layout = 'constrained')
 plt.subplot(1,2,1)
-plt.plot(co2_prices_baseline, color= 'red', linestyle= '-', label= ' CO2 prices Baseline')
+plt.plot(co2_prices_Policy, color= 'red', linestyle= '-', label= ' CO2 prices Policy')
 plt.plot(co2_prices_policy, color='red', linestyle= '--',label='CO2 prices Policy')
 plt.grid(True, axis = 'y')
 plt.xlim(2025,2050)
@@ -79,11 +66,11 @@ plt.ylabel('[€/t CO2]')
 plt.legend()
 
 plt.subplot(1,2,2)
-plt.plot(el_prices_baseline_ger, color= 'gold', linestyle= '-',label= ' Electricity prices GER Baseline')
+plt.plot(el_prices_Policy_ger, color= 'gold', linestyle= '-',label= ' Electricity prices GER Policy')
 plt.plot(el_prices_policy_ger, color='gold', linestyle= '--',label='Electricity prices GER Policy')
-plt.plot(el_prices_baseline_nor, color= 'orange', linestyle= '-',label= 'Electricity prices NOR Baseline')
+plt.plot(el_prices_Policy_nor, color= 'orange', linestyle= '-',label= 'Electricity prices NOR Policy')
 plt.plot(el_prices_policy_nor, color='orange', linestyle= '--',label='Electricity prices NOR Policy')
-plt.plot(gas_prices_baseline_nor, color='blue', linestyle= '-',label='Gas prices NOR Baseline')
+plt.plot(gas_prices_Policy_nor, color='blue', linestyle= '-',label='Gas prices NOR Policy')
 plt.plot(gas_prices_policy_nor, color='blue', linestyle= '--',label='Gas prices NOR Policy')
 plt.ylabel('[€/MWh]')
 plt.grid(True, axis = 'y')
@@ -97,28 +84,6 @@ title = '\Inputs_V2'
 plt.savefig(path_plt + title + '.png', transparent=True)
 plt.show()
 
-# Transport inputs
-
-availabilities = pd.read_excel(path_excel, sheet_name='General Assumptions', decimal=',', index_col=0)
-availabilities
-
-this_year = int(availabilities.loc['Technology availability']['Value'])
-this_year
-
-AV_pipe_new = int(availabilities.loc['New H2 pipeline - time from FID to commissioning [years]']['Value'])
-AV_pipe_new
-
-AV_pipe_retro = int(availabilities.loc['Retrofit H2 pipeline - availability from now [years]']['Value'])
-AV_pipe_retro
-
-AV_pipe_co2 = int(availabilities.loc['New CO2 pipeline - time from FID to commissioning [years]']['Value'])
-AV_pipe_co2
-
-AV_LH2 = int(availabilities.loc['LH2 shipping - availability']['Value'])
-AV_LH2
-
-AV_NH3 = int(availabilities.loc['Ammonia shipping - availability']['Value'])
-AV_NH3
 """# Production emissions
 
 ## Definition of variables
@@ -177,12 +142,12 @@ GWP100_CH4 = float(GHG.loc['CH4 GWP100 [Years]']['Value'])
 
 
 # Methane leakage rate in %
-leakage_rate_NOR_Base = float(GHG.loc['Upstream methane leakage rate [%] NOR Baseline']['Value'])
+leakage_rate_NOR_Base = float(GHG.loc['Upstream methane leakage rate [%] NOR Policy']['Value'])
 # Methane leakage rate in %
 leakage_rate_NOR_Policy = float(GHG.loc['Upstream methane leakage rate [%] NOR Policy']['Value'])
 
 # Methane leakage rate in %
-leakage_rate_US_Base = float(GHG.loc['Upstream methane leakage rate [%] US Baseline']['Value'])
+leakage_rate_US_Base = float(GHG.loc['Upstream methane leakage rate [%] US Policy']['Value'])
 
 # Methane leakage rate in %
 leakage_rate_US_Policy = float(GHG.loc['Upstream methane leakage rate [%] US Policy']['Value'])
@@ -197,11 +162,11 @@ Direct_emissions_grey = CO2_g_mole * CO2_SMR_mole
 Direct_emissions_low = Direct_emissions_grey * (1-capture_rate_low)
 
 
-# CO2 emissions from SMR @ 80% capture rate [g CO2/MJ]
+# CO2 emissions from SMR @ 55% capture rate [g CO2/MJ]
 Direct_emissions_mid = Direct_emissions_grey * (1-capture_rate_mid)
 
 
-# CO2 emissions from SMR @ 95% capture rate [g CO2/MJ]
+# CO2 emissions from SMR @ 55% capture rate [g CO2/MJ]
 Direct_emissions_high = Direct_emissions_grey * (1-capture_rate_high)
 
 
@@ -451,7 +416,7 @@ x =['Grey, GWP100\n0.02%', 'Grey, GWP20\n0.02%', 'Grey, GWP100\n1.3%', 'Grey, GW
     'Blue\nSGC 90%, FGC 95%, 0.02%','Blue\nSGC 95%, FGC 90%, 1.3%','Blue\nSGC 95%, FGC 90%, 3.7%', 'Blue\nSGC 95%, FGC 90%, 9%']
 
 # Creating a stacked bar chart to display emissions. Adding lists for the bottom method.
-fig, ax = plt.subplots(figsize=(10,4), frameon=False, layout = 'constrained')
+fig, ax = plt.subplots(figsize=(10,6), frameon=False, layout = 'constrained')
 width = 0.5
 #y_axis = np.arange(101,step=10)
 direct = plt.bar(x, Direct_emissions, width, color = 'royalblue', label='CO2 from SMR', bottom=list(map(lambda x, y, z: x + y + z, Upstream_emissions, Indirect_emissions_plt, Drive_emissions_plt)))
@@ -487,7 +452,7 @@ plt.show()
 leakage_rate = np.arange(0,0.105,0.005)
 sensitivity = []
 # calculate emissions from blue hydrogen production in [g CO2eq/MJ H2]
-def blue_h2_emissions(Direct_emissions_grey, capture_rate_high, Drive_CO2_emissions_grams_grey, capture_rate_flue_gas_high, Indirect_emissions, leakage_rate_NOR_Base, Total_methane_SMR, GWP20_CH4):
+def blue_h2_emissions(Direct_emissions_grey, capture_rate_high, Drive_CO2_emissions_grams_grey, capture_rate_flue_gas_high, Indirect_emissions, leakage_rate_low, Total_methane_SMR, GWP20_CH4):
 
     for i in leakage_rate:
         result = (Direct_emissions_grey * (1 - capture_rate_high)) + (Drive_CO2_emissions_grams_grey * (1 - capture_rate_flue_gas_high)) + Indirect_emissions + i * Total_methane_SMR * GWP20_CH4
@@ -507,7 +472,7 @@ leakage_sensi_GWP20.to_csv(output_file, sep = ';')
 
 # calculate emissions from blue hydrogen production in [g CO2eq/MJ H2]
 sensitivity = []
-def blue_h2_emissions(Direct_emissions_grey, capture_rate_high, Drive_CO2_emissions_grams_grey, capture_rate_flue_gas_high, Indirect_emissions, leakage_rate_NOR_Base, Total_methane_SMR, GWP20_CH4):
+def blue_h2_emissions(Direct_emissions_grey, capture_rate_high, Drive_CO2_emissions_grams_grey, capture_rate_flue_gas_high, Indirect_emissions, leakage_rate_low, Total_methane_SMR, GWP20_CH4):
 
     for i in leakage_rate:
         result = (Direct_emissions_grey * (1 - capture_rate_high)) + (Drive_CO2_emissions_grams_grey * (1 - capture_rate_flue_gas_high)) + Indirect_emissions + i * Total_methane_SMR * GWP100_CH4
@@ -526,14 +491,15 @@ leakage_sensi_GWP100.to_csv(output_file, sep = ';')
 
 """### Capture rate"""
 
-capture_rates = np.arange(0.5, 1.01, 0.1)
+capture_rate = np.arange(0.55, 1, 0.05)
 sensitivity = []
 # calculate emissions from blue hydrogen production in [g CO2eq/MJ H2]
-def blue_h2_emissions(Direct_emissions_grey, capture_rate_high, Drive_CO2_emissions_grams_grey, capture_rate_flue_gas_high, Indirect_emissions, leakage_rate_NOR_Base, Total_methane_SMR, GWP20_CH4):
+def blue_h2_emissions(Direct_emissions_grey, capture_rate_high, Drive_CO2_emissions_grams_grey, capture_rate_flue_gas_high, Indirect_emissions, leakage_rate_low, Total_methane_SMR, GWP20_CH4):
 
-    for i in capture_rates:
+    for i in capture_rate:
 
-        result = (Direct_emissions_grey * (1-i)) + (Drive_CO2_emissions_grams_grey * (1 - i)) + Indirect_emissions + 0.0002 * Total_methane_SMR * GWP20_CH4
+        result = (Direct_emissions_grey * (1-i)) + (Drive_CO2_emissions_grams_grey * (1 - i)) + Indirect_emissions + \
+             leakage_rate_low * Total_methane_SMR * GWP20_CH4
 
         sensitivity.append(result)
 
@@ -541,7 +507,7 @@ def blue_h2_emissions(Direct_emissions_grey, capture_rate_high, Drive_CO2_emissi
 
 blue_h2_emissions(Direct_emissions_grey, capture_rate_high, Drive_CO2_emissions_grams_grey, capture_rate_flue_gas_high, Indirect_emissions, leakage_rate_NOR_Policy, Total_methane_SMR, GWP20_CH4)
 
-capture_sensi = pd.DataFrame(sensitivity, index=capture_rates, columns=['Total_Emissions [g CO2eq/MJ H2]'])
+capture_sensi = pd.DataFrame(sensitivity, index=capture_rate, columns=['Total_Emissions [g CO2eq/MJ H2]'])
 #to_csv
 output_file = os.path.join(path_csv, 'capture_sensi' + '.csv')
 capture_sensi.to_csv(output_file, sep = ';')
@@ -549,11 +515,11 @@ capture_sensi.to_csv(output_file, sep = ';')
 # Plot leakage and capture sensi
 fig = plt.figure(figsize=(10,4))
 
-#leakage rates
 ax = fig.add_subplot(1, 2, 1)
+#plt.subplot(1,2,1)
 ax2 = ax.secondary_yaxis('right', functions=(lambda MJ: MJ*120/1000, lambda kg: kg/120))
-ax2.set_yticks(np.arange(0,19,3))
-ax.locator_params(axis='y', nbins=7)
+#ax2.set_ylabel(ylabel= '[kg CO2eq/kg H2]')
+plt.locator_params(axis='y', nbins=10)
 plt.plot(leakage_sensi_GWP20, color='blue', linestyle='solid', label = 'GWP20' )
 plt.plot(leakage_sensi_GWP100, color='dodgerblue',linestyle='-', label = 'GWP100')
 
@@ -562,8 +528,7 @@ ax.set_axisbelow(True)
 
 
 plt.xticks(np.arange(0,0.105, 0.02), ['0%', '2%', '4%', '6%', '8%', '10%'] )
-plt.xlim(0,0.1)
-plt.ylim(0,150)
+
 plt.ylabel('[g CO2eq/MJ H2]')
 plt.xlabel('Leakage rate')
 plt.legend()
@@ -571,18 +536,14 @@ plt.legend()
 #Capture rates
 ax3 = fig.add_subplot(1, 2, 2)
 ax4 = ax3.secondary_yaxis('right', functions=(lambda MJ: MJ*120/1000, lambda kg: kg/120))
-
-ax4.locator_params(axis='y', nbins=7)
 ax4.set_ylabel(ylabel= '[kg CO2eq/kg H2]')
 
 plt.plot(capture_sensi, color='blue', linestyle='solid')
-ax3.set_yticks(np.arange(0,51, (50/6)))
 plt.grid(True, axis='y')
 ax.set_axisbelow(True)
 plt.xlabel('System capture rate')
-plt.xticks(capture_rates, ['50%',  '60%',  '70%',  '80%',  '90%',  '100%'] )
-plt.xlim(0.5,1)
-plt.ylim(0,50)
+plt.xticks(np.arange(0.55,1, 0.1), ['55%',  '65%',  '75%',  '85%',  '95%'] )
+plt.locator_params(axis='y', nbins=10)
 fig.tight_layout(pad=1)
 
 title = '\Leakage_and_capture_sensi'
@@ -590,7 +551,7 @@ plt.savefig(path_plt+title+'.png', transparent = True)
 plt.show()
 
 
-# single Plot capture sensi
+# Plot capture sensi
 fig, ax = plt.subplots(figsize = (5,4), layout = 'constrained')
 plt.plot(capture_sensi, color='blue', linestyle='solid')
 plt.grid(True, axis='y')
@@ -601,7 +562,7 @@ ax5.set_ylabel(ylabel= '[kg CO2eq/kg H2]')
 plt.ylabel('[g CO2eq/MJ H2]')
 plt.xlabel('System capture rate')
 
-plt.xticks(capture_rates, ['50%',  '60%',  '70%',  '80%',  '90%',  '100%'] )
+plt.xticks(np.arange(0.55,1, 0.1), ['55%',  '65%',  '75%',  '85%',  '95%'] )
 
 title = '\Capture_sensi'
 plt.savefig(path_plt+title+'.png', transparent = True)
@@ -649,7 +610,7 @@ Q_ue [kgCO2/kgH2]
 P_ccs [€/t CO2]
 P_co2_y [€/t CO2]
 """
-#LCOH Baseline NOR
+#LCOH Policy NOR
 def calculate_lcoh_ngr():
 
     result = float(LHV_h2 * ((alpha_ngr * capex_y + opex_y) / (CF * 8760) + P_ng_y / 1000 * n) + (Q_ce_y * P_ccs_y + Q_ue_y * P_co2_y) / 1000)
@@ -667,11 +628,11 @@ for year in years:
     # get capex, opex, natural gas price and CO2 price of specific year
     capex_y = float(tea_blue.loc['Capex [€/kW]'][year])
     opex_y = capex_y * opex_share
-    Q_ce_y = float(GHG.loc['Captured emissions [kg CO2/kg H2] - NOR Baseline'][year])
-    Q_ue_y = float(GHG.loc['Blue hydrogen emissions [kg CO2/kg H2] - NOR Baseline'][year])
-    P_ng_y = float(prices.loc['Gas prices in NOR [€_2020/MWh] Baseline'][year])
-    P_co2_y = float(prices.loc['CO2 prices [€/t_CO2] Baseline'][year])
-    P_ccs_y = float(tea_blue.loc['CO2 transport and storage cost [€/t CO2] Baseline'][year])
+    Q_ce_y = float(GHG.loc['Captured emissions [kg CO2/kg H2] - NOR Policy'][year])
+    Q_ue_y = float(GHG.loc['Blue hydrogen emissions [kg CO2/kg H2] - NOR Policy'][year])
+    P_ng_y = float(prices.loc['Gas prices in NOR [€_2020/MWh] Policy'][year])
+    P_co2_y = float(prices.loc['CO2 prices [€/t_CO2] Policy'][year])
+    P_ccs_y = float(tea_blue.loc['CO2 transport and storage cost [€/t CO2] Policy'][year])
 
     # calculate lcoe of specific year
     result.LCOH_blue.loc[year] = calculate_lcoh_ngr()
@@ -716,8 +677,7 @@ result.to_csv(output_file, sep = ';')
 LCOH_blue_NOR_Policy = result
 
 # Plot cost curve of hydrogen production from NGR with CCS
-fig, ax = plt.subplots(figsize=(10,4), layout = 'constrained')
-fig.patch.set_visible(False)
+fig, ax = plt.subplots(figsize=(10,6), layout = 'constrained')
 plt.plot(result, color = 'blue', linestyle = 'solid')
 plt.grid(True, axis = 'y')
 ax.set_axisbelow(True)
@@ -732,39 +692,38 @@ plt.show()
 
 """## Green LCOH"""
 LCOH_green_NOR_Policy= ((lcoh_green_source.loc['Norway_Onshore_2_low_temp_optimistic', 2025:2050]).mul(0.89))
-
+LCOH_green_df = pd.DataFrame(LCOH_green_NOR_Policy)
+LCOH_green_df.index.name = 'Years'
 
 LCOH_green_NOR_Base = ((lcoh_green_source.loc['Norway_Onshore_2_low_temp_baseline', 2025:2050]).mul(0.89))
-LCOH_green_Base = pd.DataFrame(LCOH_green_NOR_Base)
-LCOH_green_Base.index.name = 'Years'
+
 # Create csv file from results dataframe
-output_file = os.path.join(path_csv,'LCOH_green_Base.csv')
-LCOH_green_Base.to_csv(output_file, sep = ';')
+output_file = os.path.join(path_csv,'LCOH_green.csv')
+LCOH_green_df.to_csv(output_file, sep = ';')
 
 # Plot cost curve of hydrogen production from RES
-fig, ax = plt.subplots(figsize=(10,4), layout = 'constrained')
-fig.patch.set_visible(False)
-plt.plot(LCOH_green_Base, color = 'green', linestyle = 'solid')
+fig, ax = plt.subplots(figsize=(10,6), layout = 'constrained')
+plt.plot(LCOH_green_df, color = 'green', linestyle = 'solid')
 plt.grid(True, axis = 'y')
 ax.set_axisbelow(True)
 #plt.title('Cost curve for green hydrogen production', fontweight='bold')
 #plt.xlabel('Year')
 plt.ylabel('Cost [€/kg H2]')
 
-title = '\LCOH_green_Base'
+title = '\LCOH_green'
 plt.savefig(path_plt + title + '.png', transparent=True)
 plt.show()
 
 # Green and blue LCOH
 # Plot cost curves of hydrogen production from NGR with CCS and RES
 fig, ax = plt.subplots(figsize=(5,4), layout = 'constrained')
-plt.plot(LCOH_green_NOR_Base, color ='green', linestyle ='-', label='Green H2 Baseline')
+plt.plot(LCOH_green_NOR_Base, color ='green', linestyle ='-', label='Green H2 Policy')
 
-plt.plot(LCOH_green_NOR_Policy, color ='green', marker= '*', label='Green H2 Policy')
+plt.plot(LCOH_green_NOR_Policy, color ='green', linestyle ='--', label='Green H2 Policy')
 
-plt.plot(LCOH_blue_NOR_Base, color ='blue', linestyle ='-', label='Blue H2 Baseline')
+plt.plot(LCOH_blue_NOR_Base, color ='blue', linestyle ='-', label='Blue H2 Policy')
 
-plt.plot(LCOH_blue_NOR_Policy, color ='blue', marker= '*', label='Blue H2 Policy')
+plt.plot(LCOH_blue_NOR_Policy, color ='blue', linestyle ='--', label='Blue H2 Policy')
 plt.grid(True, axis = 'y')
 ax.set_axisbelow(True)
 #plt.title('LCOH green and blue', fontweight='bold')
@@ -777,17 +736,17 @@ title = '\LCOH_green_blue_Small'
 plt.savefig(path_plt + title + '.png', transparent=True)
 plt.show()
 
-"""## LCOH blue Sensi Baseline"""
+"""## LCOH blue Sensi Policy"""
 sensi_year = 2030
 
 capex_y = float(tea_blue.loc['Capex [€/kW]'][sensi_year])
 opex_y = capex_y * opex_share
-Q_grey = float(GHG.loc['Grey hydrogen emissions [kg CO2/kg H2] - NOR Baseline']['Value'])
-Q_ce_y = float(GHG.loc['Captured emissions [kg CO2/kg H2] - NOR Baseline'][sensi_year])
-Q_ue_y = float(GHG.loc['Blue hydrogen emissions [kg CO2/kg H2] - NOR Baseline'][sensi_year])
-P_ng_y = float(prices.loc['Gas prices in NOR [€_2020/MWh] Baseline'][sensi_year])
-P_co2_y = float(prices.loc['CO2 prices [€/t_CO2] Baseline'][sensi_year])
-P_ccs_y = float(tea_blue.loc['CO2 transport and storage cost [€/t CO2] Baseline'][sensi_year])
+Q_grey = float(GHG.loc['Grey hydrogen emissions [kg CO2/kg H2] - NOR Policy']['Value'])
+Q_ce_y = float(GHG.loc['Captured emissions [kg CO2/kg H2] - NOR Policy'][sensi_year])
+Q_ue_y = float(GHG.loc['Blue hydrogen emissions [kg CO2/kg H2] - NOR Policy'][sensi_year])
+P_ng_y = float(prices.loc['Gas prices in NOR [€_2020/MWh] Policy'][sensi_year])
+P_co2_y = float(prices.loc['CO2 prices [€/t_CO2] Policy'][sensi_year])
+P_ccs_y = float(tea_blue.loc['CO2 transport and storage cost [€/t CO2] Policy'][sensi_year])
 
 ## Green vs blue
 
@@ -817,10 +776,10 @@ for year in years:
     # get capex, opex, natural gas price and CO2 price of specific year
     capex_y = float(tea_blue.loc['Capex [€/kW]'][year])
     opex_y = capex_y * opex_share
-    Q_ce_y = float(GHG.loc['Captured emissions [kg CO2/kg H2] - NOR Baseline'][year])
-    Q_ue_y = float(GHG.loc['Blue hydrogen emissions [kg CO2/kg H2] - NOR Baseline'][year])
-    P_ng_y = float(prices.loc['Gas prices in NOR [€_2020/MWh] Baseline'][year])
-    P_ccs_y = float(tea_blue.loc['CO2 transport and storage cost [€/t CO2] Baseline'][year])
+    Q_ce_y = float(GHG.loc['Captured emissions [kg CO2/kg H2] - NOR Policy'][year])
+    Q_ue_y = float(GHG.loc['Blue hydrogen emissions [kg CO2/kg H2] - NOR Policy'][year])
+    P_ng_y = float(prices.loc['Gas prices in NOR [€_2020/MWh] Policy'][year])
+    P_ccs_y = float(tea_blue.loc['CO2 transport and storage cost [€/t CO2] Policy'][year])
     for P_co2_y in P_CO2_range:
         result = calculate_lcoh_ngr_sensi_P_CO2()
         sensitivity.append(result)
@@ -889,11 +848,11 @@ lcoh_ngr_sensi_Lifetime= pd.DataFrame(sensitivity, index= lifetime, columns=['LC
 lcoh_ngr_sensi_Lifetime.index.name = 'Lifetime of plant in years'
 
 # Capture rate sensi on costs
-capture_rates = np.arange(0, 1.01, 0.1)
+capture_rate = np.arange(0,1.01,0.1)
 sensitivity = []
 def calculate_lcoh_ngr_sensi_Lifetime(alpha_ngr, capex_y, opex_y, CF, P_ng_y, n, Q_ce_y, P_ccs_y, Q_ue_y, P_co2_y, LHV_h2):
 
-    for rate in capture_rates:
+    for rate in capture_rate:
 
 
         result = float(LHV_h2 * ((alpha_ngr * capex_y + opex_y) / (CF * 8760)+ P_ng_y / 1000 * n) + ((Q_grey *  rate) * P_ccs_y + (Q_grey  * (1- rate)) * P_co2_y ) / 1000)
@@ -905,7 +864,7 @@ def calculate_lcoh_ngr_sensi_Lifetime(alpha_ngr, capex_y, opex_y, CF, P_ng_y, n,
 
 calculate_lcoh_ngr_sensi_Lifetime(alpha_ngr, capex_y, opex_y, CF, P_ng_y, n, Q_ce_y, P_ccs_y, Q_ue_y, P_co2_y, LHV_h2)
 
-lcoh_ngr_sensi_capture_rate= pd.DataFrame(sensitivity, index= capture_rates, columns=['LCOH_NGR [€/kg H2]'])
+lcoh_ngr_sensi_capture_rate= pd.DataFrame(sensitivity, index= capture_rate, columns=['LCOH_NGR [€/kg H2]'])
 lcoh_ngr_sensi_capture_rate.index.name = 'capture rate in %'
 lcoh_ngr_sensi_capture_rate
 
@@ -1014,7 +973,7 @@ lcoh_ngr_sensi_P_CCS.to_csv(output_file, sep = ';')
 sensitivity = []
 def calculate_lcoh_ngr_sensi_WACC(alpha_ngr, capex_y, opex_y, CF, P_ng_y, n, Q_ce_y, P_ccs_y, Q_ue_y, P_co2_y, LHV_h2):
 
-    for x in np.arange(0.000000001,21,1):
+    for x in np.arange(0.000001,21,1):
         factor = x/10
 
         result = float(LHV_h2 * (((i* factor * (1 + i* factor) ** l_ngr) / (((1 + i* factor) ** l_ngr) - 1) * capex_y + opex_y) / (CF * 8760)+ P_ng_y / 1000 * n) + (Q_ce_y * P_ccs_y  + Q_ue_y * P_co2_y ) / 1000)
@@ -1116,7 +1075,7 @@ result.index.name = 'Years'
 for year in years:
     # get all costs
 
-    LCOH_green = float(LCOH_green_Base.loc[year]['Norway_Onshore_2_low_temp_baseline'])
+    LCOH_green = float(LCOH_green_df.loc[year]['Norway_Onshore_2_low_temp_optimistic'])
     LCOH_blue = float(LCOH_blue_NOR_Base.loc[year]['LCOH_blue'])
 
     # calculate costs of specific year
@@ -1138,7 +1097,7 @@ result.index.name = 'Years'
 for year in years:
     # get all costs
 
-    LCOH_green = float(LCOH_green_Base.loc[year]['Norway_Onshore_2_low_temp_baseline'])
+    LCOH_green = float(LCOH_green_df.loc[year]['Norway_Onshore_2_low_temp_optimistic'])
     LCOH_blue = float(LCOH_blue_NOR_Base.loc[year]['LCOH_blue'])
 
     # calculate costs of specific year
@@ -1160,7 +1119,7 @@ LCOH_min = result
 # Plot cost curves of hydrogen production from NGR with CCS and RES
 fig, ax = plt.subplots(figsize=(10, 6), layout = 'constrained')
 
-plt.plot(LCOH_green_Base, color='green', linestyle='solid', label='Green hydrogen')
+plt.plot(LCOH_green, color='green', linestyle='solid', label='Green hydrogen')
 plt.plot(LCOH_blue_NOR_Base, color='blue', linestyle='solid', label='Blue hydrogen')
 plt.grid(True, axis='y')
 ax.set_axisbelow(True)
@@ -1176,8 +1135,7 @@ plt.savefig(path_plt+title+'.png', transparent = True)
 plt.show()
 
 # Plot cost curve for production cost
-fig, ax = plt.subplots(figsize=(10,4), layout = 'constrained')
-fig.patch.set_visible(False)
+fig, ax = plt.subplots(figsize=(10,6), layout = 'constrained')
 plt.grid(True, axis = 'y')
 ax.set_axisbelow(True)
 plt.plot(result, color='black', linestyle='solid')
@@ -1186,8 +1144,8 @@ plt.xlabel('Year')
 plt.ylabel('Cost')
 plt.show()
 
-"""##Baseline - Respective production emissions"""
-blue_emissions = pd.DataFrame(GHG.loc['Blue hydrogen emissions [kg CO2/kg H2] - NOR Baseline', 2025:2050])
+"""##Policy - Respective production emissions"""
+blue_emissions = pd.DataFrame(GHG.loc['Blue hydrogen emissions [kg CO2/kg H2] - NOR Policy', 2025:2050])
 blue_emissions.index.name = 'Years'
 blue_emissions.columns= ['Emissions']
 blue_emissions
@@ -1317,7 +1275,7 @@ result = pd.DataFrame(index=years, columns=['New_Pipeline_costs_off'])
 result.index.name = 'Years'
 
 for year in years:
-    p_el_y = float(prices.loc['Electricity prices in Norway [€_2021/MWh] Baseline'][year])
+    p_el_y = float(prices.loc['Electricity prices in Norway [€_2021/MWh] Policy'][year])
 
     result.New_Pipeline_costs_off.loc[year] = calculate_off_pipe_new()
 
@@ -1356,7 +1314,7 @@ result = pd.DataFrame(index=years, columns=['Retrofit_pipeline_costs_off'])
 result.index.name = 'Years'
 
 for year in years:
-    p_el_y = float(prices.loc['Electricity prices in Norway [€_2021/MWh] Baseline'][year])
+    p_el_y = float(prices.loc['Electricity prices in Norway [€_2021/MWh] Policy'][year])
 
     result.Retrofit_pipeline_costs_off.loc[year] = calculate_off_pipe_retrofit()
 
@@ -1374,7 +1332,7 @@ Retrofit_pipeline_costs_off.to_csv(output_file, sep = ';')
 
 sensi_year = 2030
 d_sea_sensi = 1000
-p_el_y = float(prices.loc['Electricity prices in Norway [€_2021/MWh] Baseline'][sensi_year])
+p_el_y = float(prices.loc['Electricity prices in Norway [€_2021/MWh] Policy'][sensi_year])
 
 P_el_sensi = np.arange(0,121,10)
 sensitivity = []
@@ -1426,7 +1384,7 @@ retro_pipe_sensi_distance_LCOT.to_csv(output_file, sep=';')
 """
 
 sensi_year = 2030
-#p_el_y = float(prices.loc['Electricity prices in Norway [€_2021/MWh] Baseline'b][year])
+#p_el_y = float(prices.loc['Electricity prices in Norway [€_2021/MWh] Policy'b][year])
 
 P_el_sensi = np.arange(0,121,10)
 sensitivity = []
@@ -1454,7 +1412,7 @@ new_pipe_sensi_P_el.to_csv(output_file, sep=';')
 """#### Transport distance sensi"""
 
 sensi_year = 2030
-p_el_y = float(prices.loc['Electricity prices in Norway [€_2021/MWh] Baseline'][sensi_year])
+p_el_y = float(prices.loc['Electricity prices in Norway [€_2021/MWh] Policy'][sensi_year])
 
 transport_distance = np.arange(0,10001, 500)
 sensitivity = []
@@ -1519,7 +1477,7 @@ for year in years:
     capex_liq_y = float(tea_lh2.loc['Liquefaction - Capex opt. [€/t/a]'][year])
     opex_liq_y = capex_liq_y * opex_liq_share
     el_liq_y = float(tea_lh2.loc['Liquefaction - Electricity consumption opt. [kWh/kgH2]'][year])
-    p_el_y = float(prices.loc['Electricity prices in Norway [€_2021/MWh] Baseline'][year])
+    p_el_y = float(prices.loc['Electricity prices in Norway [€_2021/MWh] Policy'][year])
 
     # calculate costs of specific year
     result.LH2_Liquefaction_costs.loc[year] = calculate_liq_costs_LH2(alpha_liq=alpha_liq, capex_liq_y=capex_liq_y, opex_liq_y=opex_liq_y, el_liq_y=el_liq_y, p_el_y=p_el_y)
@@ -1535,8 +1493,7 @@ result.to_csv(output_file, sep = ';')
 """Plot liquefaction costs"""
 
 # Plot cost curve for liquefaction
-fig, ax = plt.subplots(figsize=(10,4), layout = 'constrained')
-fig.patch.set_visible(False)
+fig, ax = plt.subplots(figsize=(10,6), layout = 'constrained')
 plt.plot(result, color = 'cyan', linestyle = 'solid')
 plt.grid(True, axis = 'y')
 ax.set_axisbelow(True)
@@ -1597,7 +1554,7 @@ for year in years:
     # get capex, opex, xx
     capex_et_y = float(tea_lh2.loc['Export Terminal - CAPEX/tank [€/t/a]'][year])
     opex_et_y = capex_et_y * opex_et_share
-    p_el_y = float(prices.loc['Electricity prices in Norway [€_2021/MWh] Baseline'][year])
+    p_el_y = float(prices.loc['Electricity prices in Norway [€_2021/MWh] Policy'][year])
 
 
     # calculate costs of specific year
@@ -1615,8 +1572,7 @@ result.to_csv(output_file, sep=';')
 #"Plot export terminal costs"
 
 # Plot cost curve for export terminal costs
-fig, ax = plt.subplots(figsize=(10,4), layout = 'constrained')
-fig.patch.set_visible(False)
+fig, ax = plt.subplots(figsize=(10,6), layout = 'constrained')
 plt.plot(result, color = 'red', linestyle = 'solid')
 plt.grid(True, axis = 'y')
 ax.set_axisbelow(True)
@@ -1719,8 +1675,7 @@ result.to_csv(output_file, sep=';')
 """Plot shipping costs"""
 
 # Plot cost curve of hydrogen production from NGR with CCS
-fig, ax = plt.subplots(figsize=(10,4), layout = 'constrained')
-fig.patch.set_visible(False)
+fig, ax = plt.subplots(figsize=(10,6), layout = 'constrained')
 plt.plot(result, color = 'green', linestyle = 'solid')
 plt.grid(True, axis = 'y')
 ax.set_axisbelow(True)
@@ -1772,7 +1727,7 @@ for year in years:
     # get capex, opex, xx
     capex_it_y = float(tea_lh2.loc['Import Terminal - CAPEX [€/t/a]'][year])
     opex_it_y = capex_it_y * opex_it_share
-    p_el_y = float(prices.loc['Electricity prices in Germany [€_2020/MWh] Baseline'][year])
+    p_el_y = float(prices.loc['Electricity prices in Germany [€_2020/MWh] Policy'][year])
 
 
     # calculate costs of specific year
@@ -1790,8 +1745,7 @@ result.to_csv(output_file, sep=';')
 
 """Plot import terminal costs"""
 
-fig, ax = plt.subplots(figsize=(10,4), layout = 'constrained')
-fig.patch.set_visible(False)
+fig, ax = plt.subplots(figsize=(10,6), layout = 'constrained')
 plt.plot(result, color = 'red', linestyle = 'solid')
 plt.grid(True, axis = 'y')
 ax.set_axisbelow(True)
@@ -1833,7 +1787,7 @@ for year in years:
     capex_recon_y = float(tea_lh2.loc['Reconversion - Capex opt. [€/t/a]'][year])
     opex_recon_y = capex_recon_y * opex_recon_share
     el_recon_y = float(tea_lh2.loc['Reconversion - Electricity consumption opt. [kWh/kg H2]'][year])
-    p_el_y = float(prices.loc['Electricity prices in Germany [€_2020/MWh] Baseline'][year])
+    p_el_y = float(prices.loc['Electricity prices in Germany [€_2020/MWh] Policy'][year])
 
     # calculate costs of specific year
     result.LH2_Reconversion_costs.loc[year] = calculate_recon_costs_LH2(alpha_recon=alpha_recon, capex_recon_y=capex_recon_y,
@@ -1885,8 +1839,7 @@ output_file = os.path.join(path_csv, 'LH2_transport_costs.csv')
 result.to_csv(output_file, sep=';')
 
 # Plot cost curve for LH2 transport
-fig, ax = plt.subplots(figsize=(10,4), layout = 'constrained')
-fig.patch.set_visible(False)
+fig, ax = plt.subplots(figsize=(10,6), layout = 'constrained')
 plt.plot(result, color = 'green', linestyle = 'solid')
 plt.grid(True, axis = 'y')
 ax.set_axisbelow(True)
@@ -1896,8 +1849,7 @@ plt.ylabel('Cost')
 plt.show()
 
 # Cost breakdown for LH2 shipping
-fig, ax = plt.subplots(figsize=(10,4), layout = 'constrained')
-fig.patch.set_visible(False)
+fig, ax = plt.subplots(figsize=(10,6), layout = 'constrained')
 plt.grid(True, axis = 'y')
 ax.set_axisbelow(True)
 x = np.arange(2025, 2051, step=5)
@@ -1923,8 +1875,7 @@ title= '\LH2_cost_breakdown'
 plt.savefig(path_plt + title + '.png', transparent=True)
 plt.show()
 #stackplot
-fig, ax = plt.subplots(figsize=(10,4), layout = 'constrained')
-fig.patch.set_visible(False)
+fig, ax = plt.subplots(figsize=(10,6), layout = 'constrained')
 plt.grid(True, axis = 'y')
 plt.grid(True, axis = 'x')
 ax.set_axisbelow(False)
@@ -1966,7 +1917,7 @@ capex_recon_y = float(tea_lh2.loc['Reconversion - Capex opt. [€/t/a]'][year])
 opex_recon_y = capex_recon_y * opex_recon_share
 el_recon_y = float(tea_lh2.loc['Reconversion - Electricity consumption opt. [kWh/kg H2]'][year])
 
-p_el_y = float(prices.loc['Electricity prices in Norway [€_2021/MWh] Baseline'][year])
+p_el_y = float(prices.loc['Electricity prices in Norway [€_2021/MWh] Policy'][year])
 
 """#### Electricity price sensi"""
 lcoh = 3
@@ -2080,7 +2031,7 @@ for year in years:
     capex_con_y = float(tea_NH3.loc['Conversion - Capex opt. [€/t/a]'][year])
     opex_con_y = capex_con_y * opex_con_share
     el_con_y = float(tea_NH3.loc['Conversion - Electricity consumption opt. [kWh/kgH2]'][year])
-    p_el_y = float(prices.loc['Electricity prices in Norway [€_2021/MWh] Baseline'][year])
+    p_el_y = float(prices.loc['Electricity prices in Norway [€_2021/MWh] Policy'][year])
 
     # calculate costs of specific year
     result.NH3_Conversion_costs.loc[year] = calculate_con_costs_NH3()
@@ -2097,8 +2048,7 @@ result.to_csv(output_file, sep = ';')
 """Plot conversion costs"""
 
 # Plot cost curve for conversion of H2 to NH3
-fig, ax = plt.subplots(figsize=(10,4), layout = 'constrained')
-fig.patch.set_visible(False)
+fig, ax = plt.subplots(figsize=(10,6), layout = 'constrained')
 plt.plot(result, color = 'cyan', linestyle = 'solid')
 plt.grid(True, axis = 'y')
 ax.set_axisbelow(True)
@@ -2169,7 +2119,7 @@ for year in years:
     # get capex, opex, xx
     capex_et_y = float(tea_NH3.loc['Export Terminal - CAPEX for storage tanks [€/t/a]'][year])
     opex_et_y = float(tea_NH3.loc['Export Terminal - Annual OPEX [€/t/a]'][year])
-    p_el_y = float(prices.loc['Electricity prices in Norway [€_2021/MWh] Baseline'][year])
+    p_el_y = float(prices.loc['Electricity prices in Norway [€_2021/MWh] Policy'][year])
 
     # calculate costs of specific year
     result.NH3_Export_terminal_costs.loc[year] = calculate_export_terminal_costs_NH3()
@@ -2186,8 +2136,7 @@ result.to_csv(output_file, sep=';')
 """Plot export terminal costs"""
 
 # Plot cost curve for export terminal costs
-fig, ax = plt.subplots(figsize=(10,4), layout = 'constrained')
-fig.patch.set_visible(False)
+fig, ax = plt.subplots(figsize=(10,6), layout = 'constrained')
 plt.plot(result, color = 'red', linestyle = 'solid')
 plt.grid(True, axis = 'y')
 ax.set_axisbelow(True)
@@ -2291,8 +2240,7 @@ result.to_csv(output_file, sep=';')
 """Plot shipping costs"""
 
 # Plot cost curve of hydrogen production from NGR with CCS
-fig, ax = plt.subplots(figsize=(10,4), layout = 'constrained')
-fig.patch.set_visible(False)
+fig, ax = plt.subplots(figsize=(10,6), layout = 'constrained')
 plt.plot(result, color = 'green', linestyle = 'solid')
 plt.grid(True, axis = 'y')
 ax.set_axisbelow(True)
@@ -2347,7 +2295,7 @@ for year in years:
     # get capex, opex, xx
     capex_it_y = float(tea_NH3.loc['Import Terminal - CAPEX for storage tanks [€/t/a]'][year])
     opex_it_y = float(tea_NH3.loc['Import Terminal - Annual OPEX [€/t/a]'][year])
-    p_el_y = float(prices.loc['Electricity prices in Germany [€_2020/MWh] Baseline'][year])
+    p_el_y = float(prices.loc['Electricity prices in Germany [€_2020/MWh] Policy'][year])
 
 
     # calculate costs of specific year
@@ -2365,8 +2313,7 @@ result.to_csv(output_file, sep=';')
 """
 Plot import terminal costs"""
 
-fig, ax = plt.subplots(figsize=(10,4), layout = 'constrained')
-fig.patch.set_visible(False)
+fig, ax = plt.subplots(figsize=(10,6), layout = 'constrained')
 plt.plot(result, color = 'red', linestyle = 'solid')
 plt.grid(True, axis = 'y')
 ax.set_axisbelow(True)
@@ -2417,7 +2364,7 @@ for year in years:
     opex_recon_y = capex_recon_y * opex_recon_share
     el_recon_y = float(tea_NH3.loc['Reconversion - Electricity consumption opt. [kWh/kg H2]'][year])
     heat_recon_y = float(tea_NH3.loc['Reconversion - Heat consumption opt. [kWh/kg H2]'][year])
-    p_el_y = float(prices.loc['Electricity prices in Germany [€_2020/MWh] Baseline'][year])
+    p_el_y = float(prices.loc['Electricity prices in Germany [€_2020/MWh] Policy'][year])
 
     # calculate costs of specific year
     result.NH3_Reconversion_costs.loc[year] = calculate_recon_costs_NH3(alpha_recon=alpha_recon, capex_recon_y=capex_recon_y,
@@ -2479,7 +2426,7 @@ def nh3_transport_costs_wo_cracking():
         capex_con_y = float(tea_NH3.loc['Conversion - Capex opt. [€/t/a]'][year])
         opex_con_y = capex_con_y * opex_con_share
         el_con_y = float(tea_NH3.loc['Conversion - Electricity consumption opt. [kWh/kgH2]'][year])
-        p_el_y_N = float(prices.loc['Electricity prices in Norway [€_2021/MWh] Baseline'][year])
+        p_el_y_N = float(prices.loc['Electricity prices in Norway [€_2021/MWh] Policy'][year])
         capex_et_y = float(tea_NH3.loc['Export Terminal - CAPEX for storage tanks [€/t/a]'][year])
         opex_et_y = float(tea_NH3.loc['Export Terminal - Annual OPEX [€/t/a]'][year])
         capex_ship_y = float(tea_NH3.loc['Shipping - Capex/Ship opt. [€/t/a]'][year]) / 1000
@@ -2488,7 +2435,7 @@ def nh3_transport_costs_wo_cracking():
         # NH3_costs_y = float(NH3_cargo_cost.loc[year])
         capex_it_y = float(tea_NH3.loc['Import Terminal - CAPEX for storage tanks [€/t/a]'][year])
         opex_it_y = float(tea_NH3.loc['Import Terminal - Annual OPEX [€/t/a]'][year])
-        p_el_y_G = float(prices.loc['Electricity prices in Germany [€_2020/MWh] Baseline'][year])
+        p_el_y_G = float(prices.loc['Electricity prices in Germany [€_2020/MWh] Policy'][year])
 
         result.NH3_transport_costs_wo_cracking.loc[year] = nh3_transport_costs_wo_cracking()
 
@@ -2499,8 +2446,7 @@ output_file = os.path.join(path_csv, 'NH3_transport_costs_wo_recon.csv')
 NH3_transport_costs_wo_recon = result
 
 # Cost breakdown for NH3 shipping w/ recon
-fig, ax = plt.subplots(figsize=(10,4), layout = 'constrained')
-fig.patch.set_visible(False)
+fig, ax = plt.subplots(figsize=(10,6), layout = 'constrained')
 plt.grid(True, axis = 'y')
 ax.set_axisbelow(True)
 x = np.arange(2025, 2051, step=5)
@@ -2525,35 +2471,9 @@ plt.xlabel('Years')
 title= '\Ammonia_cost_breakdown_w_recon'
 plt.savefig(path_plt + title + '.png', transparent=True)
 plt.show()
-#stackplot
-fig, ax = plt.subplots(figsize=(10,4), layout = 'constrained')
-fig.patch.set_visible(False)
-plt.grid(True, axis = 'y')
-plt.grid(True, axis = 'x')
-ax.set_axisbelow(False)
-x = np.arange(2025, 2051)
-CC = (con_costs.loc[::]['NH3_Conversion_costs']).apply(pd.to_numeric)
-EC = (et_costs.loc[::]['NH3_Export_terminal_costs']).apply(pd.to_numeric)
-SC = (ship_costs.loc[::]['NH3_Shipping_costs']).apply(pd.to_numeric)
-IC = (it_costs.loc[::]['NH3_Import_terminal_costs']).apply(pd.to_numeric)
-RC = (recon_costs.loc[::]['NH3_Reconversion_costs']).apply(pd.to_numeric)
-width = 2       # the width of the bars: can also be len(x) sequence
 
-labels = ['Conversion', 'Export Terminal', 'Shipping', 'Import Terminal','Reconversion']
-colors = ['darkblue', 'cornflowerblue', 'crimson', 'wheat', 'orange']
-plt.stackplot(x, CC, EC, SC, IC, RC, labels = labels, colors = colors )
-
-plt.xlim(2025,2050)
-plt.legend(loc='upper right')
-plt.ylabel('[g CO2eq/kg H2]')
-
-title = '\Ammonia_cost_breakdown_wo_recon_stackplot'
-plt.savefig(path_plt + title + '.png', transparent = True)
-
-plt.show()
 # Cost breakdown for NH3 shipping w/0 recon
-fig, ax = plt.subplots(figsize=(10,4), layout = 'constrained')
-fig.patch.set_visible(False)
+fig, ax = plt.subplots(figsize=(10,6), layout = 'constrained')
 plt.grid(True, axis = 'y')
 ax.set_axisbelow(True)
 x = np.arange(2025, 2051, step=5)
@@ -2579,32 +2499,6 @@ title= '\Ammonia_cost_breakdown_wo_recon'
 plt.savefig(path_plt + title + '.png', transparent=True)
 plt.show()
 
-#stackplot
-fig, ax = plt.subplots(figsize=(10,4), layout = 'constrained')
-fig.patch.set_visible(False)
-plt.grid(True, axis = 'y')
-plt.grid(True, axis = 'x')
-ax.set_axisbelow(False)
-x = np.arange(2025, 2051)
-CC = (con_costs.loc[::]['NH3_Conversion_costs']).apply(pd.to_numeric)
-EC = (et_costs.loc[::]['NH3_Export_terminal_costs']).apply(pd.to_numeric)
-SC = (ship_costs.loc[::]['NH3_Shipping_costs']).apply(pd.to_numeric)
-IC = (it_costs.loc[::]['NH3_Import_terminal_costs']).apply(pd.to_numeric)
-#RC = (recon_costs.loc[::]['NH3_Reconversion_costs']).apply(pd.to_numeric)
-width = 2       # the width of the bars: can also be len(x) sequence
-
-labels = ['Conversion', 'Export Terminal', 'Shipping', 'Import Terminal']
-colors = ['darkblue', 'cornflowerblue', 'crimson', 'wheat']
-plt.stackplot(x, CC, EC, SC, IC, labels = labels, colors = colors )
-
-plt.xlim(2025,2050)
-plt.legend(loc='upper right')
-plt.ylabel('[g CO2eq/kg H2]')
-
-title = '\Ammonia_cost_breakdown_wo_recon_stackplot'
-plt.savefig(path_plt + title + '.png', transparent = True)
-
-plt.show()
 """### Sensitivity"""
 
 year = 2030
@@ -2629,7 +2523,7 @@ opex_recon_y = capex_recon_y * opex_recon_share
 el_recon_y = float(tea_NH3.loc['Reconversion - Electricity consumption opt. [kWh/kg H2]'][year])
 heat_recon_y = float(tea_NH3.loc['Reconversion - Heat consumption opt. [kWh/kg H2]'][year])
 
-p_el_y = float(prices.loc['Electricity prices in Norway [€_2021/MWh] Baseline'][year])
+p_el_y = float(prices.loc['Electricity prices in Norway [€_2021/MWh] Policy'][year])
 
 """#### Electricity price sensi"""
 NH3_cargo_cost_sensi = (lcoh + (alpha_con * capex_con_y/1000 + opex_con_y/1000) + el_con_y * p_el_y / 1000+ (alpha_et * capex_et_y/1000 + opex_et_y/1000) + (el_et + el_reliq * (NH3_lhv/H2_lhv) * t_et) * p_el_y / 1000)
@@ -2824,10 +2718,10 @@ Energy use for compression in [kWh/kg H2]
 years = np.arange(2025,2051)
 result = pd.DataFrame(index=years, columns=['Pipeline_emissions'])
 result.index.name = 'Years'
-#Baseline
+#Policy
 for year in years:
 
-    EF_y_n = float(GHG.loc['Grid electricity emission factor NOR [g CO2eq/kWh] Baseline'][year])
+    EF_y_n = float(GHG.loc['Grid electricity emission factor NOR [g CO2eq/kWh] Policy'][year])
 
     result.Pipeline_emissions.loc[year] = Pipeline_emissions()
 
@@ -2909,12 +2803,12 @@ def Conversion_emissions():
     result = el_liq_y * EF_y_n
     return result
 
-# Calc. liquefaction emissions over time [g CO2eq/kg H2] Baseline
+# Calc. liquefaction emissions over time [g CO2eq/kg H2] Policy
 years = np.arange(2025, 2051)
 result = pd.DataFrame(index=years, columns=['LH2_Conversion_emissions'])
 for year in years:
     el_liq_y = float(tea_lh2.loc['Liquefaction - Electricity consumption opt. [kWh/kgH2]'][year])
-    EF_y_n = float(GHG.loc['Grid electricity emission factor NOR [g CO2eq/kWh] Baseline'][year])
+    EF_y_n = float(GHG.loc['Grid electricity emission factor NOR [g CO2eq/kWh] Policy'][year])
 
     result.LH2_Conversion_emissions.loc[year] = Conversion_emissions()
 
@@ -2924,6 +2818,22 @@ LH2_Conversion_emissions = result
 
 output_file = os.path.join(path_csv,'LH2_Conversion_emissions.csv')
 result.to_csv(output_file, sep = ';')
+
+# Calc. liquefaction emissions over time [g CO2eq/kg H2] Policy
+years = np.arange(2025, 2051)
+result = pd.DataFrame(index=years, columns=['LH2_Conversion_emissions'])
+for year in years:
+    el_liq_y = float(tea_lh2.loc['Liquefaction - Electricity consumption opt. [kWh/kgH2]'][year])
+    EF_y_n = float(GHG.loc['Grid electricity emission factor NOR [g CO2eq/kWh] Policy'][year])
+
+    result.LH2_Conversion_emissions.loc[year] = Conversion_emissions()
+
+result
+
+LH2_Conversion_emissions_policy = result
+
+output_file = os.path.join(path_csv,'LH2_Conversion_emissions_policy.csv')
+LH2_Conversion_emissions_policy.to_csv(output_file, sep = ';')
 """### Export terminal"""
 
 # Electricity consumption for the export terminal [kWh/kg_h2]
@@ -2947,7 +2857,7 @@ result = pd.DataFrame(index=years, columns=['LH2_Export_terminal_emissions'])
 result.index.name = 'Years'
 
 for year in years:
-    EF_y_n = float(GHG.loc['Grid electricity emission factor NOR [g CO2eq/kWh] Baseline'][year])
+    EF_y_n = float(GHG.loc['Grid electricity emission factor NOR [g CO2eq/kWh] Policy'][year])
 
     result.LH2_Export_terminal_emissions.loc[year] = ET_emissions()
 
@@ -2958,6 +2868,20 @@ LH2_Export_terminal_emissions = result
 
 output_file = os.path.join(path_csv,'LH2_Export_terminal_emissions.csv')
 result.to_csv(output_file, sep = ';')
+#Policy
+for year in years:
+    EF_y_n = float(GHG.loc['Grid electricity emission factor NOR [g CO2eq/kWh] Policy'][year])
+
+    result.LH2_Export_terminal_emissions.loc[year] = ET_emissions()
+
+result
+
+LH2_Export_terminal_emissions_Policy = result
+
+
+output_file = os.path.join(path_csv,'LH2_Export_terminal_emissions_Policy.csv')
+LH2_Export_terminal_emissions_Policy.to_csv(output_file, sep = ';')
+
 
 """### Shipping
 
@@ -3019,6 +2943,21 @@ LH2_Shipping_emissions = result
 
 output_file = os.path.join(path_csv,'LH2_Shipping_emissions.csv')
 result.to_csv(output_file, sep = ';')
+#policy
+for year in years:
+
+    LH2_cargo_ghg = float(LH2_cargo_emissions.loc[year]['LH2_cargo_emissions'])
+
+    # calculate emissions of specific year
+    result.LH2_Shipping_emissions.loc[year] = calculate_ship_emissions()
+
+result
+
+LH2_Shipping_emissions = result
+
+output_file = os.path.join(path_csv,'LH2_Shipping_emissions.csv')
+result.to_csv(output_file, sep = ';')
+
 
 """### Import terminal
 
@@ -3047,7 +2986,7 @@ result = pd.DataFrame(index=years, columns=['LH2_Import_terminal_emissions'])
 result.index.name = 'Years'
 
 for year in years:
-    EF_y_n = float(GHG.loc['Grid electricity emission factor GER [g CO2eq/kWh] Baseline'][year])
+    EF_y_n = float(GHG.loc['Grid electricity emission factor GER [g CO2eq/kWh] Policy'][year])
 
     result.LH2_Import_terminal_emissions.loc[year] = IT_emissions()
 
@@ -3075,7 +3014,7 @@ result.index.name = 'Years'
 for year in years:
 
     el_recon_y = float(tea_lh2.loc['Reconversion - Electricity consumption opt. [kWh/kg H2]'][year])
-    EF_y_n = float(GHG.loc['Grid electricity emission factor GER [g CO2eq/kWh] Baseline'][year])
+    EF_y_n = float(GHG.loc['Grid electricity emission factor GER [g CO2eq/kWh] Policy'][year])
 
     # calculate emissions of specific year
     result.LH2_Reconversion_emissions.loc[year] = calculate_recon_emissions()
@@ -3124,8 +3063,7 @@ LH2_transport_emissions = result
 
 
 # Emission breakdown for LH2 seaborne transport - Bar chart
-fig, ax = plt.subplots(figsize=(10,4), layout = 'constrained')
-fig.patch.set_visible(False)
+fig, ax = plt.subplots(figsize=(10,6), layout = 'constrained')
 plt.grid(True, axis = 'y')
 ax.set_axisbelow(True)
 x = np.arange(2025, 2051, step=5)
@@ -3151,14 +3089,12 @@ title = '\LH2_emissions_2'
 plt.savefig(path_plt + title + '.png', transparent = True)
 
 plt.show()
-##
 
-
-
-# Emission breakdown for LH2 seaborne transport - stackplot
-fig, ax = plt.subplots(figsize=(10,4), layout = 'constrained')
-
-plt.subplot(1,2,1)
+# Emission breakdown for LH2 seaborne transport - Line chart
+fig, ax = plt.subplots(figsize=(10,6), layout = 'constrained')
+plt.grid(True, axis = 'y')
+plt.grid(True, axis = 'x')
+ax.set_axisbelow(False)
 x = np.arange(2025, 2051)
 CE = (LH2_Conversion_emissions.loc[::]['LH2_Conversion_emissions']).apply(pd.to_numeric)
 EE = (LH2_Export_terminal_emissions.loc[::]['LH2_Export_terminal_emissions']).apply(pd.to_numeric)
@@ -3172,40 +3108,10 @@ colors = ['darkblue', 'cornflowerblue', 'crimson', 'wheat', 'orange']
 plt.stackplot(x, CE, EE, SE, IE, RE, labels = labels, colors = colors )
 
 plt.xlim(2025,2050)
-plt.ylim(0,730)
-fig.patch.set_visible(False)
-plt.grid(True, axis = 'y')
-plt.grid(True, axis = 'x')
-ax.set_axisbelow(False)
-#plt.legend(loc='upper right')
-plt.ylabel('[g CO2eq/kg H2]')
-plt.xlabel('Baseline')
-
-plt.subplot(1,2,2)
-
-fig.patch.set_visible(False)
-plt.grid(True, axis = 'y')
-plt.grid(True, axis = 'x')
-ax.set_axisbelow(False)
-x = np.arange(2025, 2051)
-
-CE = (lh2_con_pol.loc[::]['LH2_Conversion_emissions']).apply(pd.to_numeric)
-EE = (Lh2_et_pol.loc[::]['LH2_Export_terminal_emissions']).apply(pd.to_numeric)
-SE = (lh2_ship_pol.loc[::]['LH2_Shipping_emissions']).apply(pd.to_numeric)
-IE = (Lh2_it_pol.loc[::]['LH2_Import_terminal_emissions']).apply(pd.to_numeric)
-RE = (lh2_recon_pol.loc[::]['LH2_Reconversion_emissions']).apply(pd.to_numeric)
-width = 2       # the width of the bars: can also be len(x) sequence
-
-labels = ['Liquefaction', 'Export Terminal', 'Shipping', 'Import Terminal', 'Regasification']
-colors = ['darkblue', 'cornflowerblue', 'crimson', 'wheat', 'orange']
-plt.stackplot(x, CE, EE, SE, IE, RE, labels = labels, colors = colors )
-
-plt.xlim(2025,2050)
-plt.ylim(0,730)
 plt.legend(loc='upper right')
 plt.ylabel('[g CO2eq/kg H2]')
-plt.xlabel('Policy')
-title = '\LH2_emissions_stackplot_base_pol'
+
+title = '\LH2_emissionsstackplot'
 plt.savefig(path_plt + title + '.png', transparent = True)
 
 plt.show()
@@ -3217,10 +3123,10 @@ plt.show()
 
 year = 2030
 el_liq_y = float(tea_lh2.loc['Liquefaction - Electricity consumption opt. [kWh/kgH2]'][year])
-EF_y_n = 118# float(GHG.loc['Grid electricity emission factor NOR [g CO2eq/kWh] Baseline'][year])
+EF_y_n = 118# float(GHG.loc['Grid electricity emission factor NOR [g CO2eq/kWh] Policy'][year])
 
 el_recon_y = float(tea_lh2.loc['Reconversion - Electricity consumption opt. [kWh/kg H2]'][year])
-#EF_y_G = float(GHG.loc['Grid electricity emission factor GER [g CO2eq/kWh] Baseline'][year])
+#EF_y_G = float(GHG.loc['Grid electricity emission factor GER [g CO2eq/kWh] Policy'][year])
 H2_emissions_sensi = 2500
 LH2_cargo_ghg_sensi = (H2_emissions_sensi + (el_liq_y * EF_y_n ) + ((el_et + el_reliq * t_et) * EF_y_n ))
 sensitivity = []
@@ -3326,7 +3232,7 @@ years = np.arange(2025, 2051)
 result = pd.DataFrame(index=years, columns=['NH3_Conversion_emissions'])
 for year in years:
     el_con_y = float(tea_NH3.loc['Conversion - Electricity consumption opt. [kWh/kgH2]'][year])
-    EF_y_n = float(GHG.loc['Grid electricity emission factor NOR [g CO2eq/kWh] Baseline'][year])
+    EF_y_n = float(GHG.loc['Grid electricity emission factor NOR [g CO2eq/kWh] Policy'][year])
 
     result.NH3_Conversion_emissions.loc[year] = Conversion_emissions()
 
@@ -3367,7 +3273,7 @@ result = pd.DataFrame(index=years, columns=['NH3_Export_terminal_emissions'])
 result.index.name = 'Years'
 
 for year in years:
-    EF_y_n = float(GHG.loc['Grid electricity emission factor NOR [g CO2eq/kWh] Baseline'][year])
+    EF_y_n = float(GHG.loc['Grid electricity emission factor NOR [g CO2eq/kWh] Policy'][year])
 
     result.NH3_Export_terminal_emissions.loc[year] = ET_emissions()
 
@@ -3463,7 +3369,7 @@ result = pd.DataFrame(index=years, columns=['NH3_Import_terminal_emissions'])
 result.index.name = 'Years'
 
 for year in years:
-    EF_y_n = float(GHG.loc['Grid electricity emission factor GER [g CO2eq/kWh] Baseline'][year])
+    EF_y_n = float(GHG.loc['Grid electricity emission factor GER [g CO2eq/kWh] Policy'][year])
 
     result.NH3_Import_terminal_emissions.loc[year] = IT_emissions()
 
@@ -3487,7 +3393,7 @@ result.index.name = 'Years'
 for year in years:
     el_recon_y = float(tea_NH3.loc['Reconversion - Electricity consumption opt. [kWh/kg H2]'][year])
     heat_recon_y = float(tea_NH3.loc['Reconversion - Heat consumption opt. [kWh/kg H2]'][year])
-    EF_y_n = float(GHG.loc['Grid electricity emission factor GER [g CO2eq/kWh] Baseline'][year])
+    EF_y_n = float(GHG.loc['Grid electricity emission factor GER [g CO2eq/kWh] Policy'][year])
 
      # calculate emissions of specific year
     result.NH3_Reconversion_emissions.loc[year] = calculate_recon_emissions()
@@ -3539,27 +3445,6 @@ output_file = os.path.join(path_csv, 'NH3_transport_emissions.csv')
 result.to_csv(output_file, sep=';')
 NH3_transport_emissions = result
 
-def calculate_NH3_transport_emissions_wo_recon():
-    result = CE + EE + SE + IE# + RE
-
-    return result
-
-for year in years:
-    # get all emissions
-    CE = float(NH3_Conversion_emissions.loc[year]['NH3_Conversion_emissions'])
-    EE = float(NH3_Export_terminal_emissions.loc[year]['NH3_Export_terminal_emissions'])
-    SE = float(NH3_Shipping_emissions.loc[year]['NH3_Shipping_emissions'])
-    IE = float(NH3_Import_terminal_emissions.loc[year]['NH3_Import_terminal_emissions'])
-    #RE = float(NH3_Reconversion_emissions.loc[year]['NH3_Reconversion_emissions'])
-    # calculate costs of specific year
-    result.NH3_transport_emissions.loc[year] = calculate_NH3_transport_emissions_wo_recon()
-
-result
-
-output_file = os.path.join(path_csv, 'NH3_transport_emissions_wo_recon.csv')
-result.to_csv(output_file, sep=';')
-NH3_transport_emissions_wo_recon = result
-
 # Emission breakdown for NH3 seaborne transport with cracking
 fig, ax = plt.subplots(figsize=(10, 6), layout = 'constrained')
 plt.grid(True, axis='y')
@@ -3587,8 +3472,7 @@ plt.savefig(path_plt+title+'.png', transparent = True)
 
 plt.show()
 #stackplot
-fig, ax = plt.subplots(figsize=(10,4), layout = 'constrained')
-fig.patch.set_visible(False)
+fig, ax = plt.subplots(figsize=(10,6), layout = 'constrained')
 plt.grid(True, axis = 'y')
 plt.grid(True, axis = 'x')
 ax.set_axisbelow(False)
@@ -3641,35 +3525,7 @@ plt.savefig(path_plt+title+'.png', transparent = True)
 
 plt.show()
 #stackplot
-fig, ax = plt.subplots(figsize=(10,4), layout = 'constrained')
-fig.patch.set_visible(False)
-plt.grid(True, axis = 'y')
-plt.grid(True, axis = 'x')
-ax.set_axisbelow(False)
-x = np.arange(2025, 2051)
-CE = (NH3_Conversion_emissions.loc[::]['NH3_Conversion_emissions']).apply(pd.to_numeric)
-EE = (NH3_Export_terminal_emissions.loc[::]['NH3_Export_terminal_emissions']).apply(pd.to_numeric)
-SE = (NH3_Shipping_emissions.loc[::]['NH3_Shipping_emissions']).apply(pd.to_numeric)
-IE = (NH3_Import_terminal_emissions.loc[::]['NH3_Import_terminal_emissions']).apply(pd.to_numeric)
-#RE = (NH3_Reconversion_emissions.loc[::]['NH3_Reconversion_emissions']).apply(pd.to_numeric)
-width = 2       # the width of the bars: can also be len(x) sequence
-
-labels = ['Conversion', 'Export Terminal', 'Shipping', 'Import Terminal']
-colors = ['darkblue', 'cornflowerblue', 'crimson', 'wheat']
-plt.stackplot(x, CE, EE, SE, IE, labels = labels, colors = colors )
-
-plt.xlim(2025,2050)
-plt.legend(loc='upper right')
-plt.ylabel('[g CO2eq/kg H2]')
-
-title = '\Ammonia_emissions_wo_reconversion_stackplot'
-plt.savefig(path_plt + title + '.png', transparent = True)
-
-plt.show()
-
-#Ammonia emissions stackplot
-fig, ax = plt.subplots(figsize=(10,10), layout = 'constrained')
-fig.patch.set_visible(False)
+fig, ax = plt.subplots(figsize=(10,6), layout = 'constrained')
 plt.grid(True, axis = 'y')
 plt.grid(True, axis = 'x')
 ax.set_axisbelow(False)
@@ -3703,7 +3559,7 @@ NH3_cargo_ghg = float(LH2_cargo_emissions.loc[year]['LH2_cargo_emissions'])
 f_ship_nh3 = float(tea_NH3.loc['Shipping - Fuel use [kg NH3/t/km]'][year])/1000 * (NH3_lhv/H2_lhv)
 el_recon_y = float(tea_NH3.loc['Reconversion - Electricity consumption opt. [kWh/kg H2]'][year])
 heat_recon_y = float(tea_NH3.loc['Reconversion - Heat consumption opt. [kWh/kg H2]'][year])
-EF_y_n = 118  # float(GHG.loc['Grid electricity emission factor NOR [g CO2eq/kWh] Baseline'][year])
+EF_y_n = 118  # float(GHG.loc['Grid electricity emission factor NOR [g CO2eq/kWh] Policy'][year])
 
 NH3_cargo_ghg_sensi = (H2_emissions_sensi + (el_con_y * EF_y_n ) + ((el_et_nh3 + el_reliq_nh3 * (NH3_lhv/H2_lhv) * t_et) * EF_y_n ))
 sensitivity = []
@@ -3860,15 +3716,14 @@ plt.plot(Pipeline_emissions_sensi_EF, color='cornflowerblue', linestyle='-', lab
 plt.axvline(x=30, color='grey', linestyle = '--')
 plt.axvline(x=275, color='grey', linestyle = '--')
 plt.axvline(x=118, color='grey', linestyle = '--')
-plt.axvline(x=367, color='grey', linestyle = '--')
+plt.axvline(x=400, color='grey', linestyle = '--')
 plt.text(30,7600, 'NOR 2021', horizontalalignment='center', verticalalignment='center')
-plt.text(367,7600, 'GER 2021', horizontalalignment='center', verticalalignment='center')
+plt.text(400,7600, 'GER 2021', horizontalalignment='center', verticalalignment='center')
 plt.text(275,7600, 'EU 2021', horizontalalignment='center', verticalalignment='center')
 plt.text(118,7600, 'EU 2030', horizontalalignment='center', verticalalignment='center')
 
 plt.grid(True, axis='y')
 plt.xlim(0,400)
-plt.ylim(0,)
 #plt.grid(True, axis='x')
 ax.set_axisbelow(True)
 plt.locator_params(axis='x', nbins=12)
@@ -3891,7 +3746,7 @@ fig, ax = plt.subplots(figsize=(10,4), layout = 'constrained')
 
 plt.plot(lh2_transport_sensi_distance_LEOT, color='blue', linestyle='-', label = 'LH2')
 plt.plot(NH3_sensi_w_recon_distance_LEOT, color='darkorange', linestyle='-', label ='NH3')
-plt.plot(NH3_sensi_wo_recon_distance_LEOT, color='darkorange', linestyle='--', label ='NH3 w/o cracking')
+plt.plot(NH3_sensi_wo_recon_distance_LEOT, color='darkorange', linestyle='--', label ='NH3')
 plt.plot(Pipeline_sensi_distance_LEOT, color='royalblue', linestyle='-', label ='Pipeline')
 plt.grid(True, axis='y')
 #plt.grid(True, axis='x')
@@ -3899,7 +3754,7 @@ ax.set_axisbelow(True)
 
 plt.ylabel('[g CO2eq/kg H2]')
 plt.xlim(0,10000)
-plt.ylim(0,)
+#plt.ylim(0,)
 plt.xlabel('Transport Distance in km')
 plt.legend()
 
@@ -3936,221 +3791,131 @@ plt.show()
 
 
 # Plot transport emission comparison
-
-# Import from Policy calculations
-
 sensi_year = 2030
-PE_base = (Pipeline_emissions.loc[sensi_year]['Pipeline_emissions'])
-PE_pol = (pipe_em_pol.loc[sensi_year]['Pipeline_emissions'])
-
-fig, ax = plt.subplots(figsize=(10,4), layout = 'constrained')
-fig.patch.set_visible(False)
+PE_new = (Pipeline_emissions.loc[sensi_year]['Pipeline_emissions'])
+fig, ax = plt.subplots(figsize=(10,6), layout = 'constrained')
 plt.grid(True, axis = 'y')
 ax.set_axisbelow(True)
 
-
+width = 1      # the width of the bars: can also be len(x) sequence
 #Pipe em
-pipe_base = plt.bar(0, PE_base, color = 'dodgerblue')
-pipe_pol = plt.bar(1, PE_pol, color = 'royalblue')
-#Lh2 em base
+pipe = plt.bar(0, PE_new, color = 'dodgerblue')
+#Lh2 em
 CE = (LH2_Conversion_emissions.loc[sensi_year]['LH2_Conversion_emissions'])
 EE = (LH2_Export_terminal_emissions.loc[sensi_year]['LH2_Export_terminal_emissions'])
 SE = (LH2_Shipping_emissions.loc[sensi_year]['LH2_Shipping_emissions'])
 IE = (LH2_Import_terminal_emissions.loc[sensi_year]['LH2_Import_terminal_emissions'])
 RE = (LH2_Reconversion_emissions.loc[sensi_year]['LH2_Reconversion_emissions'])
-x = 2
+x = 1
 RE_plt = plt.bar(x ,RE,  color = 'orange', bottom= CE + EE + SE + IE)
 IE_plt = plt.bar(x ,IE,  color = 'wheat', bottom= CE + EE + SE)
 SE_plt = plt.bar(x ,SE,  color = 'crimson', bottom= CE + EE)
 EE_plt = plt.bar(x ,EE, color = 'cornflowerblue', bottom= CE)
 CE_plt = plt.bar(x ,CE, color = 'darkblue')
-
-#lh2 em pol
-CE = (lh2_con_pol.loc[sensi_year]['LH2_Conversion_emissions'])
-EE = (Lh2_et_pol.loc[sensi_year]['LH2_Export_terminal_emissions'])
-SE = (lh2_ship_pol.loc[sensi_year]['LH2_Shipping_emissions'])
-IE = (Lh2_it_pol.loc[sensi_year]['LH2_Import_terminal_emissions'])
-RE = (lh2_recon_pol.loc[sensi_year]['LH2_Reconversion_emissions'])
-x = 3
-RE_plt = plt.bar(x ,RE,  color = 'orange', bottom= CE + EE + SE + IE)
-IE_plt = plt.bar(x ,IE,  color = 'wheat', bottom= CE + EE + SE)
-SE_plt = plt.bar(x ,SE,  color = 'crimson', bottom= CE + EE)
-EE_plt = plt.bar(x ,EE, color = 'cornflowerblue', bottom= CE)
-CE_plt = plt.bar(x ,CE, color = 'darkblue')
-#NH3 em base
+#NH3 em
 CE = (NH3_Conversion_emissions.loc[sensi_year]['NH3_Conversion_emissions'])
 EE = (NH3_Export_terminal_emissions.loc[sensi_year]['NH3_Export_terminal_emissions'])
 SE = (NH3_Shipping_emissions.loc[sensi_year]['NH3_Shipping_emissions'])
 IE = (NH3_Import_terminal_emissions.loc[sensi_year]['NH3_Import_terminal_emissions'])
 RE = (NH3_Reconversion_emissions.loc[sensi_year]['NH3_Reconversion_emissions'])
 
-n = 4
-#plt.bar(n, RE,  color = 'orange', bottom=CE + EE + SE + IE)
-plt.bar(n, IE, color = 'wheat', bottom=CE + EE + SE)
-plt.bar(n, SE, color = 'crimson', bottom=CE + EE)
-plt.bar(n, EE, color = 'cornflowerblue',  bottom=CE)
-plt.bar(n, CE, color = 'darkblue')
-#NH3 em pol
-CE = (NH3_con_pol.loc[sensi_year]['NH3_Conversion_emissions'])
-EE = (NH3_et_pol.loc[sensi_year]['NH3_Export_terminal_emissions'])
-SE = (NH3_ship_pol.loc[sensi_year]['NH3_Shipping_emissions'])
-IE = (NH3_it_pol.loc[sensi_year]['NH3_Import_terminal_emissions'])
-RE = (NH3_recon_pol.loc[sensi_year]['NH3_Reconversion_emissions'])
-
-n = 5
-#plt.bar(n, RE,  color = 'orange', label='Reconversion emissions', bottom=CE + EE + SE + IE)
+n = 2
+plt.bar(n, RE,  color = 'orange', label='Reconversion emissions', bottom=CE + EE + SE + IE)
 plt.bar(n, IE, color = 'wheat',label='Import terminal emissions', bottom=CE + EE + SE)
 plt.bar(n, SE, color = 'crimson',label='Shipping emissions', bottom=CE + EE)
 plt.bar(n, EE, color = 'cornflowerblue', label='Export terminal emissions', bottom=CE)
 plt.bar(n, CE, color = 'darkblue',label='Conversion emissions')
 
-
-labels = ['Pipeline\nBase','Pipeline\nPolicy', 'LH2\nBase', 'LH2\nPolicy','NH3\nBase', 'NH3\nPolicy',]
+labels = ['Pipeline', 'LH2', 'NH3']
 #plt.title('Emission breakdown for LH2 shipping ', fontweight='bold')
 plt.legend()
-plt.xticks(range(6),labels)
+plt.xticks([0,1,2],labels)
 
+#plt.yticks(y, ['10', '100', '1000'])
+#plt.yscale("log")
 plt.ylabel('[g CO2eq/kg H2]')
 
-title = '\Transport_emission_comparison_wo_recon'
+title = '\Transport_emission_comparison'
 plt.savefig(path_plt + title + '.png', transparent = True)
 
 plt.show()
 
-##plot transport emissions over time
-# Plot emission curves of hydrogen transport
-fig, ax = plt.subplots(figsize=(10, 4), layout = 'constrained')
-plt.plot(LH2_transport_emissions, color='blue', linestyle='solid', label='LH2')
-plt.plot(NH3_transport_emissions, color='darkorange', linestyle='solid', label='NH3')
-plt.plot(NH3_transport_emissions_wo_recon, color='darkorange', linestyle='--', label='NH3 w/o cracking')
-
-plt.plot(Pipeline_emissions, color='dodgerblue', linestyle='solid', label='New pipeline')
-
-av_new = this_year + AV_pipe_new
-av_retro = this_year + AV_pipe_retro
-#ax.yaxis.set_major_locator(mtick.LinearLocator(7))
-plt.axvline(x=av_new, color='dodgerblue', linestyle = '--')
-plt.axvline(x=av_retro, color='royalblue', linestyle = '--')
-plt.text(av_new, 3, 'New pipeline\navailable', horizontalalignment='center', verticalalignment='center')
-plt.text(av_retro,3,  'Retrofit pipeline\navailable', horizontalalignment='center', verticalalignment='center')
-plt.xlim(2025,2050)
-plt.ylim(0,)
-plt.grid(True, axis='y')
-ax.set_axisbelow(True)
-#plt.title('Hydrogen transport costs ', fontweight='bold')
-ax.legend()
-plt.ylabel('Transport emissions [g CO2eq/kg H2]')
-title = '\LEOT_time'
-plt.savefig(path_plt + title + '.png', transparent=True)
-plt.show()
-
 # Plot transport cost comparison
-pipe_costs_new_pol = policy.New_Pipeline_costs_off
-pipe_costs_retro_pol = policy.Retrofit_pipeline_costs_off
+sensi_year = 2030
+PE_new = (New_Pipeline_costs_off.loc[sensi_year]['New_Pipeline_costs_off'])
+PE_retro = (Retrofit_pipeline_costs_off.loc[sensi_year]['Retrofit_pipeline_costs_off'])
 
-LH2_Liquefaction_costs_pol = policy.LH2_Liquefaction_costs
-LH2_Export_terminal_costs_pol = policy.LH2_Export_terminal_costs
-LH2_Shipping_costs_pol = policy.LH2_Shipping_costs
-LH2_Import_terminal_costs_pol = policy.LH2_Import_terminal_costs
-LH2_Reconversion_costs_pol = policy.LH2_Reconversion_costs
-
-NH3_Conversion_costs_pol = policy.NH3_Conversion_costs
-NH3_Export_terminal_costs_pol = policy.NH3_Export_terminal_costs
-NH3_Shipping_costs_pol = policy.NH3_Shipping_costs
-NH3_Import_terminal_costs_pol = policy.NH3_Import_terminal_costs
-NH3_Reconversion_costs_pol =policy.NH3_Reconversion_costs
-
-
-fig, ax = plt.subplots(figsize=(10,4), layout = 'constrained')
-fig.patch.set_visible(False)
+fig, ax = plt.subplots(figsize=(10,6), layout = 'constrained')
 plt.grid(True, axis = 'y')
 ax.set_axisbelow(True)
 
-
-#Pipe retro base
-PE_retro = (Retrofit_pipeline_costs_off.loc[sensi_year]['Retrofit_pipeline_costs_off'])
+width = 1      # the width of the bars: can also be len(x) sequence
+#Pipe
+pipe_new = plt.bar(1, PE_new, color = 'dodgerblue')
 pipe_retro = plt.bar(0, PE_retro, color = 'royalblue')
-
-#Pipe retro Pol
-PE_retro = (pipe_costs_retro_pol.loc[sensi_year]['Retrofit_pipeline_costs_off'])
-pipe_retro = plt.bar(1, PE_retro, color = 'royalblue')
-
-#Pipe new base
-PE_new = (New_Pipeline_costs_off.loc[sensi_year]['New_Pipeline_costs_off'])
-pipe_new = plt.bar(2, PE_new, color = 'dodgerblue')
-
-#Pipe new Pol
-PE_new = (pipe_costs_new_pol.loc[sensi_year]['New_Pipeline_costs_off'])
-pipe_new = plt.bar(3, PE_new, color = 'dodgerblue')
-
-#Lh2 base
+#Lh2
 LC = (LH2_Liquefaction_costs.loc[sensi_year]['LH2_Liquefaction_costs'])
 EC = (LH2_Export_terminal_costs.loc[sensi_year]['LH2_Export_terminal_costs'])
 SC = (LH2_Shipping_costs.loc[sensi_year]['LH2_Shipping_costs'])
 IC = (LH2_Import_terminal_costs.loc[sensi_year]['LH2_Import_terminal_costs'])
 RC = (LH2_Reconversion_costs.loc[sensi_year]['LH2_Reconversion_costs'])
 
-x = 4
+x = 2
 RC_LH2 = plt.bar(x,RC , color= 'orange',bottom= LC + EC + SC + IC)
 IC_LH2 = plt.bar(x,IC , color= 'wheat',bottom= LC + EC + SC)
 SC_LH2 = plt.bar(x,SC , color= 'crimson', bottom= LC + EC)
 EC_LH2 = plt.bar(x,EC , color= 'cornflowerblue',bottom= LC)
 LC_LH2 = plt.bar(x,LC , color= 'darkblue')
-#Lh2 pol
-LC = (LH2_Liquefaction_costs_pol.loc[sensi_year]['LH2_Liquefaction_costs'])
-EC = (LH2_Export_terminal_costs_pol.loc[sensi_year]['LH2_Export_terminal_costs'])
-SC = (LH2_Shipping_costs_pol.loc[sensi_year]['LH2_Shipping_costs'])
-IC = (LH2_Import_terminal_costs_pol.loc[sensi_year]['LH2_Import_terminal_costs'])
-RC = (LH2_Reconversion_costs_pol.loc[sensi_year]['LH2_Reconversion_costs'])
-
-x = 5
-RC_LH2 = plt.bar(x,RC , color= 'orange',bottom= LC + EC + SC + IC)
-IC_LH2 = plt.bar(x,IC , color= 'wheat',bottom= LC + EC + SC)
-SC_LH2 = plt.bar(x,SC , color= 'crimson', bottom= LC + EC)
-EC_LH2 = plt.bar(x,EC , color= 'cornflowerblue',bottom= LC)
-LC_LH2 = plt.bar(x,LC , color= 'darkblue')
-#NH3 base
+#NH3 
 CC = (con_costs.loc[sensi_year]['NH3_Conversion_costs'])
 EC = (et_costs.loc[sensi_year]['NH3_Export_terminal_costs'])
 SC = (ship_costs.loc[sensi_year]['NH3_Shipping_costs'])
 IC = (it_costs.loc[sensi_year]['NH3_Import_terminal_costs'])
 RC = (recon_costs.loc[sensi_year]['NH3_Reconversion_costs'])
 
-n = 6
-RC_NH3 = plt.bar(n,RC , color= 'orange', bottom= CC + EC + SC + IC)
-IC_NH3 = plt.bar(n,IC , color = 'wheat',  bottom= CC + EC + SC)
-SC_NH3 = plt.bar(n,SC ,color = 'crimson',  bottom= CC + EC)
-EC_NH3 = plt.bar(n,EC , color = 'cornflowerblue', bottom= CC)
-CC_NH3 = plt.bar(n,CC , color = 'darkblue')
-#NH3 pol
-CC = (NH3_Conversion_costs_pol.loc[sensi_year]['NH3_Conversion_costs'])
-EC = (NH3_Export_terminal_costs_pol.loc[sensi_year]['NH3_Export_terminal_costs'])
-SC = (NH3_Shipping_costs_pol.loc[sensi_year]['NH3_Shipping_costs'])
-IC = (NH3_Import_terminal_costs_pol.loc[sensi_year]['NH3_Import_terminal_costs'])
-RC = (NH3_Reconversion_costs_pol.loc[sensi_year]['NH3_Reconversion_costs'])
-
-n = 7
-RC_NH3 = plt.bar(n,RC , color= 'orange', label='Reconversion costs',bottom= CC + EC + SC + IC)
+n = 3
+RC_NH3 = plt.bar(n,RC , label='Reconversion costs',color= 'orange', bottom= CC + EC + SC + IC)
 IC_NH3 = plt.bar(n,IC , color = 'wheat', label='Import terminal costs', bottom= CC + EC + SC)
 SC_NH3 = plt.bar(n,SC ,color = 'crimson', label='Shipping costs', bottom= CC + EC)
 EC_NH3 = plt.bar(n,EC , color = 'cornflowerblue', label='Export terminal costs', bottom= CC)
 CC_NH3 = plt.bar(n,CC , color = 'darkblue', label='Conversion costs')
 
-labels = ['Retrofit pipeline\nBase','Retrofit pipeline\nPolicy', 'New pipeline\nBase', 'New pipeline\nPolicy','LH2\nBase', 'LH2\nPolicy','NH3\nBase','NH3\nPolicy']
+labels = ['Retrofit pipeline', 'New pipeline', 'LH2', 'NH3']
 #plt.title('Emission breakdown for LH2 shipping ', fontweight='bold')
 plt.legend()
-plt.xticks(range(8),labels)
+plt.xticks([0,1,2,3],labels)
 
 #plt.yticks(y, ['10', '100', '1000'])
 #plt.yscale("log")
 plt.ylabel('[€/kg H2]')
 
-title = '\Transport_cost_comparison_2030'
+title = '\Transport_cost_comparison'
 plt.savefig(path_plt + title + '.png', transparent = True)
 
 plt.show()
 
 """## Transport inputs"""
+
+availabilities = pd.read_excel(path_excel, sheet_name='General Assumptions', decimal=',', index_col=0)
+availabilities
+
+this_year = int(availabilities.loc['Technology availability']['Value'])
+this_year
+
+AV_pipe_new = int(availabilities.loc['New H2 pipeline - time from FID to commissioning [years]']['Value'])
+AV_pipe_new
+
+AV_pipe_retro = int(availabilities.loc['Retrofit H2 pipeline - availability from now [years]']['Value'])
+AV_pipe_retro
+
+AV_pipe_co2 = int(availabilities.loc['New CO2 pipeline - time from FID to commissioning [years]']['Value'])
+AV_pipe_co2
+
+AV_LH2 = int(availabilities.loc['LH2 shipping - availability']['Value'])
+AV_LH2
+
+AV_NH3 = int(availabilities.loc['Ammonia shipping - availability']['Value'])
+AV_NH3
 
 Retrofit_pipeline_costs_off
 
@@ -4235,8 +4000,7 @@ LCOT_min_plt = LCOT_min_tech.drop(columns='Technology')
 """### Plot transport costs"""
 
 # Plot cost curve for seaborne transport
-fig, ax = plt.subplots(figsize=(10,4), layout = 'constrained')
-fig.patch.set_visible(False)
+fig, ax = plt.subplots(figsize=(10,6), layout = 'constrained')
 plt.grid(True, axis = 'y')
 ax.set_axisbelow(True)
 plt.plot(LCOT_min_plt, color='cyan', linestyle='dashed')
@@ -4246,21 +4010,11 @@ plt.xlabel('Year')
 plt.ylabel('Cost')
 plt.show()
 
-#import policy cost curves.
-LH2_transport_costs_pol = policy.LH2_transport_costs
-NH3_transport_costs_pol = policy.NH3_transport_costs
-NH3_transport_costs_wo_recon_pol = policy.NH3_transport_costs_wo_recon
-
-# Plot cost curves of hydrogen transport baseline adn policy
-fig, ax = plt.subplots(figsize=(10, 4), layout = 'constrained')
-#baseline
+# Plot cost curves of hydrogen transport
+fig, ax = plt.subplots(figsize=(10, 6), layout = 'constrained')
 plt.plot(LH2_transport_costs, color='blue', linestyle='solid', label='LH2')
 plt.plot(NH3_transport_costs, color='darkorange', linestyle='solid', label='NH3')
 plt.plot(NH3_transport_costs_wo_recon, color='green', linestyle='-', label='NH3 w/o cracking')
-#policy
-plt.plot(LH2_transport_costs_pol, color='blue', markers= '>', label='LH2')
-plt.plot(NH3_transport_costs_pol, color='darkorange', markers= '>', label='NH3')
-plt.plot(NH3_transport_costs_wo_recon_pol, color='green', markers= '>', label='NH3 w/o cracking')
 
 plt.plot(New_Pipeline_costs_off, color='dodgerblue', linestyle='solid', label='New pipeline')
 plt.plot(Retrofit_pipeline_costs_off, color='royalblue', linestyle='solid', label='Retrofit pipeline')
@@ -4278,7 +4032,7 @@ ax.set_axisbelow(True)
 #plt.title('Hydrogen transport costs ', fontweight='bold')
 ax.legend()
 plt.ylabel('Transport costs [€/kg H2]')
-title = '\LCOT_time'
+title = '\LCOT_min'
 plt.savefig(path_plt + title + '.png', transparent=True)
 plt.show()
 
@@ -4382,8 +4136,7 @@ plt.savefig(path_plt + title + '.png', transparent=True)
 plt.show()
 
 # Cost breakdown for H2 supply
-fig, ax = plt.subplots(figsize=(10,4), layout = 'constrained')
-fig.patch.set_visible(False)
+fig, ax = plt.subplots(figsize=(10,6), layout = 'constrained')
 plt.grid(True, axis = 'y')
 ax.set_axisbelow(True)
 x = np.arange(2025, 2051, step=5)
@@ -4417,8 +4170,7 @@ plt.savefig(path_plt + title + '.png', transparent=True)
 plt.show()
 
 # Emission breakdown for H2 supply
-fig, ax = plt.subplots(figsize=(10,4), layout = 'constrained')
-fig.patch.set_visible(False)
+fig, ax = plt.subplots(figsize=(10,6), layout = 'constrained')
 plt.grid(True, axis = 'y')
 ax.set_axisbelow(True)
 x = np.arange(2025, 2051, step=5)
