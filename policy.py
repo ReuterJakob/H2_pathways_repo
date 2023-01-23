@@ -1335,8 +1335,17 @@ output_file = os.path.join(path_csv,'New_Pipeline_costs_off.csv')
 result.to_csv(output_file, sep = ';')
 New_Pipeline_costs_off = result
 
-"""## Retrofit offshore pipeline cost"""
+#pipeline cost components
+component = ((alpha_pipe * 0 / pipe_use + opex_new_off) + (capa_comp * pipe_use * 8760 * p_el_y / capa_pipe)) * d_sea / 1000
+pipe_capex = np.subtract(New_Pipeline_costs_off['New_Pipeline_costs_off'], component).apply(pd.to_numeric)
 
+component = ((alpha_pipe * capex_new_off / pipe_use + 0) + (capa_comp * pipe_use * 8760 * p_el_y / capa_pipe)) * d_sea / 1000
+pipe_opex = np.subtract(New_Pipeline_costs_off['New_Pipeline_costs_off'], component).apply(pd.to_numeric)
+
+component = ((alpha_pipe * capex_new_off / pipe_use + opex_new_off) + (capa_comp * pipe_use * 8760 * 0 / capa_pipe)) * d_sea / 1000
+pipe_p_el = np.subtract(New_Pipeline_costs_off['New_Pipeline_costs_off'], component).apply(pd.to_numeric)
+
+"""## Retrofit offshore pipeline cost"""
 #Retrofit  capex in [€/kg/100km]
 capex_pipe_retrofit_off_EHB = float(tea_pipe.loc['Medium - retrofit Offshore (EHB 2022) Capex Pipeline [€/kg/1000km]']['Parameter'])
 capex_pipe_retrofit_off_EHB
@@ -1374,6 +1383,15 @@ Retrofit_pipeline_costs_off = result
 output_file = os.path.join(path_csv,'Retrofit_pipeline_costs_off.csv')
 Retrofit_pipeline_costs_off.to_csv(output_file, sep = ';')
 
+#retro pipeline components
+component = ((alpha_pipe * 0 / pipe_use + opex_retrofit_off) + (capa_comp * pipe_use * 8760 * p_el_y / capa_pipe)) * d_sea / 1000
+retro_pipe_capex = np.subtract(Retrofit_pipeline_costs_off['Retrofit_pipeline_costs_off'], component).apply(pd.to_numeric)
+
+component = ((alpha_pipe * capex_retrofit_off / pipe_use + 0) + (capa_comp * pipe_use * 8760 * p_el_y / capa_pipe)) * d_sea / 1000
+retro_pipe_opex = np.subtract(Retrofit_pipeline_costs_off['Retrofit_pipeline_costs_off'], component).apply(pd.to_numeric)
+
+component = ((alpha_pipe * capex_retrofit_off / pipe_use + opex_retrofit_off) + (capa_comp * pipe_use * 8760 * 0 / capa_pipe)) * d_sea / 1000
+retro_pipe_p_el = np.subtract(Retrofit_pipeline_costs_off['Retrofit_pipeline_costs_off'], component).apply(pd.to_numeric)
 
 """## Sensitivity
 
@@ -3530,6 +3548,26 @@ result
 output_file = os.path.join(path_csv, 'NH3_transport_emissions.csv')
 result.to_csv(output_file, sep=';')
 NH3_transport_emissions = result
+'wo recon'
+years = np.arange(2025, 2051)
+result = pd.DataFrame(index=years, columns=['NH3_transport_emissions_wo_recon'])
+result.index.name = 'Years'
+def calculate_NH3_transport_emissions_wo():
+    result = CE + EE + SE + IE
+
+    return result
+
+for year in years:
+    # get all emissions
+    CE = float(NH3_Conversion_emissions.loc[year]['NH3_Conversion_emissions'])
+    EE = float(NH3_Export_terminal_emissions.loc[year]['NH3_Export_terminal_emissions'])
+    SE = float(NH3_Shipping_emissions.loc[year]['NH3_Shipping_emissions'])
+    IE = float(NH3_Import_terminal_emissions.loc[year]['NH3_Import_terminal_emissions'])
+   # RE = float(NH3_Reconversion_emissions.loc[year]['NH3_Reconversion_emissions'])
+    # calculate costs of specific year
+    result.NH3_transport_emissions_wo_recon.loc[year] = calculate_NH3_transport_emissions_wo()
+
+NH3_transport_emissions_wo_recon = result
 
 # Emission breakdown for NH3 seaborne transport with cracking
 fig, ax = plt.subplots(figsize=(10, 6), layout = 'constrained')
