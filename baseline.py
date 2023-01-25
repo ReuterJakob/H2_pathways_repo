@@ -16,7 +16,7 @@ path_plt = r'\\dena.de\Daten\Home\Reuter\Desktop\H2_pathways_repo\Plots_v3'
 # adjust plotsize and font
 params = {'font.size':9,
 'font.weight':'normal',
-'font.family':'arial', "figure.autolayout":'True'
+'font.family':'arial', "figure.autolayout":True,'figure.constrained_layout.use' : True
     }
 plt.rcParams.update(params)
 '''
@@ -43,9 +43,9 @@ lcoh_green_source = pd.read_excel(path_excel, sheet_name='LCOH_RES', decimal=','
 
 # Emissions treshholds in kgCO2eq/kg H2
 RED_tresh_MJ = 28.3
-Certifhy_MJ = 36.4
+#Certifhy_MJ = 36.4
 RED_tresh_kg = 3.4
-Certifhy_kg = 4.368
+#Certifhy_kg = 4.368
 
 ## Plot price inputs.
 co2_prices_baseline = prices.loc['CO2 prices [€/t_CO2] Baseline', 2010:2050]
@@ -500,8 +500,8 @@ drive = plt.bar(x, Drive_emissions_plt, width, color = 'dodgerblue',label='CO2 f
 indirect = plt.bar(x, Indirect_emissions_plt, width, color ='grey', label ='CO2 from NG infrastructure', bottom=Upstream_emissions)
 upstream = plt.bar(x, Upstream_emissions, width, color = 'lightcoral',label = 'CH4 from fugitive upstream methane')
 #asthetics
-plt.axhline(RED_tresh_MJ, 0.5, color = 'lime', marker = '*', label = 'EU Comission Treshold')
-plt.axhline(Certifhy_MJ, 0.5, color = 'lime', marker = 'D', label = 'CertifHy Treshold')
+plt.axhline(RED_tresh_MJ, 0.5, color = 'lime', marker = 'o', label = 'EU Comission Treshold')
+#plt.axhline(Certifhy_MJ, 0.5, color = 'lime', marker = 'D', label = 'CertifHy Treshold')
 plt.grid(True, axis = 'y')
 ax.set_ylabel(ylabel= ('LEOH [g CO2eq/MJ H2]'))
 ax.yaxis.set_major_locator(mtick.LinearLocator(6))
@@ -540,7 +540,7 @@ Upstream_emissions = [upstream_emissions_GWP100_NOR_Base, upstream_emissions_GWP
                       upstream_emissions_GWP20_NOR_Base, upstream_emissions_GWP20_NOR_Policy]
 x =['Grey, GWP100\n0.02%', 'Grey, GWP20\n0.02%', 'Grey, GWP100\n1.3%', 'Grey, GWP20\n1.3%',
     'Baseline 2025', 'Policy 2025',
-    'Baseline 2050','Policy 2050']
+    'Baseline 2035','Policy 2035']
 
 # Creating a stacked bar chart to display emissions. Adding lists for the bottom method.
 fig, ax = plt.subplots(figsize=(8,3.2), frameon=False, layout = 'constrained')
@@ -552,8 +552,8 @@ indirect = plt.bar(x, Indirect_emissions_plt, width, color ='grey', label ='CO2 
 upstream = plt.bar(x, Upstream_emissions, width, color = 'lightcoral',label = 'CH4 from fugitive upstream methane')
 #Asthetics
 blue = 3.5
-plt.axhline(Certifhy_MJ,0.5, color = 'lime', linestyle = '-', marker = 'D', label = 'CertifHy Treshold')
-plt.axhline(RED_tresh_MJ,0.5, color = 'lime', linestyle = '-', marker = '*', label = 'EU Comission Treshold')
+#plt.axhline(Certifhy_MJ,0.5, color = 'lime', linestyle = '-', marker = 'D', label = 'CertifHy Treshold')
+plt.axhline(RED_tresh_MJ,0.5, color = 'lime', linestyle = '-', marker = 'o', label = 'EU Comission Treshold')
 plt.grid(True, axis = 'y')
 ax.set_ylabel(ylabel= ('LEOH [g CO2eq/MJ H2]'))
 ax.yaxis.set_major_locator(mtick.LinearLocator(6))
@@ -2125,7 +2125,6 @@ plt.show()
 
 # Cost breakdown for LH2 shipping
 fig, ax = plt.subplots(figsize=(8,3.2), layout = 'constrained')
-fig.patch.set_visible(False)
 plt.grid(True, axis = 'y')
 ax.set_axisbelow(True)
 x = np.arange(2025, 2051, step=5)
@@ -2158,9 +2157,9 @@ ship_costs_pol = policy.LH2_Shipping_costs
 it_costs_pol = policy.LH2_Import_terminal_costs
 recon_costs_pol = policy.LH2_Reconversion_costs
 #plot
-fig, ax = plt.subplots(figsize=(8,3.2), layout = 'constrained')
+fig, ax = plt.subplots(figsize=(8,3.2))
 plt.subplot(1,2,1)
-fig.patch.set_visible(False)
+plt.tight_layout
 plt.grid(True, axis = 'y')
 plt.grid(True, axis = 'x')
 ax.set_axisbelow(True)
@@ -2184,7 +2183,6 @@ plt.xlabel('Baseline', fontweight='bold')
 plt.title('Liquid hydrogen')
 #policy
 plt.subplot(1,2,2)
-fig.patch.set_visible(False)
 plt.grid(True, axis = 'y')
 plt.grid(True, axis = 'x')
 ax.set_axisbelow(True)
@@ -2295,7 +2293,7 @@ output_file = os.path.join(path_csv,'lh2_transport_sensi_distance_LCOT.csv')
 lh2_transport_sensi_distance_LCOT.to_csv(output_file, sep = ';')
 
 #Impact of cargo emissions on transport costs
-p_el_y = 50#float(prices.loc['Electricity prices in Norway [€_2021/MWh] Baseline'][year])
+ #float(prices.loc['Electricity prices in Norway [€_2021/MWh] Baseline'][year])
 P_co2_y = 120
 cargo_emissions_range = np.arange(0, 10001, 500)
 sensitivity = []
@@ -2307,7 +2305,7 @@ def lh2_transport_distance(p_el_y, alpha_liq, alpha_et, alpha_ship, alpha_it, al
         ((alpha_liq * capex_liq_y/1000 + opex_liq_y/1000) + el_liq_y * p_el_y/1000)\
         + (alpha_et * capex_et_y/1000 + opex_et_y/1000) + (el_et + el_reliq * t_et) * p_el_y/1000\
         + (alpha_ship * capex_ship_y + opex_ship_y) / (8760/(2*(d_sea_sensi/v_ship + h_ship)))/(1-(bog_ship * d_sea_sensi/v_ship) - (f_ship  * d_sea_sensi))\
-             + (bog_ship * d_sea_sensi/v_ship + f_ship * d_sea_sensi) * (policy.lcoh + H2_emissions * P_co2_y / 1000)\
+             + (bog_ship * d_sea_sensi/v_ship + f_ship * d_sea_sensi) * (lcoh + H2_emissions * P_co2_y / 1000)\
         + (alpha_it * capex_it_y/1000 + opex_it_y/1000) + (el_it + el_reliq * t_it) * p_el_y/1000\
         + (alpha_recon * capex_recon_y / 1000 + opex_recon_y / 1000) + el_recon_y * p_el_y / 1000\
 
@@ -3101,6 +3099,27 @@ NH3_transport_sensi_distance_LCOT
 output_file = os.path.join(path_csv,'NH3_transport_sensi_distance_LCOT.csv')
 NH3_transport_sensi_distance_LCOT.to_csv(output_file, sep =';')
 
+sensitivity = []
+def nh3_transport_sensi_distance_wo_recon(p_el_y, alpha_con, alpha_et, alpha_ship, alpha_it, alpha_recon,capex_con_y, capex_et_y,capex_ship_y, capex_it_y,  bog_ship_nh3, capex_recon_y, d_sea ,v_ship, f_ship_nh3, el_et ,el_it ,t_it ,el_recon_y):
+
+    for d_sea in transport_distance:
+
+        result = \
+        (alpha_con * capex_con_y/1000 + opex_con_y/1000) + el_con_y * p_el_y/1000 \
+        + (alpha_et * capex_et_y/1000 + opex_et_y/1000) + (el_et + el_reliq * (NH3_lhv/H2_lhv) * t_et) * p_el_y /1000 \
+        + (alpha_ship * capex_ship_y + opex_ship_y)/(8760/(2*(d_sea/v_ship + h_ship)))/(1-(bog_ship_nh3 * d_sea/v_ship) - (f_ship_nh3  * d_sea))+ (bog_ship_nh3 * d_sea/v_ship + f_ship_nh3 * d_sea) * NH3_cargo_cost_sensi\
+        + (alpha_it * capex_it_y/1000 + opex_it_y/1000) + (el_it + el_reliq * (NH3_lhv/H2_lhv) * t_it) * p_el_y /1000\
+        #+ (alpha_recon * capex_recon_y / 1000 + opex_recon_y / 1000) + (heat_recon_y + el_recon_y) * p_el_y / 1000
+
+        sensitivity.append(result)
+
+    return sensitivity
+
+nh3_transport_sensi_distance_wo_recon(p_el_y, alpha_con, alpha_et, alpha_ship, alpha_it, alpha_recon,capex_con_y, capex_et_y,capex_ship_y, capex_it_y,  bog_ship_nh3, capex_recon_y, d_sea ,v_ship, f_ship, el_et ,el_it ,t_it ,el_recon_y)
+
+NH3_wo_recon_transport_sensi_distance_LCOT= pd.DataFrame(sensitivity, transport_distance, columns=['NH3 transport costs w/o recon [€/kg H2]'])
+NH3_wo_recon_transport_sensi_distance_LCOT.index.name = 'Transport distance in km'
+NH3_wo_recon_transport_sensi_distance_LCOT
 """## Sensitivity Plots
 
 ### Electricity price sensi
@@ -3124,10 +3143,10 @@ ax.set_axisbelow(True)
 plt.locator_params(axis='x', nbins=8)
 plt.locator_params(axis='y', nbins=7)
 
-plt.axvline(x=31.8, color='lightgrey', linestyle=':')
-plt.axvline(x=57, color='lightgrey', linestyle=':')
-plt.axvline(x=97, color='lightgrey', linestyle=':')
-plt.axvline(x=84, color='lightgrey', linestyle=':')
+plt.axvline(x=31.8, color='grey', linestyle=':')
+plt.axvline(x=57, color='grey', linestyle=':')
+plt.axvline(x=97, color='grey', linestyle=':')
+plt.axvline(x=84, color='grey', linestyle=':')
 plt.text(31.8,2.9, 'NOR 2021', horizontalalignment='center', verticalalignment='center')
 plt.text(57,2.9, 'NOR 2030', horizontalalignment='center', verticalalignment='center')
 plt.text(97,2.9, 'GER 2021', horizontalalignment='center', verticalalignment='center')
@@ -3154,26 +3173,30 @@ fig, ax = plt.subplots(figsize=(8,3.2), layout = 'constrained')
 
 plt.plot(lh2_transport_sensi_distance_LCOT, color='blue', linestyle='-', label = 'LH2')
 plt.plot(NH3_transport_sensi_distance_LCOT, color='darkorange', linestyle='-', label ='NH3')
+plt.plot(NH3_wo_recon_transport_sensi_distance_LCOT, color='darkorange', linestyle='--', label ='NH3 w/o cracking')
 plt.plot(new_pipe_sensi_distance_LCOT, color='dodgerblue', linestyle='-', label ='New pipeline')
 plt.plot(retro_pipe_sensi_distance_LCOT, color='royalblue', linestyle='-', label ='Retrofit pipeline')
 #orientation
 d_sea_hammerfest = 2500
 d_sea_US = 9500
 
-plt.axvline(x=d_sea, color='lightgrey', linestyle=':')
-plt.axvline(x=d_sea_hammerfest, color='lightgrey', linestyle=':')
-plt.axvline(x=d_sea_US, color='lightgrey', linestyle=':')
 
-plt.text(d_sea, 6, 'Norway Kårstø', horizontalalignment='center', verticalalignment='center')
-plt.text(d_sea_hammerfest,6,  'Norway Hammerfest', horizontalalignment='center', verticalalignment='center')
-plt.text(d_sea_US,6,  'USA Texas', horizontalalignment='center', verticalalignment='center')
+ylim = 6
+top = ylim + 0.2
+plt.axvline(x=d_sea, color='grey', linestyle=':')
+plt.axvline(x=d_sea_hammerfest, color='grey', linestyle=':')
+plt.axvline(x=d_sea_US, color='grey', linestyle=':')
+
+plt.text(d_sea, top, 'Norway Kårstø', horizontalalignment='center', verticalalignment='center')
+plt.text(d_sea_hammerfest,top,  'Norway Hammerfest', horizontalalignment='center', verticalalignment='center')
+plt.text(d_sea_US,top,  'USA Texas', horizontalalignment='center', verticalalignment='center')
 plt.grid(True, axis='y')
 #plt.grid(True, axis='x')
 ax.set_axisbelow(True)
 plt.locator_params(axis='x', nbins=12)
 plt.ylabel('LCOT [€/kg H2]')
 plt.xlim(0,10000)
-plt.ylim(0,6)
+plt.ylim(0,ylim)
 plt.xlabel('Transport Distance in km')
 plt.legend(loc = 'upper left')
 
@@ -3609,30 +3632,30 @@ plt.show()
 
 year = 2030
 el_liq_y = float(tea_lh2.loc['Liquefaction - Electricity consumption opt. [kWh/kgH2]'][year])
-EF_y_n = 118# float(GHG.loc['Grid electricity emission factor NOR [g CO2eq/kWh] Baseline'][year])
+EF_y_n_sensi = 200# float(GHG.loc['Grid electricity emission factor NOR [g CO2eq/kWh] Baseline'][year])
 
 el_recon_y = float(tea_lh2.loc['Reconversion - Electricity consumption opt. [kWh/kg H2]'][year])
 #EF_y_G = float(GHG.loc['Grid electricity emission factor GER [g CO2eq/kWh] Baseline'][year])
 H2_emissions_sensi = 2500
-LH2_cargo_ghg_sensi = (H2_emissions_sensi + (el_liq_y * EF_y_n ) + ((el_et + el_reliq * t_et) * EF_y_n ))
+LH2_cargo_ghg_sensi = (H2_emissions_sensi + (el_liq_y * EF_y_n_sensi ) + ((el_et + el_reliq * t_et) * EF_y_n_sensi ))
 sensitivity = []
-def lh2_transport_sensi(el_liq_y, EF_y_n, el_et, el_reliq, t_et, bog_ship, d_sea ,v_ship, f_ship, LH2_cargo_ghg ,el_it ,t_it ,el_recon_y):
+def lh2_transport_sensi(el_liq_y, EF_y_n_sensi, el_et, el_reliq, t_et, bog_ship, d_sea ,v_ship, f_ship, LH2_cargo_ghg ,el_it ,t_it ,el_recon_y):
 
-    for EF_y_n in EF_sensi_range:
+    for EF_y_n_sensi in EF_sensi_range:
 
         result = \
-        (el_liq_y * EF_y_n )\
-        + ((el_et + el_reliq * t_et) * EF_y_n) \
+        (el_liq_y * EF_y_n_sensi )\
+        + ((el_et + el_reliq * t_et) * EF_y_n_sensi) \
         + ((bog_ship * d_sea_sensi / v_ship + f_ship * d_sea_sensi) * LH2_cargo_ghg_sensi)\
-        + ((el_it + el_reliq * t_it) * EF_y_n )\
-        + (el_recon_y * EF_y_n )
+        + ((el_it + el_reliq * t_it) * EF_y_n_sensi )\
+        + (el_recon_y * EF_y_n_sensi )
 
         sensitivity.append(result)
 
     return sensitivity
 
 
-lh2_transport_sensi(el_liq_y, EF_y_n, el_et, el_reliq, t_et, bog_ship, d_sea, v_ship, f_ship, LH2_cargo_ghg, el_it,
+lh2_transport_sensi(el_liq_y, EF_y_n_sensi, el_et, el_reliq, t_et, bog_ship, d_sea, v_ship, f_ship, LH2_cargo_ghg, el_it,
                     t_it, el_recon_y)
 
 lh2_transport_sensi_EF= pd.DataFrame(sensitivity, EF_sensi_range, columns=['LH2 transport emission [g CO2eq/kg H2]'])
@@ -3647,7 +3670,7 @@ import matplotlib.ticker as mtick
 
 # Transport distance sensi emissions
 sensitivity = []
-def lh2_transport_sensi(el_liq_y, EF_y_n, el_et, el_reliq, t_et, bog_ship, d_sea ,v_ship, f_ship, LH2_cargo_ghg ,el_it ,t_it ,el_recon_y):
+def lh2_transport_sensi(el_liq_y, EF_y_n_sensi, el_et, el_reliq, t_et, bog_ship, d_sea ,v_ship, f_ship, LH2_cargo_ghg ,el_it ,t_it ,el_recon_y):
 
     for d_sea_sensi in transport_distance:
 
@@ -3663,7 +3686,7 @@ def lh2_transport_sensi(el_liq_y, EF_y_n, el_et, el_reliq, t_et, bog_ship, d_sea
     return sensitivity
 
 
-lh2_transport_sensi(el_liq_y, EF_y_n, el_et, el_reliq, t_et, bog_ship, d_sea, v_ship, f_ship, LH2_cargo_ghg, el_it,
+lh2_transport_sensi(el_liq_y, EF_y_n_sensi, el_et, el_reliq, t_et, bog_ship, d_sea, v_ship, f_ship, LH2_cargo_ghg, el_it,
                     t_it, el_recon_y)
 
 lh2_transport_sensi_distance_LEOT= pd.DataFrame(sensitivity, transport_distance, columns=['LH2 transport emission [g CO2eq/kg H2]'])
@@ -3678,7 +3701,7 @@ lh2_transport_sensi_distance_LEOT.to_csv(output_file, sep =';')
 cargo_emissions_range = np.arange(0, 10001, 500)
 d_sea_sensi = 650
 sensitivity = []
-def lh2_transport_sensi(el_liq_y, EF_y_n, el_et, el_reliq, t_et, bog_ship, d_sea ,v_ship, f_ship, LH2_cargo_ghg ,el_it ,t_it ,el_recon_y):
+def lh2_transport_sensi(el_liq_y, EF_y_n_sensi, el_et, el_reliq, t_et, bog_ship, d_sea ,v_ship, f_ship, LH2_cargo_ghg ,el_it ,t_it ,el_recon_y):
 
     for H2_sensi_emissions in cargo_emissions_range:
 
@@ -3694,7 +3717,7 @@ def lh2_transport_sensi(el_liq_y, EF_y_n, el_et, el_reliq, t_et, bog_ship, d_sea
     return sensitivity
 
 
-lh2_transport_sensi(el_liq_y, EF_y_n, el_et, el_reliq, t_et, bog_ship, d_sea, v_ship, f_ship, LH2_cargo_ghg, el_it,
+lh2_transport_sensi(el_liq_y, EF_y_n_sensi, el_et, el_reliq, t_et, bog_ship, d_sea, v_ship, f_ship, LH2_cargo_ghg, el_it,
                     t_it, el_recon_y)
 
 lh2_transport_sensi_cargo_emissions= pd.DataFrame(sensitivity, cargo_emissions_range, columns=['LH2 transport emission [g CO2eq/kg H2]'])
@@ -4171,21 +4194,21 @@ NH3_cargo_ghg = float(LH2_cargo_emissions.loc[year]['LH2_cargo_emissions'])
 f_ship_nh3 = float(tea_NH3.loc['Shipping - Fuel use [kg NH3/t/km]'][year])/1000 * (NH3_lhv/H2_lhv)
 el_recon_y = float(tea_NH3.loc['Reconversion - Electricity consumption opt. [kWh/kg H2]'][year])
 heat_recon_y = float(tea_NH3.loc['Reconversion - Heat consumption opt. [kWh/kg H2]'][year])
-EF_y_n = 118  # float(GHG.loc['Grid electricity emission factor NOR [g CO2eq/kWh] Baseline'][year])
+EF_y_n_sensi  # float(GHG.loc['Grid electricity emission factor NOR [g CO2eq/kWh] Baseline'][year])
 
-NH3_cargo_ghg_sensi = (H2_emissions_sensi + (el_con_y * EF_y_n ) + ((el_et_nh3 + el_reliq_nh3 * (NH3_lhv/H2_lhv) * t_et) * EF_y_n ))
+NH3_cargo_ghg_sensi = (H2_emissions_sensi + (el_con_y * EF_y_n_sensi ) + ((el_et_nh3 + el_reliq_nh3 * (NH3_lhv/H2_lhv) * t_et) * EF_y_n_sensi ))
 sensitivity = []
 
-def NH3_sensi_w_recon(el_con_y, EF_y_n, el_et_nh3, el_reliq_nh3, t_et, bog_ship_nh3, d_sea, v_ship, f_ship_nh3, NH3_cargo_ghg, el_it, heat_recon_y, t_it, el_recon_y):
+def NH3_sensi_w_recon(el_con_y, EF_y_n_sensi, el_et_nh3, el_reliq_nh3, t_et, bog_ship_nh3, d_sea, v_ship, f_ship_nh3, NH3_cargo_ghg, el_it, heat_recon_y, t_it, el_recon_y):
 
-    for EF_y_n in EF_sensi_range:
+    for EF_y_n_sensi in EF_sensi_range:
 
         result =\
-            (el_con_y * EF_y_n )\
-        + ((el_et_nh3 + el_reliq_nh3 * (NH3_lhv/H2_lhv) * t_et) * EF_y_n )\
+            (el_con_y * EF_y_n_sensi )\
+        + ((el_et_nh3 + el_reliq_nh3 * (NH3_lhv/H2_lhv) * t_et) * EF_y_n_sensi )\
         + ((bog_ship_nh3 * d_sea_sensi / v_ship + f_ship_nh3 * d_sea_sensi) * NH3_cargo_ghg_sensi)\
-        + ((el_it + el_reliq * (NH3_lhv/H2_lhv) * t_it) * EF_y_n )\
-        + ((heat_recon_y + el_recon_y) * EF_y_n )
+        + ((el_it + el_reliq * (NH3_lhv/H2_lhv) * t_it) * EF_y_n_sensi )\
+        + ((heat_recon_y + el_recon_y) * EF_y_n_sensi )
 
         sensitivity.append(result)
 
@@ -4193,7 +4216,7 @@ def NH3_sensi_w_recon(el_con_y, EF_y_n, el_et_nh3, el_reliq_nh3, t_et, bog_ship_
     return sensitivity
 
 
-NH3_sensi_w_recon(el_con_y, EF_y_n, el_et_nh3, el_reliq_nh3, t_et, bog_ship_nh3, d_sea, v_ship, f_ship_nh3, NH3_cargo_ghg,
+NH3_sensi_w_recon(el_con_y, EF_y_n_sensi, el_et_nh3, el_reliq_nh3, t_et, bog_ship_nh3, d_sea, v_ship, f_ship_nh3, NH3_cargo_ghg,
                   el_it, heat_recon_y, t_it, el_recon_y)
 
 NH3_sensi_w_recon_EF = pd.DataFrame(sensitivity, EF_sensi_range, columns=['NH3 transport emission [g CO2eq/kg H2]'])
@@ -4203,16 +4226,16 @@ output_file = os.path.join(path_csv, 'NH3_sensi_w_recon_EF.csv')
 NH3_sensi_w_recon_EF.to_csv(output_file, sep=',')
 
 sensitivity = []
-def NH3_sensi_wo_recon(el_con_y, EF_y_n, el_et_nh3, el_reliq_nh3, t_et, bog_ship_nh3, d_sea, v_ship, f_ship_nh3, NH3_cargo_ghg, el_it, heat_recon_y, t_it, el_recon_y):
+def NH3_sensi_wo_recon(el_con_y, EF_y_n_sensi, el_et_nh3, el_reliq_nh3, t_et, bog_ship_nh3, d_sea, v_ship, f_ship_nh3, NH3_cargo_ghg, el_it, heat_recon_y, t_it, el_recon_y):
 
-    for EF_y_n in EF_sensi_range:
+    for EF_y_n_sensi in EF_sensi_range:
 
         result =\
-            (el_con_y * EF_y_n )\
-        + ((el_et_nh3 + el_reliq_nh3 * (NH3_lhv/H2_lhv) * t_et) * EF_y_n )\
+            (el_con_y * EF_y_n_sensi )\
+        + ((el_et_nh3 + el_reliq_nh3 * (NH3_lhv/H2_lhv) * t_et) * EF_y_n_sensi )\
         + ((bog_ship_nh3 * d_sea_sensi / v_ship + f_ship_nh3 * d_sea_sensi) * NH3_cargo_ghg_sensi)\
-        + ((el_it + el_reliq * (NH3_lhv/H2_lhv) * t_it) * EF_y_n )
-        #+ ((heat_recon_y + el_recon_y) * EF_y_n )
+        + ((el_it + el_reliq * (NH3_lhv/H2_lhv) * t_it) * EF_y_n_sensi )
+        #+ ((heat_recon_y + el_recon_y) * EF_y_n_sensi )
 
         sensitivity.append(result)
 
@@ -4220,7 +4243,7 @@ def NH3_sensi_wo_recon(el_con_y, EF_y_n, el_et_nh3, el_reliq_nh3, t_et, bog_ship
     return sensitivity
 
 # recall function
-NH3_sensi_wo_recon(el_con_y, EF_y_n, el_et_nh3, el_reliq_nh3, t_et, bog_ship_nh3, d_sea, v_ship, f_ship_nh3, NH3_cargo_ghg,
+NH3_sensi_wo_recon(el_con_y, EF_y_n_sensi, el_et_nh3, el_reliq_nh3, t_et, bog_ship_nh3, d_sea, v_ship, f_ship_nh3, NH3_cargo_ghg,
                    el_it, heat_recon_y, t_it, el_recon_y)
 
 NH3_sensi_wo_recon_EF = pd.DataFrame(sensitivity, EF_sensi_range, columns=['NH3 transport emission w/o recon [g CO2eq/kg H2]'])
@@ -4231,7 +4254,7 @@ NH3_sensi_wo_recon_EF.to_csv(output_file, sep=',')
 
 # Transport distance sensi NH3 emissions
 sensitivity = []
-def NH3_sensi_w_recon(el_con_y, EF_y_n, el_et_nh3, el_reliq_nh3, t_et, bog_ship_nh3, d_sea, v_ship, f_ship_nh3, NH3_cargo_ghg, el_it, heat_recon_y, t_it, el_recon_y):
+def NH3_sensi_w_recon(el_con_y, EF_y_n_sensi, el_et_nh3, el_reliq_nh3, t_et, bog_ship_nh3, d_sea, v_ship, f_ship_nh3, NH3_cargo_ghg, el_it, heat_recon_y, t_it, el_recon_y):
 
     for d_sea_sensi in transport_distance:
 
@@ -4248,7 +4271,7 @@ def NH3_sensi_w_recon(el_con_y, EF_y_n, el_et_nh3, el_reliq_nh3, t_et, bog_ship_
     return sensitivity
 
 
-NH3_sensi_w_recon(el_con_y, EF_y_n, el_et_nh3, el_reliq_nh3, t_et, bog_ship_nh3, d_sea, v_ship, f_ship_nh3, NH3_cargo_ghg,
+NH3_sensi_w_recon(el_con_y, EF_y_n_sensi, el_et_nh3, el_reliq_nh3, t_et, bog_ship_nh3, d_sea, v_ship, f_ship_nh3, NH3_cargo_ghg,
                   el_it, heat_recon_y, t_it, el_recon_y)
 
 NH3_sensi_w_recon_distance_LEOT = pd.DataFrame(sensitivity, transport_distance, columns=['NH3 transport emission [g CO2eq/kg H2]'])
@@ -4258,7 +4281,7 @@ output_file = os.path.join(path_csv, 'NH3_sensi_w_recon_distance_LEOT.csv')
 NH3_sensi_w_recon_distance_LEOT.to_csv(output_file, sep=',')
 
 sensitivity = []
-def NH3_sensi_wo_recon(el_con_y, EF_y_n, el_et_nh3, el_reliq_nh3, t_et, bog_ship_nh3, d_sea, v_ship, f_ship_nh3, NH3_cargo_ghg, el_it, heat_recon_y, t_it, el_recon_y):
+def NH3_sensi_wo_recon(el_con_y, EF_y_n_sensi, el_et_nh3, el_reliq_nh3, t_et, bog_ship_nh3, d_sea, v_ship, f_ship_nh3, NH3_cargo_ghg, el_it, heat_recon_y, t_it, el_recon_y):
 
     for d_sea_sensi in transport_distance:
 
@@ -4267,7 +4290,7 @@ def NH3_sensi_wo_recon(el_con_y, EF_y_n, el_et_nh3, el_reliq_nh3, t_et, bog_ship
         + ((el_et_nh3 + el_reliq_nh3 * (NH3_lhv/H2_lhv) * t_et) * EF_sensi_EU_2030)\
         + ((bog_ship_nh3 * d_sea_sensi / v_ship + f_ship_nh3 * d_sea_sensi) * NH3_cargo_ghg_sensi)\
         + ((el_it + el_reliq * (NH3_lhv/H2_lhv) * t_it) * EF_sensi_EU_2030)
-        #+ ((heat_recon_y + el_recon_y) * EF_y_n )
+        #+ ((heat_recon_y + el_recon_y) * EF_y_n_sensi )
 
         sensitivity.append(result)
 
@@ -4275,7 +4298,7 @@ def NH3_sensi_wo_recon(el_con_y, EF_y_n, el_et_nh3, el_reliq_nh3, t_et, bog_ship
     return sensitivity
 
 # recall function
-NH3_sensi_wo_recon(el_con_y, EF_y_n, el_et_nh3, el_reliq_nh3, t_et, bog_ship_nh3, d_sea, v_ship, f_ship_nh3, NH3_cargo_ghg,
+NH3_sensi_wo_recon(el_con_y, EF_y_n_sensi, el_et_nh3, el_reliq_nh3, t_et, bog_ship_nh3, d_sea, v_ship, f_ship_nh3, NH3_cargo_ghg,
                    el_it, heat_recon_y, t_it, el_recon_y)
 
 NH3_sensi_wo_recon_distance_LEOT = pd.DataFrame(sensitivity, transport_distance, columns=['NH3 transport emission w/o recon [g CO2eq/kg H2]'])
@@ -4288,7 +4311,7 @@ NH3_sensi_wo_recon_distance_LEOT.to_csv(output_file, sep=',')
 
 
 sensitivity = []
-def NH3_sensi_w_recon(el_con_y, EF_y_n, el_et_nh3, el_reliq_nh3, t_et, bog_ship_nh3, d_sea, v_ship, f_ship_nh3, NH3_cargo_ghg, el_it, heat_recon_y, t_it, el_recon_y):
+def NH3_sensi_w_recon(el_con_y, EF_y_n_sensi, el_et_nh3, el_reliq_nh3, t_et, bog_ship_nh3, d_sea, v_ship, f_ship_nh3, NH3_cargo_ghg, el_it, heat_recon_y, t_it, el_recon_y):
 
     for H2_sensi_emissions in cargo_emissions_range:
 
@@ -4305,7 +4328,7 @@ def NH3_sensi_w_recon(el_con_y, EF_y_n, el_et_nh3, el_reliq_nh3, t_et, bog_ship_
     return sensitivity
 
 
-NH3_sensi_w_recon(el_con_y, EF_y_n, el_et_nh3, el_reliq_nh3, t_et, bog_ship_nh3, d_sea, v_ship, f_ship_nh3, NH3_cargo_ghg,
+NH3_sensi_w_recon(el_con_y, EF_y_n_sensi, el_et_nh3, el_reliq_nh3, t_et, bog_ship_nh3, d_sea, v_ship, f_ship_nh3, NH3_cargo_ghg,
                   el_it, heat_recon_y, t_it, el_recon_y)
 
 NH3_sensi_w_recon_cargo_emissions = pd.DataFrame(sensitivity, cargo_emissions_range, columns=['NH3 transport emission [g CO2eq/kg H2]'])
@@ -4403,10 +4426,10 @@ plt.plot(NH3_sensi_w_recon_EF, color='darkorange', linestyle='-', label ='NH3')
 plt.plot(NH3_sensi_wo_recon_EF, color='darkorange', linestyle='--', label ='NH3 w/o cracking')
 plt.plot(Pipeline_emissions_sensi_EF, color='cornflowerblue', linestyle='-', label ='Pipeline')
 
-plt.axvline(x=30, color='lightgrey', linestyle=':')
-plt.axvline(x=275, color='lightgrey', linestyle=':')
-plt.axvline(x=118, color='lightgrey', linestyle=':')
-plt.axvline(x=367, color='lightgrey', linestyle=':')
+plt.axvline(x=30, color='grey', linestyle=':')
+plt.axvline(x=275, color='grey', linestyle=':')
+plt.axvline(x=118, color='grey', linestyle=':')
+plt.axvline(x=367, color='grey', linestyle=':')
 plt.text(30,7600, 'NOR 2021', horizontalalignment='center', verticalalignment='center')
 plt.text(367,7600, 'GER 2021', horizontalalignment='center', verticalalignment='center')
 plt.text(275,7600, 'EU 2021', horizontalalignment='center', verticalalignment='center')
@@ -4434,22 +4457,27 @@ plt.show()
 fig, ax = plt.subplots(figsize=(8,3.2), layout = 'constrained')
 #plt.subplot(1,2,1)
 
-
+ylim = 2500
+top = ylim + 1
 plt.plot(lh2_transport_sensi_distance_LEOT, color='blue', linestyle='-', label = 'LH2')
 plt.plot(NH3_sensi_w_recon_distance_LEOT, color='darkorange', linestyle='-', label ='NH3')
 plt.plot(NH3_sensi_wo_recon_distance_LEOT, color='darkorange', linestyle='--', label ='NH3 w/o cracking')
 plt.plot(Pipeline_sensi_distance_LEOT, color='royalblue', linestyle='-', label ='Pipeline')
+plt.axvline(x=d_sea, color='grey', linestyle=':')
+plt.axvline(x=d_sea_hammerfest, color='grey', linestyle=':')
+plt.axvline(x=d_sea_US, color='grey', linestyle=':')
+plt.text(d_sea, top, 'Norway Kårstø', horizontalalignment='center', verticalalignment='center')
+plt.text(d_sea_hammerfest,top,  'Norway Hammerfest', horizontalalignment='center', verticalalignment='center')
+plt.text(d_sea_US,top,  'USA Texas', horizontalalignment='center', verticalalignment='center')
 plt.grid(True, axis='y')
 #plt.grid(True, axis='x')
 ax.set_axisbelow(True)
 
-plt.ylabel('[g CO2eq/kg H2]')
+plt.ylabel('LEOT [g CO2eq/kg H2]')
 plt.xlim(0,10000)
 plt.ylim(0,)
 plt.xlabel('Transport Distance in km')
-plt.legend()
-
-
+plt.legend(loc = 'upper right')
 
 title = '\Transport_distance_sensi_emissions'
 plt.savefig(path_plt + title + '.png', transparent=True)
@@ -4714,10 +4742,22 @@ d_sea = d_sea_US
 p_el_y = 50#float(prices.loc['Electricity prices in Norway [€_2021/MWh] Baseline'][year])
 EF_y_n = 200 #float(GHG.loc['Grid electricity emission factor NOR [g CO2eq/kWh] Baseline'][year])
 # LCOH blue
+year = 2030
+CF = float(tea_blue.loc['Availability [%]']['NGR with CCS'])
+# Plant efficiency in %
+n = float(tea_blue.loc['Efficiency [%]']['NGR with CCS'])
+# LHV of hydrogen is 33.33 kWh/kg
+LHV_h2 = float(tea_blue.loc['LHV H2 [kWh/kg]']['NGR with CCS'])
+i = float(tea_blue.loc['Discount rate [%] Baseline']['NGR with CCS'])
+# Economic lifetime of the plant in years
+l_ngr = float(tea_blue.loc['Lifetime [Years]']['NGR with CCS'])
+opex_share = float(tea_blue.loc['Opex [% of Capex]']['NGR with CCS'])
+# Calculate the amortisation factor alpha
+alpha_ngr = (i * (1 + i) ** l_ngr) / (((1 + i) ** l_ngr) - 1)
 capex_y = float(tea_blue.loc['Capex [€/kW]'][year])
 opex_y = float(tea_blue.loc['Opex [€/kW/a]'][year])
-Q_ce_y = float(GHG.loc['Captured emissions [kg CO2/kg H2] - US Baseline'][year])
-Q_ue_y = float(GHG.loc['Blue hydrogen emissions [kg CO2/kg H2] - US Baseline'][year])
+Q_ce_y = float(GHG.loc['Captured emissions [kg CO2/kg H2] - NOR Baseline'][year])
+Q_ue_y = float(GHG.loc['Blue hydrogen emissions [kg CO2/kg H2] - NOR Baseline'][year])
 P_ng_y = float(prices.loc['Gas prices Permian Waha [€/MWh]'][year])
 P_ccs_y = float(tea_blue.loc['CO2 transport and storage cost [€/t CO2] Policy'][year])
 P_co2_y = float(prices.loc['CO2 prices [€/t_CO2] Baseline'][year])
@@ -4748,7 +4788,7 @@ IE_plt = plt.bar(x ,IE,  color = 'wheat', bottom= CE + EE + SE, label = 'Import 
 SE_plt = plt.bar(x ,SE,  color = 'crimson', bottom= CE + EE, label = 'Shipping')
 EE_plt = plt.bar(x ,EE, color = 'cornflowerblue', bottom= CE, label = 'Export terminal')
 CE_plt = plt.bar(x ,CE, color = 'darkblue', label = 'Conversion')
-plt.plot(x, Q_ue_y*1000, marker = '*',color = 'blue', label = 'LCOH Blue Baseline')
+plt.plot(x, Q_ue_y*1000, marker = 'o',color = 'blue', label = 'LEOH Blue Baseline')
 
 #Lh2 policy LEOT
 CE = policy.CE_US_LH2
@@ -4762,7 +4802,7 @@ IE_plt = plt.bar(x ,IE,  color = 'wheat', bottom= CE + EE + SE)
 SE_plt = plt.bar(x ,SE,  color = 'crimson', bottom= CE + EE)
 EE_plt = plt.bar(x ,EE, color = 'cornflowerblue', bottom= CE)
 CE_plt = plt.bar(x ,CE, color = 'darkblue')
-plt.plot(x, policy.Q_ue_y*1000, marker = 'D', color = 'blue', label = 'LCOH Blue Baseline')
+plt.plot(x, policy.Q_ue_y*1000, marker = 'D', color = 'blue', label = 'LEOH Blue Policy')
 #Nh3 baseline LEOT
 el_con_y = float(tea_NH3.loc['Conversion - Electricity consumption opt. [kWh/kgH2]'][year])
 el_recon_y = float(tea_NH3.loc['Reconversion - Electricity consumption opt. [kWh/kg H2]'][year])
@@ -4842,7 +4882,7 @@ plt.bar(x,IC , color= 'wheat',bottom= LC + EC + SC)
 plt.bar(x,SC , color= 'crimson', bottom= LC + EC)
 plt.bar(x,EC , color= 'cornflowerblue',bottom= LC)
 plt.bar(x,LC , color= 'darkblue')
-plt.plot(x, lcoh_blue_sensi_US, marker = '*', color = 'blue', label = 'LCOH Blue Baseline')
+plt.plot(x, lcoh_blue_sensi_US, marker = 'o', color = 'blue', label = 'LCOH Blue Baseline')
 #Lh2 policy LCOT
 x = 1
 LC = policy.LC_US_LH2
@@ -5200,7 +5240,7 @@ PC = (LCOH_min_tech_em.loc[::,'Minimal_production_costs']).apply(pd.to_numeric)
 TC = (LCOT_min_tech_em.loc[::,'Minimal_offshore_transport_costs']).apply(pd.to_numeric)
 
 labels = ['Production', 'Transport']
-colors = ['lightgrey', 'lightsteelblue']
+colors = ['lightsteelblue', 'peachpuff']
 plt.stackplot(x, PC, TC, labels = labels, colors = colors )
 #orientation
 top = 5.1
@@ -5224,7 +5264,7 @@ TC = (policy.LCOT_min_tech_em.loc[::,'Minimal_offshore_transport_costs']).apply(
 PC = (policy.LCOH_min_tech_em.loc[::,'Minimal_production_costs']).apply(pd.to_numeric)
 
 labels = ['Production', 'Transport']
-colors = ['lightgrey', 'lightsteelblue']
+colors = ['lightsteelblue', 'peachpuff']
 plt.stackplot(x, PC,TC, labels = labels, colors = colors )
 #orientation
 plt.axvline(x=policy.av_new, color='dodgerblue', linestyle = '--')
@@ -5253,14 +5293,14 @@ PE = (LCOH_min_tech_em.loc[::,'Emissions']).apply(pd.to_numeric)
 TE = (LCOT_min_tech_em.loc[::,'Emissions']).apply(pd.to_numeric)
 
 labels = ['Production', 'Transport']
-colors = ['lightgrey', 'lightsteelblue']
+colors = ['lightsteelblue', 'peachpuff']
 plt.stackplot(x, PE, TE, labels = labels, colors = colors )
 
 top = 10
 ylim = top - 0.2
 #asthetics
-plt.axhline(Certifhy_kg,0, color = 'lime', linestyle = '-', marker = 'D', label = 'CertifHy Treshold')
-plt.axhline(RED_tresh_kg,0, color = 'lime', linestyle = '-', marker = '*', label = 'EU Comission Treshold')
+#plt.axhline(Certifhy_kg,0, color = 'lime', linestyle = '-', marker = 'D', label = 'CertifHy Treshold')
+plt.axhline(RED_tresh_kg,0, color = 'lime', linestyle = '-', marker = 'o', label = 'EU Comission Treshold')
 plt.axvline(x=av_new, color='dodgerblue', linestyle = '--')
 plt.axvline(x=av_retro, color='royalblue', linestyle = '--')
 plt.text(av_new, top, 'New', horizontalalignment='center', verticalalignment='center')
@@ -5281,11 +5321,11 @@ TE = (policy.LCOT_min_tech_em.loc[::,'Emissions']).apply(pd.to_numeric)
 PE = (policy.LCOH_min_tech_em.loc[::,'Emissions']).apply(pd.to_numeric)
 
 labels = ['Production', 'Transport']
-colors = ['lightgrey', 'lightsteelblue']
+colors = ['lightsteelblue', 'peachpuff']
 plt.stackplot(x, PE,TE, labels = labels, colors = colors )
 #asthetics
-plt.axhline(Certifhy_kg,0, color = 'lime', linestyle = '-', marker = 'D', label = 'CertifHy Treshold')
-plt.axhline(RED_tresh_kg,0, color = 'lime', linestyle = '-', marker = '*', label = 'EU Comission Treshold')
+#plt.axhline(Certifhy_kg,0, color = 'lime', linestyle = '-', marker = 'D', label = 'CertifHy Treshold')
+plt.axhline(RED_tresh_kg,0, color = 'lime', linestyle = '-', marker = 'o', label = 'EU Comission Treshold')
 plt.axvline(x=policy.av_new, color='dodgerblue', linestyle = '--')
 plt.axvline(x=policy.av_retro, color='royalblue', linestyle = '--')
 plt.text(policy.av_new, top, 'New', horizontalalignment='center', verticalalignment='center')
@@ -5315,7 +5355,7 @@ PC = (LCOH_min_tech_em.loc[::,'Minimal_production_costs']).apply(pd.to_numeric)
 TC = (LCOT_min_tech_em.loc[::,'Minimal_offshore_transport_costs']).apply(pd.to_numeric)
 
 labels = ['Production', 'Transport']
-colors = ['lightgrey', 'lightsteelblue']
+colors = ['lightsteelblue', 'peachpuff']
 ##transport
 #plt.plot(LH2_transport_costs, color='blue', linestyle='solid', label='LH2')
 #plt.plot(NH3_transport_costs, color='darkorange', linestyle='solid', label='NH3')
@@ -5359,7 +5399,7 @@ TC = (policy.LCOT_min_tech_em.loc[::,'Minimal_offshore_transport_costs']).apply(
 PC = (policy.LCOH_min_tech_em.loc[::,'Minimal_production_costs']).apply(pd.to_numeric)
 
 labels = ['Production', 'Transport']
-colors = ['lightgrey', 'lightsteelblue']
+colors = ['lightsteelblue', 'peachpuff']
 plt.stackplot(x, PC,TC, labels = labels, colors = colors )
 #orientation
 plt.axvline(x=policy.av_new, color='dodgerblue', linestyle = '--')
