@@ -254,10 +254,8 @@ Drive_CO2_emissions_grams_blue_flue_low = Drive_CO2_emissions_grams_grey * (1 - 
 Drive_CO2_emissions_grams_blue_flue_high = Drive_CO2_emissions_grams_grey * (1 - capture_rate_flue_gas_high)
 
 
-"""## Check this cell!!"""
-
 # CH4 consumed to drive the process [g CH4/MJ_H2]
-Drive_CH4_consumed = Drive_Energy_MJ_mole_h2 * 1/CO2_g_mole * CH4_g_mole
+Drive_CH4_consumed = Drive_CO2_emissions_grams_grey * 1/CO2_g_mole * CH4_g_mole
 
 
 """## Total direct CO2 emissions
@@ -315,9 +313,8 @@ Total_CO2_emissions_blue_high_with_fluegas_high = Direct_emissions_high + Drive_
 """## Indirect emissions from natural gas transport and storage"""
 
 # Indirect emissions from natural gas transport and storage [g CO2/MJ_H2]
-Indirect_emissions_NOR_base = float(GHG.loc['Indirect upstream emissions NOR [g CO2e/MJ_CH4] Baseline']['Value'])
-
-Indirect_emissions_US_base = float(GHG.loc['Indirect upstream emissions US [g CO2e/MJ_CH4] Baseline']['Value'])
+Indirect_emissions_NOR_base = float(GHG.loc['Midstream emissions NOR [g CO2e/MJ_H2] Baseline']['Value'])
+Indirect_emissions_US_base = float(GHG.loc['Midstream emissions US [g CO2e/MJ_CH4] Baseline']['Value'])
 
 
 """## CH4 upstream emissions"""
